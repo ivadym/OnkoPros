@@ -1,0 +1,133 @@
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs';
+
+import { Item } from '../item';
+import { Valor } from '../valor';
+
+import { AdvertenciasService } from '../../advertencias.service';
+import { EntrevistasService } from '../entrevistas.service';
+import { NavegacionService } from 'src/app/navegacion.service';
+
+@Component({
+  selector: 'app-item',
+  templateUrl: './item.component.html',
+  styleUrls: ['./item.component.css']
+})
+export class ItemComponent implements OnInit {
+
+  item: Item;
+  valor: Valor;
+  itemDisponible: boolean = true;
+
+  constructor(
+    private route: ActivatedRoute,
+    private entrevistasService: EntrevistasService,
+    private advertenciasService: AdvertenciasService,
+    private navegacionService: NavegacionService
+  ) { }
+
+  ngOnInit() {
+    this.getItem(+this.route.snapshot.paramMap.get('id'));
+  }
+
+  /**
+   * Controla la navegación desde la ruta actual hacia el exterior
+   */
+  canDeactivate(): Observable<boolean> | boolean {
+    if (this.item) {
+      return this.advertenciasService.confirm('¿Desea abandonar la entrevista actual sin finalizarla?');
+    } else {
+      return true;
+    }
+  }
+
+  /**
+   * Lista la pregunta enviada por el servidor
+   */
+  getItem(id: number): void {
+    this.entrevistasService.getItem(id).subscribe(
+      item => {
+        if(item) {
+          //TODO: Fichero de logs
+          console.log("SERVIDOR - Item: " + item.titulo);
+          this.item = item,
+          this.itemDisponible = true;
+        } else { // Respondidos todos los items asociados a la entrevista
+          // TODO: Fichero de logs
+          this.itemDisponible = false;
+          console.error("LOG getItem() (no hay más items)");
+        }
+      }
+    )
+  }
+
+  /**
+   * Envío de la respuesta del usuario y actualización de la pregunta
+   */
+  enviarValor(entrevistaId: number, valor: Valor): void {
+    this.entrevistasService.postValor(entrevistaId, valor).subscribe(
+      respuesta => {
+        if (respuesta) {
+          //TODO: Fichero de logs
+          console.log("SERVIDOR - Confirmación respuesta usuario: "
+            + respuesta.id + ":" + respuesta.valor + ":" + respuesta.valorTexto);
+          this.clearItemActual(),
+          this.clearValorActual(),
+          this.getItem(entrevistaId)
+        } else {
+          // TODO: Tratamiento del error/Mensaje de error al usuario (footer popup)
+          console.error("ERROR enviarValor()");
+        }
+      }
+    )
+  }
+
+  /**
+   * Actualiza la respuesta del usuario
+   */
+  setValor(id: number, valor: string, valorTexto: string) {
+    this.valor = {
+      id: this.item.id,
+      valor: valor,
+      valorTexto: null
+    }
+  }
+  
+  /**
+   * Registra la respuesta de usuario
+   */
+  onSubmit() {
+    const entrevistaId = +this.route.snapshot.paramMap.get('id');
+    this.enviarValor(entrevistaId, this.valor);
+  }
+
+  /**
+   * Limpia la pregunta actual
+   */
+  clearItemActual() {
+    this.item = null;
+  }
+
+  /**
+   * Limpia la respuesta del usuario
+   */
+  clearValorActual() {
+    this.valor = null;
+  }
+
+  /**
+   * Redirige al usuario a la lista de entrevistas
+   */
+  goToEntrevistas(): void {
+    this.navegacionService.goToEntrevistas();
+  }
+
+  /**
+   * Redirige al usuario a la página de inicio
+   */
+  goToInicio(): void {
+    this.navegacionService.goToInicio();
+  }
+
+}

@@ -1,0 +1,14 @@
+<h4>4-ENTREVISTAS-LISTA</h4>
+
+<div>
+    <ul>
+        <li *ngFor="let entrevista of entrevistas">
+            <a routerLink="/dashboard/entrevistas/{{entrevista.id}}" routerLinkActive="active">
+                {{entrevista.titulo}}</a>
+        </li>
+    </ul>
+</div>
+
+<div *ngIf="!entrevistasDisponibles">
+    ¡Enhorabuena, está al día con las entrevistas!
+</div>

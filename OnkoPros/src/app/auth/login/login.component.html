@@ -1,0 +1,23 @@
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+  <div>
+      <label>
+          Usuario: <input type="text" formControlName="usuario" required>
+          <div *ngIf="usuario.invalid && (usuario.dirty || usuario.touched)">
+              <div *ngIf="usuario.errors.required">Se requiere un nombre de usuario</div>
+          </div>
+      </label>
+  </div>
+  
+  <div>
+      <label>
+          Clave: <input type="password" formControlName="clave" required>
+          <div *ngIf="clave.invalid && (clave.dirty || clave.touched)">
+                  <div *ngIf="clave.errors.required">Se requiere una clave de usuario</div>
+          </div>
+      </label>
+  </div>
+
+  <button type="submit" [disabled]="!loginForm.valid">Iniciar sesión</button>
+
+</form>

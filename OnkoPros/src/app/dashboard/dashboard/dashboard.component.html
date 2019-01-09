@@ -1,0 +1,8 @@
+<nav>
+  <a routerLink="/dashboard" routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
+  <a routerLink="/dashboard/entrevistas" routerLinkActive="active">Entrevistas</a>
+  <button (click)="logout()">Cerrar sesión</button>
+</nav>
+
+<router-outlet></router-outlet>
