@@ -19,10 +19,7 @@ const httpOptions = {
 })
 export class EntrevistasService {
 
-  // TODO: A TRAVÉS DE NGINX
-  private expressServerURL = 'http://127.0.0.1:3000/';
-
-  private _entrevistasURL = this.expressServerURL + 'api/entrevistas';  // URL de la web api
+  private _entrevistasURL = 'api/entrevistas';  // URL de la web api
   private handleError: HandleError;
 
   constructor(
