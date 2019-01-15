@@ -5,6 +5,7 @@
 /tmp
 /temp
 /logs
+/ssl
 /out-tsc
 
 # dependencies
