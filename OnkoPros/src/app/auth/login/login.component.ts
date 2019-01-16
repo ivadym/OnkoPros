@@ -11,6 +11,8 @@ import { AuthService } from '../auth.service';
 })
 export class LoginComponent implements OnInit {
 
+  errorDeAutenticacion: boolean;
+
   loginForm = this.formBuilder.group({
     usuario: ['', Validators.required],
     clave: ['', Validators.required]
@@ -41,14 +43,22 @@ export class LoginComponent implements OnInit {
   /**
    * Verifica las credenciales introducidas
    */
-  onSubmit() {
-    this.authService.usuarioLogueado = this.usuario.value;
-    this.authService.login().subscribe(() => {
-      if (this.authService.loggedIn) {
-        let redirect = this.authService.redirectURL ? this.authService.redirectURL : '/dashboard';
-        this.router.navigate([redirect]);
+  onSubmit(): void {
+    this.authService.postLogin(this.usuario.value, this.clave.value).subscribe(
+      usuario => {
+        if (usuario && usuario.jwt) {
+          this.errorDeAutenticacion = false;
+          localStorage.setItem('jwt', usuario.jwt);
+          let redirect = this.authService.urlInicial ? this.authService.urlInicial : '/dashboard';
+          this.router.navigate([redirect]);
+        } else {
+          // TODO: Manejo fallo autenticación / Fichero de logs
+          // TODO: Diferenciar fallo autenticación y caída posible del servidor
+          this.errorDeAutenticacion = true;
+          console.error('LOG onSubmit() (fallo de autenticación)');
+        }
       }
-    });
+    );
   }
 
 }

@@ -16,7 +16,8 @@ export class InicioComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.usuarioLogueado = this.authService.usuarioLogueado;
+   // TODO
+   // this.usuarioLogueado = this.authService.usuarioLogueado;
   }
 
 }

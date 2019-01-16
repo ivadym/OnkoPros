@@ -41,7 +41,7 @@ export class EntrevistasService {
    * SET API URL de las entrevistas
    */
   set entrevistasURL(url: string) {
-    // TODO: Petición cambio URL API entrevistas(fichero de configuración)
+    // TODO: Petición cambio URL API entrevistas (fichero de configuración)
     this._entrevistasURL = url;
   }
 
@@ -51,7 +51,7 @@ export class EntrevistasService {
   getEntrevistas(): Observable<Entrevista[]> {
     return this.http.get<Entrevista[]>(this.entrevistasURL)
       .pipe(
-        catchError(this.handleError('getEntrevistas', []))
+        catchError(this.handleError<Entrevista[]>('getEntrevistas()'))
       );
   }
 
@@ -61,10 +61,10 @@ export class EntrevistasService {
    */
   getItem(id: number): Observable<Item> {
     const url = `${this.entrevistasURL}/${id}`;
-    return this.http.get<Item[]>(url)
+    return this.http.get<Item>(url)
       .pipe(
         map(preguntas => preguntas[0]), // Devuelve un array de {0|1} elementos
-        catchError(this.handleError<Item>(`getItem id=${id}`))
+        catchError(this.handleError<Item>(`getItem(id=${id})`))
       );
   }
 
@@ -76,7 +76,7 @@ export class EntrevistasService {
     const url = `${this.entrevistasURL}/${entrevistaId}`;
     return this.http.post<Valor>(url, valor, httpOptions)
     .pipe(
-      catchError(this.handleError(`postValor id=${valor.id}`, valor))
+      catchError(this.handleError<Valor>(`postValor id=${valor.id}`, valor))
     )
   }
 

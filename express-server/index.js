@@ -5,9 +5,14 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}) );
 
+var Usuario = require ('./usuario.js');
 var Entrevista = require('./entrevista.js');
 var Item = require('./item.js');
 var Valor = require('./valor.js');
+
+var usuario_1 = new Usuario(1, 'test1', 'pass1', 'Test1', 'Test1_1', 'Test1_2');
+var usuario_2 = new Usuario(2, 'a', 'a', 'Test2', 'Test2_1', 'Test2_2');
+var usuarios = [usuario_1, usuario_2]
 
 var entrevista_1 = new Entrevista(1, 'Entrevista 1', 'estado', 'f_creacion', 'f_limite');
 var entrevista_2 = new Entrevista(2, 'Entrevista 2');
@@ -28,11 +33,27 @@ var valores_e2 = [];
  */
 app.use(function(req, res, next) {
   // CORS
-  res.header("Access-Control-Allow-Origin", "*");
+  res.header('Access-Control-Allow-Origin', '*');
   // TODO: Authorization, Content-Length
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  // res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  //res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
   next();
+});
+
+/**
+ * POST auth
+ */
+app.post('/api/auth', function(req, res, next) {
+  console.log(`POST auth/${req.body.usuario}/${req.body.clave}`);
+  id = checkCredenciales(req.body.usuario, req.body.clave);
+  if(id != null) {
+    // TODO: Generar jwt
+    usuarios[id].jwt = 'jwt-test'
+    res.send(JSON.stringify(usuarios[id]));
+  } else {
+    res.send(null);
+  }
 });
 
 /**
@@ -72,6 +93,18 @@ app.post('/api/entrevistas/:id', function(req, res, next) {
   setValor(id, valor);
   res.send(req.body);
 });
+
+/**
+ * Comprueba las credenciales de usuario recibidas
+ */
+function checkCredenciales(usuario, clave) {
+  for (var i = 0; i < usuarios.length; i++) {
+    if (usuarios[i].usuario == usuario && usuarios[i].clave == clave) {
+      return i;
+    }
+  }
+  return null;
+}
 
 /**
  * Extrae las entrevistas disponibles
@@ -119,8 +152,7 @@ function setValor(id, valor) {
 function borrarEntrevista(id) {
   // TODO: Acceso BBDD
   for (var i = 0; i < entrevistas.length; i++) {
-    var obj = entrevistas[i];
-    if (id == obj.id) {
+    if (entrevistas[i].id == id) {
         entrevistas.splice(i, 1);
     }
   }
@@ -134,5 +166,5 @@ function borrarEntrevista(id) {
 var server = app.listen(8080, function () {
   var host = server.address().address
   var port = server.address().port   
-  console.log("Servidor iniciado en http://%s:%s", host, port)
+  console.log('Servidor iniciado en http://%s:%s', host, port)
 })

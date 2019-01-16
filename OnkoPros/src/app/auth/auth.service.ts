@@ -1,60 +1,84 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { tap, delay } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
+
+import { HttpErrorHandlerService, HandleError } from '../http-error-handler.service';
+import { Usuario } from './usuario';
+
+const httpOptions = {
+  headers: new HttpHeaders({
+    'Content-Type': 'application/json'
+  })
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private _usuarioLogueado: string;
-  loggedIn = false;
-  redirectURL: string;
+  private _authURL = 'api/auth'; // URL de la web api
+  private _urlInicial: string; // URL de redirección
+  private handleError: HandleError;
 
   constructor(
-    private router: Router
-  ) { }
-
-  /**
-   * GET usuario logueado
-   */
-  get usuarioLogueado(): string {
-    return this._usuarioLogueado;
+    private router: Router,
+    private http: HttpClient,
+    httpErrorHandler: HttpErrorHandlerService
+  ) { 
+    this.handleError = httpErrorHandler.createHandleError('AuthService');
   }
 
   /**
-   * SET usuario logueado
+   * GET API URL de autenticación
    */
-  set usuarioLogueado(usuario: string) {
-    this._usuarioLogueado = usuario;
+  get authURL(): string {
+    // TODO: Petición al servidor (fichero de configuración)
+    return this._authURL;
   }
 
   /**
-   * Inicia la sesión comprobando las credenciales
+   * SET API URL de autenticación
    */
-  login(): Observable<boolean> {
-
-    // TODO: Petición HTTP para verificar usuario
-
-    return of(true).pipe(
-      delay(1000),
-      tap(val => this.loggedIn = true)
-    );
+  set authURL(url: string) {
+    // TODO: Petición cambio URL API autenticación (fichero de configuración)
+    this._authURL = url;
   }
 
+  /**
+   * GET URL de redirección
+   */
+  get urlInicial(): string {
+    return this._urlInicial;
+  }
+
+  /**
+   * SET URL de redirección
+   */
+  set urlInicial(url: string) {
+    this._urlInicial = url;
+  }
+
+  /**
+   * Envío de las credenciales de usuario al servidor
+   */
+  postLogin(usuario: string, clave: string): Observable<Usuario> {
+    return this.http.post<Usuario>(this._authURL, {usuario, clave}, httpOptions)
+    .pipe(
+      catchError(this.handleError<Usuario>(`postLogin(usuario=${usuario})`))
+    )
+  }
+  
   /**
    * Cierra la sesión
    */
   logout(): void {
-
-    // TODO: Limpiar todos los tokens, etc.
     // TODO: se limpian los flags y después salta el canDeactivate, por lo que
     // al dar a cancelar (al cierre de sesión) y después moverse a otra ruta,
     // el sistema te preguta 2 veces y te echa (si das a aceptar).
-    
-    this.loggedIn = false;
-    this.redirectURL = null;
+    localStorage.removeItem('jwt')
+    this.urlInicial = null;
     this.router.navigate(['/login']);
   }
 
@@ -63,12 +87,13 @@ export class AuthService {
    * lo redirige al formulario del login
    */
   checkLogin(url: string): boolean {
-    if (this.loggedIn) {
+    if (localStorage.getItem('jwt')) {
       return true;
+    } else {
+      this.urlInicial = url;
+      this.router.navigate(['/login']);
+      return false;
     }
-    this.redirectURL = url;
-    this.router.navigate(['/login']);
-    return false;
   }
 
 }

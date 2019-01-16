@@ -18,7 +18,8 @@ export class AuthGuard implements CanActivate {
    */
   canActivate(
     next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+    state: RouterStateSnapshot
+  ): Observable<boolean> | Promise<boolean> | boolean {
       let url: string = state.url;
       return this.authService.checkLogin(url);
   }
@@ -28,7 +29,8 @@ export class AuthGuard implements CanActivate {
    */
   canActivateChild(
     next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+    state: RouterStateSnapshot
+  ): Observable<boolean> | Promise<boolean> | boolean {
       return this.canActivate(next, state);
   }
 

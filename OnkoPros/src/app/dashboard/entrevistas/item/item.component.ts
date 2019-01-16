@@ -50,13 +50,13 @@ export class ItemComponent implements OnInit {
       item => {
         if(item) {
           //TODO: Fichero de logs
-          console.log("SERVIDOR - Item: " + item.titulo);
+          console.log('SERVIDOR - Item: ' + item.titulo);
           this.item = item,
           this.itemDisponible = true;
         } else { // Respondidos todos los items asociados a la entrevista
           // TODO: Fichero de logs
           this.itemDisponible = false;
-          console.error("LOG getItem() (no hay más items)");
+          console.error('LOG getItem() (no hay más items)');
         }
       }
     )
@@ -70,14 +70,14 @@ export class ItemComponent implements OnInit {
       respuesta => {
         if (respuesta) {
           //TODO: Fichero de logs
-          console.log("SERVIDOR - Confirmación respuesta usuario: "
-            + respuesta.id + ":" + respuesta.valor + ":" + respuesta.valorTexto);
+          console.log('SERVIDOR - Confirmación respuesta usuario: '
+            + respuesta.id + ':' + respuesta.valor + ':' + respuesta.valorTexto);
           this.clearItemActual(),
           this.clearValorActual(),
           this.getItem(entrevistaId)
         } else {
           // TODO: Tratamiento del error/Mensaje de error al usuario (footer popup)
-          console.error("ERROR enviarValor()");
+          console.error('ERROR enviarValor()');
         }
       }
     )
@@ -86,7 +86,7 @@ export class ItemComponent implements OnInit {
   /**
    * Actualiza la respuesta del usuario
    */
-  setValor(id: number, valor: string, valorTexto: string) {
+  setValor(id: number, valor: string, valorTexto: string): void {
     this.valor = {
       id: this.item.id,
       valor: valor,
@@ -97,7 +97,7 @@ export class ItemComponent implements OnInit {
   /**
    * Registra la respuesta de usuario
    */
-  onSubmit() {
+  onSubmit(): void {
     const entrevistaId = +this.route.snapshot.paramMap.get('id');
     this.enviarValor(entrevistaId, this.valor);
   }
@@ -105,14 +105,14 @@ export class ItemComponent implements OnInit {
   /**
    * Limpia la pregunta actual
    */
-  clearItemActual() {
+  clearItemActual(): void {
     this.item = null;
   }
 
   /**
    * Limpia la respuesta del usuario
    */
-  clearValorActual() {
+  clearValorActual(): void {
     this.valor = null;
   }
 

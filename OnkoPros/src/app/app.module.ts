@@ -9,6 +9,8 @@ import { AuthModule } from './auth/auth.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { AppRoutingModule } from './app-routing.module';
 
+import { httpInterceptorProviders } from './http-interceptor-providers';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -22,6 +24,7 @@ import { AppRoutingModule } from './app-routing.module';
     AppRoutingModule
   ],
   providers: [
+    httpInterceptorProviders
   ],
   bootstrap: [
     AppComponent
