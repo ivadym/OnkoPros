@@ -20,7 +20,7 @@
 
   <button type="submit" [disabled]="!loginForm.valid">Iniciar sesión</button>
 
-  <div *ngIf="errorDeAutenticacion">
+  <div *ngIf="falloAutenticacion">
       Las credenciales introducidas son incorrectas, vuelva a intentarlo.
   </div>
 

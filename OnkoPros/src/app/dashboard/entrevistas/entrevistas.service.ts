@@ -19,7 +19,7 @@ const httpOptions = {
 })
 export class EntrevistasService {
 
-  private _entrevistasURL = 'api/entrevistas';  // URL de la web api
+  private _entrevistasURL = 'http://localhost:8080/api/entrevistas';  // URL de la web api
   private handleError: HandleError;
 
   constructor(

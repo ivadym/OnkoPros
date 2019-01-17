@@ -18,8 +18,9 @@ const httpOptions = {
 })
 export class AuthService {
 
-  private _authURL = 'api/auth'; // URL de la web api
+  private _authURL = 'http://localhost:8080/api/auth'; // URL de la web api
   private _urlInicial: string; // URL de redirección
+  private _usuarioLogueado: Usuario;
   private handleError: HandleError;
 
   constructor(
@@ -58,6 +59,20 @@ export class AuthService {
    */
   set urlInicial(url: string) {
     this._urlInicial = url;
+  }
+
+  /**
+   * GET URL de redirección
+   */
+  get usuarioLoguado(): Usuario {
+    return this._usuarioLogueado;
+  }
+
+  /**
+   * SET URL de redirección
+   */
+  set usuarioLogueado(usuario: Usuario) {
+    this._usuarioLogueado = usuario;
   }
 
   /**

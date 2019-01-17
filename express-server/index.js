@@ -3,7 +3,13 @@ const app = express();
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}) );
+app.use(bodyParser.urlencoded({extended: true}));
+
+const fs   = require('fs');
+const jwt = require('jsonwebtoken');
+
+var privateKEY  = fs.readFileSync('./RSA/private.key', 'utf8');
+var publicKEY  = fs.readFileSync('./RSA/public.key', 'utf8');
 
 var Usuario = require ('./usuario.js');
 var Entrevista = require('./entrevista.js');
@@ -37,7 +43,22 @@ app.use(function(req, res, next) {
   // TODO: Authorization, Content-Length
   res.header('Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  //res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+  // res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+  next();
+});
+
+/**
+ * GET, PUT, POST, DELETE (verificación del JWT)
+ */
+app.use('/', function(req, res, next) {
+  try {
+    var token = req.headers['authorization'].split(' ')[1];
+    console.log(verificarJWT(token));
+  }
+  catch(err) {
+    // TODO: Logout 
+    console.log("ERROR");
+  }
   next();
 });
 
@@ -48,19 +69,19 @@ app.post('/api/auth', function(req, res, next) {
   console.log(`POST auth/${req.body.usuario}/${req.body.clave}`);
   id = checkCredenciales(req.body.usuario, req.body.clave);
   if(id != null) {
-    // TODO: Generar jwt
-    usuarios[id].jwt = 'jwt-test'
+    // TODO: Catch error generarJWT()
+    usuarios[id].jwt = generarJWT(usuarios[id]);
     res.send(JSON.stringify(usuarios[id]));
   } else {
     res.send(null);
   }
-});
+}); 
 
 /**
  * GET entrevistas
  */
 app.get('/api/entrevistas', function(req, res, next) {
-  console.log('GET entrevistas') // TODO: Fichero logs
+  console.log('GET entrevistas'); // TODO: Fichero logs
   res.send(
     JSON.stringify(getEntrevistas())
   );
@@ -104,6 +125,34 @@ function checkCredenciales(usuario, clave) {
     }
   }
   return null;
+}
+
+/**
+ * Genera un JWT asociado a un usuario determinado
+ */
+function generarJWT(usuario) {
+  return jwt.sign(
+    {
+      usuario: usuario
+    },
+    privateKEY,
+    {
+      expiresIn: '1h',
+      algorithm: 'RS256'
+    }
+  );
+}
+
+/**
+ * Verifica el JWT asociado al cliente
+ */
+function verificarJWT(token) {
+  /**
+   * Token expiration (token.exp)
+   * Token isuer (https://YOUR_AUTH0_DOMAIN/)
+   * Token audience
+   */
+  return jwt.verify(token, publicKEY);
 }
 
 /**
@@ -155,11 +204,6 @@ function borrarEntrevista(id) {
     if (entrevistas[i].id == id) {
         entrevistas.splice(i, 1);
     }
-  }
-  if (id == 1) {
-    console.log(valores_e1);
-  } else if (id == 2) {
-    console.log(valores_e2);
   }
 }
 

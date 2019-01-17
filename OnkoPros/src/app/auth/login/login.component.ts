@@ -11,7 +11,7 @@ import { AuthService } from '../auth.service';
 })
 export class LoginComponent implements OnInit {
 
-  errorDeAutenticacion: boolean;
+  falloAutenticacion: boolean;
 
   loginForm = this.formBuilder.group({
     usuario: ['', Validators.required],
@@ -47,14 +47,18 @@ export class LoginComponent implements OnInit {
     this.authService.postLogin(this.usuario.value, this.clave.value).subscribe(
       usuario => {
         if (usuario && usuario.jwt) {
-          this.errorDeAutenticacion = false;
+
+          console.error(usuario.jwt)
+
+          this.falloAutenticacion = false;
+          this.authService.usuarioLogueado = usuario;
           localStorage.setItem('jwt', usuario.jwt);
           let redirect = this.authService.urlInicial ? this.authService.urlInicial : '/dashboard';
           this.router.navigate([redirect]);
         } else {
           // TODO: Manejo fallo autenticación / Fichero de logs
           // TODO: Diferenciar fallo autenticación y caída posible del servidor
-          this.errorDeAutenticacion = true;
+          this.falloAutenticacion = true;
           console.error('LOG onSubmit() (fallo de autenticación)');
         }
       }
