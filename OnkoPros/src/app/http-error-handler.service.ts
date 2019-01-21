@@ -1,45 +1,60 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
 
-/**
- * Tipo de la función handleError devuelta por HttpHandler.createHandleError
- */
-export type HandleError =
-  <T> (operation?: string, result?: T) => (error: HttpErrorResponse) => Observable<T>;
+import { AdvertenciasService } from './advertencias.service';
+import { AuthService } from './auth/auth.service';
+import { NavegacionService } from './navegacion.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HttpErrorHandlerService {
 
-  constructor() { }
-    /**
-     * Crea la función handleError(servicio)
-     */
-    createHandleError = (serviceName = '') => <T>
-    (operation = 'operation', result = {} as T) => this.handleError(serviceName, operation, result);
+  constructor(
+    private authService: AuthService,
+    private advertenciasService: AdvertenciasService,
+    private navegacionService: NavegacionService
+  ) { }
 
   /**
-   * Devuelve la función que trata las operaciones HTTP fallidas sin parar la ejecución
-   * @param serviceName - Nombre del servicio que intentó la operación
-   * @param operation - Nombre de la operación fallida
-   * @param result - Valor opcional a devolver (observable)
+   * Trata las operaciones HTTP fallidas sin parar la ejecucción
    */
-  handleError<T> (serviceName = '', operation = 'operation', result = {} as T) {
+  handleError(error: HttpErrorResponse, operacion: string) {
+    if(error.status === 400) {
+      this.badRequest();
+    } else if (error.status === 404) {
+      this.notFound();
+    } else if(error.status === 403 && operacion != 'login()') {
+      this.forbidden();
+    }
+    const mensaje = (error.error instanceof ErrorEvent) ?
+      error.error.message : // Error en la red o en el lado del cliente
+      `El servidor ha devuelto el código de error: "${error.status}", 
+      con el cuerpo: "${error.error}"`; // Error del backend -> se analiza el body
+    // TODO: Mejorar el tratamiento del error para que sea digerido por el usuario
+    console.error(`ERROR en la operación ${operacion}: ${mensaje}`);
+  };
 
-    return (error: HttpErrorResponse): Observable<T> => {
-      // TODO: Fichero REMOTO de logs (eliminar mensajes en la consola)
-      const message = (error.error instanceof ErrorEvent) ?
-        error.error.message : // Error en la red o en el lado del cliente
-      `El servidor ha devuelto el código de error: ${error.status},
-        con el cuerpo: "${error.error}"`; // Error del backend -> se analiza el body
+  /**
+   * Trata el error HTTP 400 Bad Request
+   */
+  badRequest() {
+    this.navegacionService.goToPaginaNoEncontrada();
+  }
 
-      // TODO: Mejorar el tratamiento del error para que sea digerido por el usuario
-      console.error(`${serviceName}: ${operation} ha fallado: ${message}`);
-      
-      return of(result); // La aplicación sigue funcionando (el valor devuelto no para la ejecución)
-    };
+  /**
+   * Trata el error HTTP 404 Not Found
+   */
+  notFound() {
+    this.navegacionService.goToPaginaNoEncontrada();
+  }
+
+  /**
+   * Trata el error HTTP 403 Forbidden
+   */
+  forbidden() {
+    this.advertenciasService.alerta('Su sesión ha caducado. Si lo desea, vuelva a iniciar sesión.')
+    this.authService.logout();
   }
 
 }

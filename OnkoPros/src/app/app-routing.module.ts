@@ -14,7 +14,7 @@ const appRoutes: Routes = [
     RouterModule.forRoot(
       appRoutes,
       {
-        enableTracing: true, // Solo para DEBUG
+        enableTracing: true, // TODO: Eliminar -> solo para DEBUG
       }
     )
   ],

@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
-import { HttpErrorHandlerService, HandleError } from '../http-error-handler.service';
 import { Usuario } from './usuario';
+import { NavegacionService } from '../navegacion.service';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -21,15 +20,11 @@ export class AuthService {
   private _authURL = 'http://localhost:8080/api/auth'; // URL de la web api
   private _urlInicial: string; // URL de redirección
   private _usuarioLogueado: Usuario;
-  private handleError: HandleError;
 
   constructor(
-    private router: Router,
     private http: HttpClient,
-    httpErrorHandler: HttpErrorHandlerService
-  ) { 
-    this.handleError = httpErrorHandler.createHandleError('AuthService');
-  }
+    private navegacionService: NavegacionService
+  ) { }
 
   /**
    * GET API URL de autenticación
@@ -62,14 +57,14 @@ export class AuthService {
   }
 
   /**
-   * GET URL de redirección
+   * GET usuario logueado
    */
-  get usuarioLoguado(): Usuario {
+  get usuarioLogueado(): Usuario {
     return this._usuarioLogueado;
   }
 
   /**
-   * SET URL de redirección
+   * SET usuario logueado
    */
   set usuarioLogueado(usuario: Usuario) {
     this._usuarioLogueado = usuario;
@@ -78,11 +73,8 @@ export class AuthService {
   /**
    * Envío de las credenciales de usuario al servidor
    */
-  postLogin(usuario: string, clave: string): Observable<Usuario> {
-    return this.http.post<Usuario>(this._authURL, {usuario, clave}, httpOptions)
-    .pipe(
-      catchError(this.handleError<Usuario>(`postLogin(usuario=${usuario})`))
-    )
+  postLogin(usuario: string, clave: string): Observable<any> {
+    return this.http.post(this._authURL, {usuario, clave}, httpOptions);
   }
   
   /**
@@ -91,10 +83,12 @@ export class AuthService {
   logout(): void {
     // TODO: se limpian los flags y después salta el canDeactivate, por lo que
     // al dar a cancelar (al cierre de sesión) y después moverse a otra ruta,
-    // el sistema te preguta 2 veces y te echa (si das a aceptar).
-    localStorage.removeItem('jwt')
+    // el sistema te preguta 2 veces y te echa (si das a aceptar)
+    // TODO: Fichero de logs
+    localStorage.removeItem('jwt');
     this.urlInicial = null;
-    this.router.navigate(['/login']);
+    this.usuarioLogueado = null;
+    this.navegacionService.goToLogin();
   }
 
   /**
@@ -106,7 +100,7 @@ export class AuthService {
       return true;
     } else {
       this.urlInicial = url;
-      this.router.navigate(['/login']);
+      this.navegacionService.goToLogin();
       return false;
     }
   }

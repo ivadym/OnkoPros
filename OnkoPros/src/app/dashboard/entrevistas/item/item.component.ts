@@ -5,9 +5,10 @@ import { Observable } from 'rxjs';
 import { Item } from '../item';
 import { Valor } from '../valor';
 
-import { AdvertenciasService } from '../../advertencias.service';
+import { AdvertenciasService } from '../../../advertencias.service';
 import { EntrevistasService } from '../entrevistas.service';
 import { NavegacionService } from 'src/app/navegacion.service';
+import { HttpErrorHandlerService } from 'src/app/http-error-handler.service';
 
 @Component({
   selector: 'app-item',
@@ -24,7 +25,8 @@ export class ItemComponent implements OnInit {
     private route: ActivatedRoute,
     private entrevistasService: EntrevistasService,
     private advertenciasService: AdvertenciasService,
-    private navegacionService: NavegacionService
+    private navegacionService: NavegacionService,
+    private errorHandler: HttpErrorHandlerService
   ) { }
 
   ngOnInit() {
@@ -36,7 +38,7 @@ export class ItemComponent implements OnInit {
    */
   canDeactivate(): Observable<boolean> | boolean {
     if (this.item) {
-      return this.advertenciasService.confirm('¿Desea abandonar la entrevista actual sin finalizarla?');
+      return this.advertenciasService.advertencia('¿Desea abandonar la entrevista actual sin finalizarla?');
     } else {
       return true;
     }
@@ -50,14 +52,16 @@ export class ItemComponent implements OnInit {
       item => {
         if(item) {
           //TODO: Fichero de logs
-          console.log('SERVIDOR - Item: ' + item.titulo);
+          console.log('SERVIDOR - Item extraído: ' + item.titulo);
           this.item = item,
           this.itemDisponible = true;
-        } else { // Respondidos todos los items asociados a la entrevista
-          // TODO: Fichero de logs
-          this.itemDisponible = false;
+        } else {
           console.error('LOG getItem() (no hay más items)');
+          this.itemDisponible = false;
         }
+      },
+      error => {
+        this.errorHandler.handleError(error, `getItem(${id})`);
       }
     )
   }
@@ -67,11 +71,10 @@ export class ItemComponent implements OnInit {
    */
   enviarValor(entrevistaId: number, valor: Valor): void {
     this.entrevistasService.postValor(entrevistaId, valor).subscribe(
-      respuesta => {
-        if (respuesta) {
-          //TODO: Fichero de logs
-          console.log('SERVIDOR - Confirmación respuesta usuario: '
-            + respuesta.id + ':' + respuesta.valor + ':' + respuesta.valorTexto);
+      valor => {
+        if(valor) {
+          console.log('SERVIDOR - Confirmación respuesta usuario: ' + 
+          valor.id + '/' + valor.valor + '/' + valor.valorTexto);
           this.clearItemActual(),
           this.clearValorActual(),
           this.getItem(entrevistaId)
@@ -79,6 +82,10 @@ export class ItemComponent implements OnInit {
           // TODO: Tratamiento del error/Mensaje de error al usuario (footer popup)
           console.error('ERROR enviarValor()');
         }
+      },
+      error => {
+        //TODO: Fichero de logs
+        this.errorHandler.handleError(error, `enviarValor(${valor.id}, ${valor.valor}, ${valor.valorTexto})`)
       }
     )
   }
@@ -97,7 +104,7 @@ export class ItemComponent implements OnInit {
   /**
    * Registra la respuesta de usuario
    */
-  onSubmit(): void {
+  responder(): void {
     const entrevistaId = +this.route.snapshot.paramMap.get('id');
     this.enviarValor(entrevistaId, this.valor);
   }

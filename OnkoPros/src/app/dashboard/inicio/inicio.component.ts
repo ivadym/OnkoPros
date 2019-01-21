@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
+import { Usuario } from 'src/app/auth/usuario';
+
 import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
@@ -9,15 +11,14 @@ import { AuthService } from 'src/app/auth/auth.service';
 })
 export class InicioComponent implements OnInit {
   
-  usuarioLogueado: string;
+  usuarioLogueado: Usuario;
 
   constructor(
     private authService : AuthService
   ) { }
 
   ngOnInit() {
-   // TODO
-   // this.usuarioLogueado = this.authService.usuarioLogueado;
+    this.usuarioLogueado = this.authService.usuarioLogueado;
   }
-
+  
 }

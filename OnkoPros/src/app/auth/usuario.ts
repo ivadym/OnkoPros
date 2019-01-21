@@ -1,7 +1,7 @@
 export class Usuario {
     id:                 number;
     usuario:            string;
-    clave:              string;
+    clave:              string; // TODO: No recibir clave
     nombre:             string;
     apellido_1:         string;
     apellido_2:         string;
@@ -9,5 +9,4 @@ export class Usuario {
     fecha_nacimiento:   string;
     telefono:           string;
     email:              string;
-    jwt:                string;
 }

@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Entrevista } from '../entrevista';
 
 import { EntrevistasService } from '../entrevistas.service';
+import { HttpErrorHandlerService } from 'src/app/http-error-handler.service';
 
 @Component({
   selector: 'app-entrevistas-lista',
@@ -15,7 +16,8 @@ export class EntrevistasListaComponent implements OnInit {
   entrevistasDisponibles: boolean = true;
 
   constructor(
-    private entrevistasService: EntrevistasService
+    private entrevistasService: EntrevistasService,
+    private errorHandler: HttpErrorHandlerService
   ) { }
 
   ngOnInit() {
@@ -28,16 +30,18 @@ export class EntrevistasListaComponent implements OnInit {
   getEntrevistas(): void {
     this.entrevistasService.getEntrevistas().subscribe(
       entrevistas => {
-        if(entrevistas.length > 0) {
-          //TODO: Fichero de logs
-          console.log("SERVIDOR - Entrevistas: " + entrevistas.length);
-          this.entrevistas = entrevistas
-          this.entrevistasDisponibles = true;
+        if(entrevistas) {
+        //TODO: Fichero de logs
+        console.log('SERVIDOR - Entrevistas: ' + entrevistas);
+        this.entrevistas = entrevistas
+        this.entrevistasDisponibles = true;
         } else {
-          // TODO: Fichero del logs
+          console.error("LOG getEntrevistas() (no hay más entrevistas disponibles)");
           this.entrevistasDisponibles = false;
-          console.error("LOG getEntrevistas() (no hay más entrevistas por hacer)");
         }
+      },
+      error => {
+        this.errorHandler.handleError(error, 'getEntrevistas()');
       }
     );
   }

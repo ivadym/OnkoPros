@@ -11,6 +11,20 @@ export class NavegacionService {
   ) { }
 
   /**
+   * Redirige al usuario a la página de inicio
+   */
+  goToInicio(): void {
+    this.router.navigate(['']);
+  }
+
+  /**
+   * Redirige al usuario a la página de inicio de sesión
+   */
+  goToLogin(): void {
+    this.router.navigate(['/login']);
+  }
+
+  /**
    * Redirige al usuario a la lista de entrevistas
    */
   goToEntrevistas(): void {
@@ -18,10 +32,9 @@ export class NavegacionService {
   }
 
   /**
-   * Redirige al usuario a la página de inicio
+   * Redirige al usuario a la página no encontrada
    */
-  goToInicio(): void {
-    this.router.navigate(['']);
+  goToPaginaNoEncontrada(): void {
+    this.router.navigate(['RecursoNoEncontrado']);
   }
-
 }

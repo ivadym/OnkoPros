@@ -1,8 +1,6 @@
-<h4>4-ITEM</h4>
-
 <div *ngIf="item">
     {{item.titulo}}
-    <form (ngSubmit)="onSubmit()">
+    <form (ngSubmit)="responder()">
         <label *ngFor="let valor of item.valores; let i = index">
             <input type="{{item.tipo}}" name="valor" valor="item.valores[i]"
                 (click)="setValor(item.id, item.valores[i], null)">{{item.valores[i]}}<br>

@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../auth.service';
+import { HttpErrorHandlerService } from 'src/app/http-error-handler.service';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +22,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private errorHandler: HttpErrorHandlerService
   ) { }
 
   ngOnInit() { }
@@ -43,24 +45,29 @@ export class LoginComponent implements OnInit {
   /**
    * Verifica las credenciales introducidas
    */
-  onSubmit(): void {
+  login(): void {
     this.authService.postLogin(this.usuario.value, this.clave.value).subscribe(
-      usuario => {
-        if (usuario && usuario.jwt) {
-
-          console.error(usuario.jwt)
-
+      respuesta => {
+        if (respuesta && respuesta.usuario && respuesta.jwt) {
+          // TODO: Fichero de logs
+          console.log('SERVIDOR - Autenticación: ' + respuesta.usuario.usuario + '/' + respuesta.jwt);
           this.falloAutenticacion = false;
-          this.authService.usuarioLogueado = usuario;
-          localStorage.setItem('jwt', usuario.jwt);
+          this.authService.usuarioLogueado = respuesta.usuario;
+          localStorage.setItem('jwt', respuesta.jwt);
           let redirect = this.authService.urlInicial ? this.authService.urlInicial : '/dashboard';
           this.router.navigate([redirect]);
         } else {
+          // TODO: ¿Código nunca alcanzable?
           // TODO: Manejo fallo autenticación / Fichero de logs
           // TODO: Diferenciar fallo autenticación y caída posible del servidor
-          this.falloAutenticacion = true;
-          console.error('LOG onSubmit() (fallo de autenticación)');
+          // console.error('LOG login() (fallo de autenticación)');
         }
+      },
+      error => {
+        if(error.status === 403) {
+          this.falloAutenticacion = true;
+        }
+        this.errorHandler.handleError(error, 'login()');
       }
     );
   }
