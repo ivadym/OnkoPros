@@ -11,7 +11,7 @@ export class AuthInterceptor implements HttpInterceptor {
   ) { }
  
   intercept(req: HttpRequest<any>, next: HttpHandler) {
-    const authToken = this.authService.usuarioLogueado ? this.authService.usuarioLogueado.jwt : null;
+    const authToken = this.authService.getJWT();
     const authReq = req.clone({ // Clonado de la petición y añadido el header de autenticación
       setHeaders: { Authorization: `Bearer ${authToken}` }
     });

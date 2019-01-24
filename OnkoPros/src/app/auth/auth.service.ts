@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 import { Usuario } from './usuario';
 import { NavegacionService } from '../navegacion.service';
@@ -18,11 +18,16 @@ export class AuthService {
 
   private _authURL = 'http://localhost:8080/api/auth'; // URL de la web api
   private _urlInicial: string; // URL de redirección
+  private _usuarioSubject: BehaviorSubject<Usuario>;
+  private _currentUser: Observable<Usuario>;
 
   constructor(
     private http: HttpClient,
     private navegacionService: NavegacionService
-  ) { }
+  ) {
+    this._usuarioSubject = new BehaviorSubject(JSON.parse(localStorage.getItem('usuarioLogueado')));
+    this._currentUser = this._usuarioSubject.asObservable();
+  }
 
   /**
    * GET API URL de autenticación
@@ -55,17 +60,25 @@ export class AuthService {
   }
 
   /**
-   * GET usuario logueado
+   * GET usuario logueado (observable)
+   */
+  get usuarioLogueadoObservable(): Observable<Usuario> {
+    return this._currentUser;
+  }
+
+  /**
+   * GET usuario logueado (observable)
    */
   get usuarioLogueado(): Usuario {
-    return JSON.parse(localStorage.getItem('usuarioLogueado'));;
+    return this._usuarioSubject.value;
   }
 
   /**
    * SET usuario logueado
    */
   set usuarioLogueado(usuario: Usuario) {
-    localStorage.setItem('usuarioLogueado', JSON.stringify(usuario));;
+    localStorage.setItem('usuarioLogueado', JSON.stringify(usuario));
+    this._usuarioSubject.next(usuario);
   }
 
   /**
@@ -84,8 +97,8 @@ export class AuthService {
     // el sistema te preguta 2 veces y te echa (si das a aceptar)
     // TODO: Fichero de logs
     localStorage.removeItem('usuarioLogueado');
-    this.urlInicial = null;
     this.usuarioLogueado = null;
+    this.urlInicial = null;
     this.navegacionService.goToLogin();
   }
 
@@ -101,6 +114,13 @@ export class AuthService {
       this.navegacionService.goToLogin();
       return false;
     }
+  }
+
+  /**
+   * Devuelve el token asociado al usuario
+   */
+  getJWT(): string {
+    return this._usuarioSubject.value ? this._usuarioSubject.value.jwt : null;
   }
 
 }

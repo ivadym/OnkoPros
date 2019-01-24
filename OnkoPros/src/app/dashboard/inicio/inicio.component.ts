@@ -15,10 +15,10 @@ export class InicioComponent implements OnInit {
 
   constructor(
     private authService : AuthService
-  ) { }
-
-  ngOnInit() {
+  ) {
     this.usuarioLogueado = this.authService.usuarioLogueado;
   }
+
+  ngOnInit() { }
   
 }

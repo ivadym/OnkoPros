@@ -52,7 +52,6 @@ export class LoginComponent implements OnInit {
           // TODO: Fichero de logs
           console.log('SERVIDOR - Autenticación: ' + usuario.usuario + '/' + usuario.jwt);
           this.falloAutenticacion = false;
-          // TODO: Usuario logueado en local storage
           this.authService.usuarioLogueado = usuario;
           let redirect = this.authService.urlInicial ? this.authService.urlInicial : '/dashboard';
           this.router.navigate([redirect]);
