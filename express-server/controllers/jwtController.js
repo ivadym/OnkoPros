@@ -9,7 +9,7 @@ var publicKEY  = fs.readFileSync('./RSA/public.key', 'utf8');
  */
 exports.generarJWT = function (req, res, next) {
   try {
-    var token = jwt.sign(
+    req.usuario.jwt = jwt.sign(
       { usuario: req.usuario.id },
       privateKEY,
       {
@@ -18,10 +18,7 @@ exports.generarJWT = function (req, res, next) {
       }
     );
     // TODO: Filtrar los datos que son necesarios enviar en primera instancia
-    res.status(200).json({
-      usuario: req.usuario,
-      jwt: token
-    });
+    res.status(200).json(req.usuario);
   } catch (error) {
     // TODO: Tratamiento error interno servidor
     res.sendStatus(500) // HTTP 500 Internal Server Error
@@ -37,7 +34,6 @@ exports.verificarJWT = function (req, res, next) {
         jwt.verify(token, publicKEY);
         next();
     } catch (error) {
-        // TODO: Solicitar a Angular que cierre sesión (lado cliente)
         // TODO: Mejor manejo errores
         res.sendStatus(403); // HTTP 403 Forbidden
     }

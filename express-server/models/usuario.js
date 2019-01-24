@@ -1,6 +1,6 @@
 class Usuario {
 
-    constructor(id, usuario, nombre, apellido_1, apellido_2, estado, sexo, fecha_nacimiento, telefono, email) {
+    constructor(id, usuario, nombre, apellido_1, apellido_2, estado, sexo, fecha_nacimiento, telefono, email, jwt) {
         this.id = id || null;
         this.usuario = usuario || null;
         this.nombre = nombre || null;
@@ -11,6 +11,7 @@ class Usuario {
         this.fecha_nacimiento = fecha_nacimiento || null;
         this.telefono = telefono || null;
         this.email = email || null;
+        this.jwt = jwt || null;
     }
 
 }

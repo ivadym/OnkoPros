@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -19,7 +18,6 @@ export class AuthService {
 
   private _authURL = 'http://localhost:8080/api/auth'; // URL de la web api
   private _urlInicial: string; // URL de redirección
-  private _usuarioLogueado: Usuario;
 
   constructor(
     private http: HttpClient,
@@ -60,14 +58,14 @@ export class AuthService {
    * GET usuario logueado
    */
   get usuarioLogueado(): Usuario {
-    return this._usuarioLogueado;
+    return JSON.parse(localStorage.getItem('usuarioLogueado'));;
   }
 
   /**
    * SET usuario logueado
    */
   set usuarioLogueado(usuario: Usuario) {
-    this._usuarioLogueado = usuario;
+    localStorage.setItem('usuarioLogueado', JSON.stringify(usuario));;
   }
 
   /**
@@ -85,7 +83,7 @@ export class AuthService {
     // al dar a cancelar (al cierre de sesión) y después moverse a otra ruta,
     // el sistema te preguta 2 veces y te echa (si das a aceptar)
     // TODO: Fichero de logs
-    localStorage.removeItem('jwt');
+    localStorage.removeItem('usuarioLogueado');
     this.urlInicial = null;
     this.usuarioLogueado = null;
     this.navegacionService.goToLogin();
@@ -96,7 +94,7 @@ export class AuthService {
    * lo redirige al formulario del login
    */
   checkLogin(url: string): boolean {
-    if (localStorage.getItem('jwt')) {
+    if (localStorage.getItem('usuarioLogueado')) {
       return true;
     } else {
       this.urlInicial = url;

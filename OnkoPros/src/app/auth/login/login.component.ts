@@ -47,13 +47,13 @@ export class LoginComponent implements OnInit {
    */
   login(): void {
     this.authService.postLogin(this.usuario.value, this.clave.value).subscribe(
-      respuesta => {
-        if (respuesta && respuesta.usuario && respuesta.jwt) {
+      usuario => {
+        if (usuario && usuario.jwt) {
           // TODO: Fichero de logs
-          console.log('SERVIDOR - Autenticación: ' + respuesta.usuario.usuario + '/' + respuesta.jwt);
+          console.log('SERVIDOR - Autenticación: ' + usuario.usuario + '/' + usuario.jwt);
           this.falloAutenticacion = false;
-          this.authService.usuarioLogueado = respuesta.usuario;
-          localStorage.setItem('jwt', respuesta.jwt);
+          // TODO: Usuario logueado en local storage
+          this.authService.usuarioLogueado = usuario;
           let redirect = this.authService.urlInicial ? this.authService.urlInicial : '/dashboard';
           this.router.navigate([redirect]);
         } else {
