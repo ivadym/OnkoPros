@@ -1,8 +1,8 @@
 const fs   = require('fs');
 const jwt = require('jsonwebtoken');
 
-var privateKEY  = fs.readFileSync('./RSA/private.key', 'utf8');
-var publicKEY  = fs.readFileSync('./RSA/public.key', 'utf8');
+var privateKEY  = fs.readFileSync('./RSA/private.key');
+var publicKEY  = fs.readFileSync('./RSA/public.key');
 
 /**
  * Genera un JWT asociado a un usuario determinado

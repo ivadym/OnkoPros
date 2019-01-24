@@ -107,7 +107,7 @@ export class AuthService {
    * lo redirige al formulario del login
    */
   checkLogin(url: string): boolean {
-    if (localStorage.getItem('usuarioLogueado')) {
+    if (this.usuarioLogueado) {
       return true;
     } else {
       this.urlInicial = url;
@@ -120,7 +120,7 @@ export class AuthService {
    * Devuelve el token asociado al usuario
    */
   getJWT(): string {
-    return this._usuarioSubject.value ? this._usuarioSubject.value.jwt : null;
+    return this.usuarioLogueado ? this.usuarioLogueado.jwt : null;
   }
 
 }

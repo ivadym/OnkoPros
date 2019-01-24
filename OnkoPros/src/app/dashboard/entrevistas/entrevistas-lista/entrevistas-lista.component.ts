@@ -32,7 +32,7 @@ export class EntrevistasListaComponent implements OnInit {
       entrevistas => {
         if(entrevistas) {
         //TODO: Fichero de logs
-        console.log('SERVIDOR - Entrevistas: ' + entrevistas);
+        console.log('SERVIDOR - Entrevistas: ' + entrevistas.length);
         this.entrevistas = entrevistas
         this.entrevistasDisponibles = true;
         } else {

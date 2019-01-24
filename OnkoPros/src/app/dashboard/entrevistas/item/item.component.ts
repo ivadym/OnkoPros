@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { Item } from '../item';
@@ -36,8 +36,12 @@ export class ItemComponent implements OnInit {
   /**
    * Controla la navegación desde la ruta actual hacia el exterior
    */
-  canDeactivate(): Observable<boolean> | boolean {
-    if (this.item) {
+  canDeactivate(
+    currentRoute: ActivatedRouteSnapshot,
+    currentState: RouterStateSnapshot,
+    nextState?: RouterStateSnapshot
+  ): Observable<boolean> | boolean {
+    if (this.item && nextState.url != '/login') {
       return this.advertenciasService.advertencia('¿Desea abandonar la entrevista actual sin finalizarla?');
     } else {
       return true;
