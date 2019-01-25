@@ -3,8 +3,8 @@ var Entrevista = require('./entrevista');
 var Item = require('./item');
 var Valor = require('./valor');
 
-var usuario_1 = new Usuario(1, 'test1', 'Test1', 'Test1_1', 'Test1_2');
-var usuario_2 = new Usuario(2, 'a', 'Test2', 'Test2_1', 'Test2_2');
+var usuario_1 = new Usuario(1, 'test1', 'Paciente', 'Prueba', 'Prueba');
+var usuario_2 = new Usuario(2, 'a', 'Admin', 'Prueba', 'Prueba');
 usuarios = [usuario_1, usuario_2];
 
 var clave_1 = 'pass1';

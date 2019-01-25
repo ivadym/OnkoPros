@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
+import { Usuario } from 'src/app/auth/usuario';
+
 import { AuthService } from 'src/app/auth/auth.service';
 import { AdvertenciasService } from 'src/app/advertencias.service';
 
@@ -10,10 +12,16 @@ import { AdvertenciasService } from 'src/app/advertencias.service';
 })
 export class DashboardComponent implements OnInit {
 
+  usuarioLogueado: Usuario
+
   constructor(
     private authService: AuthService,
     private advertenciasService: AdvertenciasService
-  ) { }
+  ) {
+    this.authService.usuarioLogueadoObservable.subscribe(
+      usuario => this.usuarioLogueado = usuario
+    );
+  }
 
   ngOnInit() { }
 

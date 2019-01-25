@@ -2,6 +2,7 @@
   <a routerLink="/dashboard" routerLinkActive="active"
       [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
   <a routerLink="/dashboard/entrevistas" routerLinkActive="active">Entrevistas</a>
+  <a routerLink="/dashboard/perfil" routerLinkActive="active">{{usuarioLogueado.nombre}} {{usuarioLogueado.apellido_1}}</a>
   <button (click)="logout()">Cerrar sesión</button>
 </nav>
 

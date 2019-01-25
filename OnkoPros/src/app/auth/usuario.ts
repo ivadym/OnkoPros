@@ -4,6 +4,7 @@ export class Usuario {
     nombre:             string;
     apellido_1:         string;
     apellido_2:         string;
+    estado:             string;
     sexo:               string;
     fecha_nacimiento:   string;
     telefono:           string;

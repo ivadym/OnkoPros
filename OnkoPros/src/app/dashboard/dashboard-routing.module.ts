@@ -9,6 +9,7 @@ import { ItemComponent } from './entrevistas/item/item.component';
 
 import { AuthGuard } from '../auth/auth.guard';
 import { CanDeactivateGuard } from '../auth/can-deactivate.guard';
+import { PerfilComponent } from './perfil/perfil.component';
 
 const dashboardRoutes: Routes = [
   {
@@ -23,6 +24,10 @@ const dashboardRoutes: Routes = [
           {
             path: '',
             component: InicioComponent
+          },
+          {
+            path: 'perfil',
+            component: PerfilComponent
           },
           {
             path: 'entrevistas',
