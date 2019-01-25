@@ -1,6 +1,6 @@
 export class Valor {
     id:         number;
-    valor:      string;
+    valor:      object;
     valorTexto: string;
 }
  

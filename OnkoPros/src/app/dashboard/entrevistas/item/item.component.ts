@@ -19,6 +19,7 @@ export class ItemComponent implements OnInit {
 
   item: Item;
   valor: Valor;
+  private valoresSeleccionados: string[];
   itemDisponible: boolean = true;
 
   constructor(
@@ -77,11 +78,11 @@ export class ItemComponent implements OnInit {
     this.entrevistasService.postValor(entrevistaId, valor).subscribe(
       valor => {
         if(valor) {
-          console.log('SERVIDOR - Confirmación respuesta usuario: ' + 
-          valor.id + '/' + valor.valor + '/' + valor.valorTexto);
-          this.clearItemActual(),
-          this.clearValorActual(),
-          this.getItem(entrevistaId)
+          console.log('SERVIDOR - Confirmación respuesta usuario: ');
+          console.log(valor.id); console.log(valor.valor); console.log(valor.valorTexto);
+          this.clearItemActual();
+          this.clearValorActual();
+          this.getItem(entrevistaId);
         } else {
           // TODO: Tratamiento del error/Mensaje de error al usuario (footer popup)
           console.error('ERROR enviarValor()');
@@ -89,27 +90,42 @@ export class ItemComponent implements OnInit {
       },
       error => {
         //TODO: Fichero de logs
-        this.errorHandler.handleError(error, `enviarValor(${valor.id}, ${valor.valor}, ${valor.valorTexto})`)
+        this.errorHandler.handleError(error, `enviarValor(${valor.id}, ${valor.valor}, ${valor.valorTexto})`);
       }
     )
   }
 
   /**
-   * Actualiza la respuesta del usuario
+   * Actualiza los valores de la respuesta del usuario
    */
-  setValor(id: number, valor: string, valorTexto: string): void {
+  setValor(id: number, valor: string): void {
+    if(this.item.tipo === 'radio') { // RADIO BUTTON
+      this.valoresSeleccionados = [valor];
+    } else if(this.item.tipo === 'checkbox') { // CHECKBOX
+      if(!this.valoresSeleccionados) {
+        this.valoresSeleccionados = [valor];
+      } else if(this.valoresSeleccionados.includes(valor)) {
+        this.valoresSeleccionados.splice(this.valoresSeleccionados.indexOf(valor), 1);
+      } else {
+        this.valoresSeleccionados.push(valor);
+      }
+    }
+
     this.valor = {
-      id: this.item.id,
-      valor: valor,
-      valorTexto: null
+      id: id,
+      valor: this.valoresSeleccionados,
+      valorTexto: this.valor ? this.valor.valorTexto : null
     }
   }
-  
+
   /**
    * Registra la respuesta de usuario
    */
   responder(): void {
     const entrevistaId = +this.route.snapshot.paramMap.get('id');
+    if(!this.valoresSeleccionados.includes('Otro')) {
+      this.valor.valorTexto = null;
+    }
     this.enviarValor(entrevistaId, this.valor);
   }
 
@@ -124,6 +140,7 @@ export class ItemComponent implements OnInit {
    * Limpia la respuesta del usuario
    */
   clearValorActual(): void {
+    this.valoresSeleccionados = null;
     this.valor = null;
   }
 

@@ -1,15 +1,20 @@
 <div *ngIf="item">
     {{item.titulo}}
     <form (ngSubmit)="responder()">
-        <label *ngFor="let valor of item.valores; let i = index">
-            <input type="{{item.tipo}}" name="valor" valor="item.valores[i]"
-                (click)="setValor(item.id, item.valores[i], null)">{{item.valores[i]}}<br>
-        </label>
-        <div *ngIf="valor?.valor === 'Otro'">
-            <input [(ngModel)]="valor.valorTexto" name="valorTexto"
-                placeholder="Elabore su propia respuesta" autocomplete="off"/>
+
+        <!-- RADIO BUTTON & CHECKBOX -->
+        <div *ngIf="item.tipo === 'radio' || item.tipo === 'checkbox'">
+            <label *ngFor="let valor of item.valores; let i = index">
+                <input type="{{item.tipo}}" name="valor" valor="item.valores[i]"
+                    (click)="setValor(item.id, item.valores[i])">{{item.valores[i]}}<br>
+            </label>
+            <div *ngIf="valor?.valor.includes('Otro')">
+                <input [(ngModel)]="valor.valorTexto" name="valorTexto"
+                    placeholder="Elabore su propia respuesta" autocomplete="off"/>
+            </div>
         </div>
-        <button type="submit" [disabled]="!valor?.valor">Siguiente pregunta</button>
+
+        <button type="submit" [disabled]="!valor?.valor.length">Siguiente pregunta</button>
     </form>
 </div>
 

@@ -19,8 +19,9 @@ e2_cont = 0;
 
 var item_1 = new Item(1, 'Item 1', 'radio', ['A1', 'B', 'C', 'Otro'], '2019');
 var item_2 = new Item(2, 'Item 2', 'radio', ['A2', 'B', 'C', 'Otro'], '2019');
-var item_3 = new Item(3, 'Item 3', 'radio', ['A3', 'B', 'C', 'Otro'], '2019');
-items = [item_1, item_2, item_3];
+var item_3 = new Item(3, 'Item 3', 'checkbox', ['A3', 'B', 'C', 'Otro'], '2019');
+var item_4 = new Item(4, 'Item 4', 'checkbox', ['A4', 'B', 'C', 'Otro'], '2019');
+items = [item_1, item_2, item_3, item_4];
 
 valores_e1 = [];
 valores_e2 = [];
