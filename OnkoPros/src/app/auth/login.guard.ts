@@ -8,37 +8,23 @@ import { NavegacionService } from '../navegacion.service';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard implements CanActivate {
+export class LoginGuard implements CanActivate {
 
   constructor(
     private authService: AuthService,
     private navegacionService: NavegacionService
   ) { }
 
-  /**
-   *  Guard que controla la navegación entre routes
-   */
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> | Promise<boolean> | boolean {
-    this.authService.urlInicial = state.url;
     if(this.authService.usuarioLogueado) {
-      return true;
-    } else {
-      this.navegacionService.goToLogin();
+      this.navegacionService.goToInicio();
       return false;
+    } else {
+      return true;
     }
-  }
-  
-  /**
-   *  Guard que controla la navegación entre child routes
-   */
-  canActivateChild(
-    next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<boolean> | Promise<boolean> | boolean {
-    return this.canActivate(next, state);
   }
 
 }

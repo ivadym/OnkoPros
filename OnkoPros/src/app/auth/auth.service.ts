@@ -67,7 +67,7 @@ export class AuthService {
   }
 
   /**
-   * GET usuario logueado (observable)
+   * GET usuario logueado
    */
   get usuarioLogueado(): Usuario {
     return this._usuarioSubject.value;
@@ -92,28 +92,11 @@ export class AuthService {
    * Cierra la sesión
    */
   logout(): void {
-    // TODO: se limpian los flags y después salta el canDeactivate, por lo que
-    // al dar a cancelar (al cierre de sesión) y después moverse a otra ruta,
-    // el sistema te preguta 2 veces y te echa (si das a aceptar)
     // TODO: Fichero de logs
     localStorage.removeItem('usuarioLogueado');
     this.usuarioLogueado = null;
     this.urlInicial = null;
     this.navegacionService.goToLogin();
-  }
-
-  /**
-   * Comprueba si el usuario tiene iniciada la sesión y en caso de que no lo haya hecho,
-   * lo redirige al formulario del login
-   */
-  checkLogin(url: string): boolean {
-    if (this.usuarioLogueado) {
-      return true;
-    } else {
-      this.urlInicial = url;
-      this.navegacionService.goToLogin();
-      return false;
-    }
   }
 
   /**

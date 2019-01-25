@@ -35,6 +35,6 @@ export class NavegacionService {
    * Redirige al usuario a la página no encontrada
    */
   goToPaginaNoEncontrada(): void {
-    this.router.navigate(['RecursoNoEncontrado']);
+    this.router.navigate(['404']);
   }
 }
