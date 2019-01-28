@@ -1,27 +1,51 @@
-<form [formGroup]="loginForm" (ngSubmit)="login()">
-
-  <div>
-      <label>
-          Usuario: <input type="text" formControlName="usuario" required>
-          <div *ngIf="usuario.invalid && (usuario.dirty || usuario.touched)">
-              <div *ngIf="usuario.errors.required">Se requiere un nombre de usuario</div>
-          </div>
-      </label>
-  </div>
-  
-  <div>
-      <label>
-          Clave: <input type="password" formControlName="clave" required>
-          <div *ngIf="clave.invalid && (clave.dirty || clave.touched)">
-                  <div *ngIf="clave.errors.required">Se requiere una clave de usuario</div>
-          </div>
-      </label>
-  </div>
-
-  <button type="submit" [disabled]="!loginForm.valid">Iniciar sesión</button>
-
-  <div *ngIf="falloAutenticacion">
-      Las credenciales introducidas son incorrectas, vuelva a intentarlo.
-  </div>
-
-</form>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-auto">
+            <form [formGroup]="loginForm" (ngSubmit)="login()">
+                <div class="row">
+                    <div class="col-12 p-1">
+                        <h2 class="login-descripcion display-4">
+                            Escriba su nombre de usuario y contraseña
+                        </h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 p-1">
+                        <input class="form-control" type="text" formControlName="usuario" 
+                            placeholder="Usuario" required>
+                        <div *ngIf="usuario.invalid && (usuario.dirty || usuario.touched)">
+                            <div class="alert-warning" *ngIf="usuario.errors.required">
+                                Introduzca un nombre de usuario
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 p-1">
+                        <input class="form-control" type="password" formControlName="clave"
+                            placeholder="Clave" required>
+                        <div *ngIf="clave.invalid && (clave.dirty || clave.touched)">
+                            <div class="alert-warning" *ngIf="clave.errors.required">
+                                Introduzca una clave de usuario
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 p-1">
+                        <button class="btn btn-block" type="submit" [disabled]="!loginForm.valid">
+                            Iniciar sesión
+                        </button>
+                    </div>
+                </div>
+                <div class="row" *ngIf="falloAutenticacion">
+                    <div class="col-12 p-1">
+                        <div class="alert alert-danger text-center">
+                            Las credenciales son incorrectas
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+   </div>
+</div>

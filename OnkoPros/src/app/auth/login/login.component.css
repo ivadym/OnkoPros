@@ -1,0 +1,48 @@
+.login-descripcion {
+    font-size: 16px;
+}
+
+.form-control {
+    color: #2E397A;
+    font-weight: 900;
+    background-color:#F2F4FF;
+    border-color: transparent;
+}
+
+/* Campo de texto seleccionado */
+.form-control:focus {
+    box-shadow: none;
+    border-bottom-color: #2E397A;
+}
+
+/* Placeholder */
+.form-control::placeholder {
+    font-weight: normal;
+    color: #2E397A;
+}
+
+/* Placeholder */
+.form-control:focus::placeholder {
+    font-weight: normal;
+    color: rgba(46, 57, 122, 0.5);
+}
+
+.btn {
+    color: white;
+    background-color: #2E397A;
+    cursor: not-allowed;
+}
+
+.alert-warning {
+    color: darkorange;
+    background-color: transparent;
+    font-size: 14px;
+}
+
+.alert-danger {
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(255, 0, 0, 0.75);
+    background-color:rgba(255, 0, 0, 0.10);
+    border: none;
+}

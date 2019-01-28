@@ -1,0 +1,15 @@
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    width: 60%;
+    display: table;
+    margin: auto; 
+}
+
+.login-header {
+    font-size: 22px;
+}
