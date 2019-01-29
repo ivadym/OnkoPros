@@ -1,0 +1,16 @@
+.notFound {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.notFoundMensaje {
+    color: rgba(255, 0, 0, 0.75);
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.btn {
+    color: white;
+    background-color: #2E397A;
+}
