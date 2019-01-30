@@ -3,7 +3,7 @@
 }
 
 .form-control {
-    color: #2E397A;
+    color: #2A367B;
     font-weight: 900;
     background-color:#F2F4FF;
     border-color: transparent;
@@ -12,24 +12,24 @@
 /* Campo de texto seleccionado */
 .form-control:focus {
     box-shadow: none;
-    border-bottom-color: #2E397A;
+    border-bottom-color: #2A367B;
 }
 
 /* Placeholder */
 .form-control::placeholder {
     font-weight: normal;
-    color: #2E397A;
+    color: #2A367B;
 }
 
 /* Placeholder */
 .form-control:focus::placeholder {
     font-weight: normal;
-    color: rgba(46, 57, 122, 0.5);
+    color: rgba(42, 54, 123, 0.5);
 }
 
 .btn {
     color: white;
-    background-color: #2E397A;
+    background-color: #2a367b;
     cursor: not-allowed;
 }
 
