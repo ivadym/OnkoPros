@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 import { Usuario } from './usuario';
 import { NavegacionService } from '../navegacion.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -23,7 +25,8 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private navegacionService: NavegacionService
+    private navegacionService: NavegacionService,
+    private spinner: NgxSpinnerService
   ) {
     this._usuarioSubject = new BehaviorSubject(JSON.parse(localStorage.getItem('usuarioLogueado')));
     this._currentUser = this._usuarioSubject.asObservable();
@@ -85,7 +88,13 @@ export class AuthService {
    * Envío de las credenciales de usuario al servidor
    */
   postLogin(usuario: string, clave: string): Observable<any> {
-    return this.http.post(this._authURL, {usuario, clave}, httpOptions);
+    this.spinner.show();
+    return this.http.post(this._authURL, {usuario, clave}, httpOptions)
+      .pipe(
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
   }
   
   /**

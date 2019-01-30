@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 
 import { Entrevista } from './entrevista';
 import { Item } from './item';
@@ -21,7 +21,7 @@ export class EntrevistasService {
   private _entrevistasURL = 'http://localhost:8080/api/entrevistas';  // URL de la web api
 
   constructor(
-    private http: HttpClient,
+    private http: HttpClient
   ) { }
 
   /**
@@ -59,7 +59,6 @@ export class EntrevistasService {
    * Envío de la respuesta del usuario al servidor
    */
   postValor(entrevistaId: number, valor: Valor): Observable<Valor> {
-    // TODO: Establecer timeout
     const url = `${this.entrevistasURL}/${entrevistaId}`;
     return this.http.post<Valor>(url, valor, httpOptions);
   }

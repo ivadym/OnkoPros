@@ -7,6 +7,7 @@ import { PaginaNoEncontradaComponent } from './pagina-no-encontrada/pagina-no-en
 
 import { AuthModule } from './auth/auth.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { NgxSpinnerModule } from 'ngx-spinner';
 import { AppRoutingModule } from './app-routing.module';
 
 import { httpInterceptorProviders } from './http-interceptor-providers';
@@ -21,6 +22,7 @@ import { httpInterceptorProviders } from './http-interceptor-providers';
     HttpClientModule,
     AuthModule,
     DashboardModule,
+    NgxSpinnerModule,
     AppRoutingModule
   ],
   providers: [
