@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { InicioComponent } from './inicio/inicio.component';
 import { PerfilComponent } from './perfil/perfil.component';
+import { NotificacionesComponent } from './notificaciones/notificaciones.component';
 import { EntrevistasComponent } from './entrevistas/entrevistas/entrevistas.component';
 import { EntrevistasListaComponent } from './entrevistas/entrevistas-lista/entrevistas-lista.component';
 import { ItemComponent } from './entrevistas/item/item.component';
@@ -17,6 +18,7 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
     DashboardComponent,
     InicioComponent,
     PerfilComponent,
+    NotificacionesComponent,
     EntrevistasComponent,
     EntrevistasListaComponent,
     ItemComponent
