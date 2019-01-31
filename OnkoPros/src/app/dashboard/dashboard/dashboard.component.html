@@ -1,9 +1,40 @@
-<nav>
-  <a routerLink="/dashboard" routerLinkActive="active"
-      [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
-  <a routerLink="/dashboard/entrevistas" routerLinkActive="active">Entrevistas</a>
-  <a routerLink="/dashboard/perfil" routerLinkActive="active">{{usuarioLogueado.nombre}} {{usuarioLogueado.apellido_1}}</a>
-  <button (click)="logout()">Cerrar sesión</button>
+<nav class="navbar navbar-expand">
+  <div class="container">
+    <a class="navbar-brand text-center d-none d-md-block">
+      <img src="./../../../assets/logos/onkologikoa.ico"
+        class="d-inline-block align-top" alt="Logo Onkologikoa">
+      <h1 class="brand-title display-4">
+        OnkoPros
+      </h1>
+    </a>
+    <ul class="navbar-nav nav-fill w-100">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/dashboard" routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }">
+            Inicio
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/dashboard/entrevistas" routerLinkActive="active">
+          Entrevistas
+        </a>
+      </li>
+      <li class="nav-item dropdown" ngbDropdown>
+        <div class="btn btn-dropdown"  routerLinkActive="active" id="dropdown" ngbDropdownToggle>
+            {{usuarioLogueado.nombre}} {{usuarioLogueado.apellido_1}}
+          <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="dropdown">
+            <a class="dropdown-item" routerLink="/dashboard/perfil" routerLinkActive="active">
+              Perfil de usuario
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="btn btn-logout dropdown-item" (click)="logout()">Cerrar sesión</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
 </nav>
 
-<router-outlet></router-outlet>
+<div class="container">
+  <router-outlet></router-outlet>
+</div>
