@@ -3,8 +3,9 @@ var Entrevista = require('./entrevista');
 var Item = require('./item');
 var Valor = require('./valor');
 
-var usuario_1 = new Usuario(1, 'test1', 'Paciente', 'Apellido1', 'Apellido2');
-var usuario_2 = new Usuario(2, 'a', 'Admin', 'Apellido1', 'Apellido2');
+var usuario_1 = new Usuario(1, 'test1', 'Paciente', 'Paciente', 'Apellido1', 'Apellido2');
+var usuario_2 = new Usuario(2, 'a', 'Administrador', 'Admin', 'Apellido1', 'Apellido2', 'Hombre',
+    '01/01/1001', '+34 601 01 01 01', 'admin@onkologikoa.org', 'activo');
 usuarios = [usuario_1, usuario_2];
 
 var clave_1 = 'pass1';
