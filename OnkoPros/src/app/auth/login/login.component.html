@@ -11,7 +11,7 @@
             <div class="row">
                 <div class="col-12 p-1">
                     <input class="form-control" type="text" formControlName="usuario" 
-                        placeholder="Usuario" required>
+                        placeholder="Usuario" required autofocus>
                     <div *ngIf="usuario.invalid && (usuario.dirty || usuario.touched)">
                         <div class="alert-warning" *ngIf="usuario.errors.required">
                             Introduzca un nombre de usuario

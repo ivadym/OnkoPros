@@ -1,25 +1,52 @@
-<div *ngIf="item">
-    {{item.titulo}}
-    <form (ngSubmit)="responder()">
-
-        <!-- RADIO BUTTON & CHECKBOX -->
-        <div *ngIf="item.tipo === 'radio' || item.tipo === 'checkbox'">
-            <label *ngFor="let valor of item.valores; let i = index">
-                <input type="{{item.tipo}}" name="valor" valor="item.valores[i]"
-                    (click)="setValor(item.id, item.valores[i])">{{item.valores[i]}}<br>
-            </label>
-            <div *ngIf="valor?.valor.includes('Otro')">
-                <input [(ngModel)]="valor.valorTexto" name="valorTexto"
-                    placeholder="Elabore su propia respuesta" autocomplete="off"/>
+<div class="row row-item">
+    <div *ngIf="item" class="col-sm-12 col-md-6 col-item">
+        <div class="titulo-item text-center">
+            {{item.titulo}}
+        </div>
+        <form (ngSubmit)="responder()">
+            <!-- RADIO BUTTON & CHECKBOX -->
+            <div *ngIf="item.tipo === 'radio' || item.tipo === 'checkbox'" class="opciones-item">
+                <div *ngFor="let valor of item.valores; let i = index" class="row">
+                    <div class="col-12 p-1 custom-control custom-{{item.tipo}}">
+                        <input type="{{item.tipo}}" name="valor" id="{{item.tipo}}_{{i}}"
+                            class="custom-control-input" (click)="setValor(item.id, item.valores[i])">
+                        <label class="custom-control-label" for="{{item.tipo}}_{{i}}">
+                            {{item.valores[i]}}
+                        </label>
+                    </div>
+                </div>
+                <div *ngIf="valor?.valor.includes('Otro')" class="row">
+                    <div class="col-12">
+                        <input #otro class="opcion-otro" [(ngModel)]="valor.valorTexto" name="valorTexto"
+                            placeholder="Elabore su propia respuesta" autocomplete="off">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <button type="submit" class="btn btn-responder col-12" [disabled]="!valor?.valor.length">
+                    Responder
+                </button>
+            </div>
+        </form>
+    </div>
+    <div *ngIf="!itemDisponible" class="col-12 col-item text-center">
+        <div class="row ent-fin justify-content-center">
+            <div class="col-md-4 felicitacion-col">
+                <h1 class="msj-ent-finalizada display-4 text-center">
+                    <i>¡Enhorabuena, ha finalizado la entrevista!</i>    
+                </h1>
+            </div>
+            <div class="col-md-4 img-col">
+                <i class="fas fa-flag-checkered fa-4x p-5"></i>
             </div>
         </div>
-
-        <button type="submit" [disabled]="!valor?.valor.length">Siguiente pregunta</button>
-    </form>
-</div>
-
-<div *ngIf="!itemDisponible">
-    ¡Enhorabuena, ha finalizado la entrevista!<br>
-    <button (click)="goToEntrevistas()">Realizar otra entrevista</button>
-    <button (click)="goToInicio()">Volver al inicio</button>
+        <div class="row justify-content-center">
+            <div class="col-md-4 col-sm-12 m-1 btn btn-ent-fin" (click)="goToEntrevistas()">
+                Realizar otra entrevista
+            </div>
+            <div class="col-md-4 col-sm-12 m-1 left btn btn-ent-fin" (click)="goToInicio()">
+                Volver al inicio
+            </div>
+        </div>
+    </div>
 </div>

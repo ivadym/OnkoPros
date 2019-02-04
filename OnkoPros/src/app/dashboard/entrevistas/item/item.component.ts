@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 
@@ -16,6 +16,15 @@ import { HttpErrorHandlerService } from 'src/app/http-error-handler.service';
   styleUrls: ['./item.component.css']
 })
 export class ItemComponent implements OnInit {
+
+  @ViewChild("otro") nameField: ElementRef;
+  autofocus(valor: string): void {
+    if (valor == 'Otro' && this.valoresSeleccionados.includes(valor)) {
+      setTimeout(() => {
+        this.nameField.nativeElement.focus();
+      }, 50);
+    }
+  }
 
   item: Item;
   valor: Valor;
@@ -110,6 +119,8 @@ export class ItemComponent implements OnInit {
         this.valoresSeleccionados.push(valor);
       }
     }
+
+    this.autofocus(valor);
 
     this.valor = {
       id: id,

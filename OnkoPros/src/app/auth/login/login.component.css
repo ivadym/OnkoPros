@@ -8,12 +8,13 @@
     background-color:#F2F4FF;
     border-radius: 5px;
     border-color: transparent;
+    box-shadow: none;
 }
 
 /* Campo de texto seleccionado */
 .form-control:focus {
-    box-shadow: none;
     border-bottom-color: #2A367B;
+
 }
 
 /* Placeholder */

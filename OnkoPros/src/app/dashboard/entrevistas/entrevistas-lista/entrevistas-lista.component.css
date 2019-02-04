@@ -1,5 +1,4 @@
 .row-ent {
-    color: #2A367B;
     margin-top: 10%;
 }
 
@@ -39,7 +38,7 @@
 }
 
 .img-fluid {
-    width: 200px;
+    width: 50%;
     height: auto;
 }
 
