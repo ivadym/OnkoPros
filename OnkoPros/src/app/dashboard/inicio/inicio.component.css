@@ -1,8 +1,9 @@
 .inicio-component {
-    margin-top: 15%;
+    margin-top: 10%;
 }
 
 .bienvenida-header {
-    color: #2A367B;
+    color: #4D2A7B;
     font-size: 22px;
+    padding: 5%;
 }

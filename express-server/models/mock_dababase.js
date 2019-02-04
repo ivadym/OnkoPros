@@ -12,8 +12,9 @@ var clave_1 = 'pass1';
 var clave_2 = 'a';
 claves = [clave_1, clave_2];
 
-var entrevista_1 = new Entrevista(1, 'Entrevista 1', 'estado', 'f_creacion', 'f_limite');
-var entrevista_2 = new Entrevista(2, 'Entrevista 2');
+var entrevista_1 = new Entrevista(1, 'Entrevista 1', 'Descripción de la entrevista 1','estado',
+    'f_creacion', 'f_limite');
+var entrevista_2 = new Entrevista(2, 'Entrevista 2', 'Descripción de la entrevista 2');
 entrevistas = [entrevista_1, entrevista_2];
 e1_cont = 0;
 e2_cont = 0;

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
 import { Entrevista } from '../entrevista';
 
@@ -8,6 +8,7 @@ import { HttpErrorHandlerService } from 'src/app/http-error-handler.service';
 @Component({
   selector: 'app-entrevistas-lista',
   templateUrl: './entrevistas-lista.component.html',
+  encapsulation: ViewEncapsulation.None,
   styleUrls: ['./entrevistas-lista.component.css']
 })
 export class EntrevistasListaComponent implements OnInit {
