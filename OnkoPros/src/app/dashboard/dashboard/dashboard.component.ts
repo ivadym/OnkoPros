@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { Usuario } from 'src/app/auth/usuario';
 
@@ -12,9 +13,10 @@ import { AdvertenciasService } from 'src/app/advertencias.service';
 })
 export class DashboardComponent implements OnInit {
 
-  usuarioLogueado: Usuario
+  usuarioLogueado: Usuario;
 
   constructor(
+    private router: Router,
     private authService: AuthService,
     private advertenciasService: AdvertenciasService
   ) {
@@ -29,15 +31,21 @@ export class DashboardComponent implements OnInit {
    * Cierra la sesión actual
    */
   logout() {
-    this.advertenciasService.advertencia(
-      `¿Desea cerrar la sesión actual? Se perderán los cambios no guardados.`
-    ).subscribe(res => {
-      if(res) {
-        this.authService.logout();
-      } else {
-        return;
-      }
-    })
+    var url = this.router.url;
+    var regEx = /\/dashboard\/entrevistas\/\d/
+    if (regEx.test(url)) {
+      this.advertenciasService.advertencia(
+        `¿Desea cerrar la sesión actual? Se perderán los cambios no guardados.`
+      ).subscribe(res => {
+        if(res) {
+          this.authService.logout();
+        } else {
+          return;
+        }
+      });
+    } else {
+      this.authService.logout();
+    }
   }
 
 }

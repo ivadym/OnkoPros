@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { InicioComponent } from './inicio/inicio.component';
@@ -10,7 +11,6 @@ import { EntrevistasComponent } from './entrevistas/entrevistas/entrevistas.comp
 import { EntrevistasListaComponent } from './entrevistas/entrevistas-lista/entrevistas-lista.component';
 import { ItemComponent } from './entrevistas/item/item.component';
 
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 
 @NgModule({
