@@ -1,14 +1,13 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
-import { Observable } from 'rxjs';
 
 import { Item } from '../item';
 import { Valor } from '../valor';
 
-import { AdvertenciasService } from '../../../advertencias.service';
 import { EntrevistasService } from '../entrevistas.service';
 import { NavegacionService } from 'src/app/navegacion.service';
 import { HttpErrorHandlerService } from 'src/app/http-error-handler.service';
+import { AvisosService } from 'src/app/avisos.service';
 
 @Component({
   selector: 'app-item',
@@ -34,7 +33,7 @@ export class ItemComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private entrevistasService: EntrevistasService,
-    private advertenciasService: AdvertenciasService,
+    private avisosService: AvisosService,
     private navegacionService: NavegacionService,
     private errorHandler: HttpErrorHandlerService
   ) { }
@@ -50,9 +49,20 @@ export class ItemComponent implements OnInit {
     currentRoute: ActivatedRouteSnapshot,
     currentState: RouterStateSnapshot,
     nextState?: RouterStateSnapshot
-  ): Observable<boolean> | boolean {
+  ): Promise<boolean> | boolean {
     if (this.item && nextState.url != '/login') {
-      return this.advertenciasService.advertencia('¿Desea abandonar la entrevista actual sin finalizarla?');
+      return this.avisosService.advertencia(
+        '¿Desea abandonar la entrevista actual sin finalizarla?', 
+        'Se perderán los cambios no guardados.'
+      )
+        .then(
+          res => {
+            return true;
+          },
+          error => {
+            return false;
+          }
+        );
     } else {
       return true;
     }

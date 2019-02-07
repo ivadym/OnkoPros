@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 
-import { AdvertenciasService } from './advertencias.service';
 import { AuthService } from './auth/auth.service';
+import { AvisosService } from './avisos.service';
 import { NavegacionService } from './navegacion.service';
 
 @Injectable({
@@ -12,7 +12,7 @@ export class HttpErrorHandlerService {
 
   constructor(
     private authService: AuthService,
-    private advertenciasService: AdvertenciasService,
+    private avisosService: AvisosService,
     private navegacionService: NavegacionService
   ) { }
 
@@ -53,7 +53,10 @@ export class HttpErrorHandlerService {
    * Trata el error HTTP 403 Forbidden
    */
   forbidden() {
-    this.advertenciasService.alerta('Su sesión ha caducado. Si lo desea, vuelva a iniciar sesión.')
+    this.avisosService.alerta(
+      'Su sesión ha caducado.',
+      'Si lo desea, puede volver a iniciar sesión.'
+    );
     this.authService.logout();
   }
 

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Usuario } from 'src/app/auth/usuario';
 
 import { AuthService } from 'src/app/auth/auth.service';
-import { AdvertenciasService } from 'src/app/advertencias.service';
+import { AvisosService } from 'src/app/avisos.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -18,7 +18,7 @@ export class DashboardComponent implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private advertenciasService: AdvertenciasService
+    private avisosService: AvisosService
   ) {
     this.authService.usuarioLogueadoObservable.subscribe(
       usuario => this.usuarioLogueado = usuario
@@ -34,15 +34,18 @@ export class DashboardComponent implements OnInit {
     var url = this.router.url;
     var regEx = /\/dashboard\/entrevistas\/\d/
     if (regEx.test(url)) {
-      this.advertenciasService.advertencia(
-        `¿Desea cerrar la sesión actual? Se perderán los cambios no guardados.`
-      ).subscribe(res => {
-        if(res) {
-          this.authService.logout();
-        } else {
-          return;
-        }
-      });
+      this.avisosService.advertencia(
+        '¿Desea cerrar la sesión actual?',
+        'Se perderán los cambios no guardados.'
+      )
+        .then(
+          res => {
+            this.authService.logout();
+          },
+          error => {
+            return;
+          }
+        );
     } else {
       this.authService.logout();
     }

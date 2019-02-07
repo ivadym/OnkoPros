@@ -1,0 +1,20 @@
+.modal-title {
+    color: #4D2A7B;
+    font-size: 22px;
+}
+
+.btn-modal {
+    color: #4D2A7B;
+    background-color: rgba(77, 42, 123, 0.1);
+    border-radius: 5px;
+}
+
+.btn-modal:focus {
+    border-color: #4D2A7B;
+    box-shadow: none;
+}
+
+.btn-modal:hover {
+    color: white;
+    background-color: #4D2A7B;
+}

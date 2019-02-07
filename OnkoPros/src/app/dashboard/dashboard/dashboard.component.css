@@ -15,12 +15,6 @@ a, .navbar, .dropdown-item, .btn {
     border-radius: 5px;
 }
 
-.dropdown-item:hover {
-    color: #2A367B;
-    background-color:rgba(42, 54, 123, 0.1);
-    border-radius: 0px;
-}
-
 .active {
     color: white;
     background-color:#2A367B;
@@ -30,6 +24,12 @@ a, .navbar, .dropdown-item, .btn {
 .dropdown-item.active {
     color: white;
     background-color:#2A367B;
+    border-radius: 0px;
+}
+
+.dropdown-item:hover {
+    color: #2A367B;
+    background-color:rgba(42, 54, 123, 0.1);
     border-radius: 0px;
 }
 
