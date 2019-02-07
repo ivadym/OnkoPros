@@ -8,6 +8,7 @@ import { EntrevistasService } from '../entrevistas.service';
 import { NavegacionService } from 'src/app/navegacion.service';
 import { HttpErrorHandlerService } from 'src/app/http-error-handler.service';
 import { AvisosService } from 'src/app/avisos.service';
+import { dashCaseToCamelCase } from '@angular/compiler/src/util';
 
 @Component({
   selector: 'app-item',
@@ -54,15 +55,14 @@ export class ItemComponent implements OnInit {
       return this.avisosService.advertencia(
         '¿Desea abandonar la entrevista actual sin finalizarla?', 
         'Se perderán los cambios no guardados.'
-      )
-        .then(
-          res => {
-            return true;
-          },
-          error => {
-            return false;
-          }
-        );
+      ).then(
+        res => {
+          return true;
+        },
+        error => {
+          return false;
+        }
+      );
     } else {
       return true;
     }
@@ -95,10 +95,23 @@ export class ItemComponent implements OnInit {
    */
   enviarValor(entrevistaId: number, valor: Valor): void {
     this.entrevistasService.postValor(entrevistaId, valor).subscribe(
-      valor => {
-        if(valor) {
+      datos => {
+        if(datos.alerta) {
+          this.avisosService.alerta(
+            'Según los resultados reportados, es necesario que siga las siguientes intrucciones:',
+            datos.alerta
+          ).then(
+            res => {
+              console.log('SERVIDOR - Confirmación respuesta usuario: ');
+              console.log(datos.valor.id); console.log(datos.valor.valor); console.log(datos.valor.valorTexto);
+              this.clearItemActual();
+              this.clearValorActual();
+              this.getItem(entrevistaId);
+            }
+          );
+        } else if(datos.valor) {
           console.log('SERVIDOR - Confirmación respuesta usuario: ');
-          console.log(valor.id); console.log(valor.valor); console.log(valor.valorTexto);
+          console.log(datos.valor.id); console.log(datos.valor.valor); console.log(datos.valor.valorTexto);
           this.clearItemActual();
           this.clearValorActual();
           this.getItem(entrevistaId);

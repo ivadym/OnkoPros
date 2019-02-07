@@ -37,15 +37,14 @@ export class DashboardComponent implements OnInit {
       this.avisosService.advertencia(
         '¿Desea cerrar la sesión actual?',
         'Se perderán los cambios no guardados.'
-      )
-        .then(
-          res => {
-            this.authService.logout();
-          },
-          error => {
-            return;
-          }
-        );
+      ).then(
+        res => {
+          this.authService.logout();
+        },
+        error => {
+          return;
+        }
+      );
     } else {
       this.authService.logout();
     }

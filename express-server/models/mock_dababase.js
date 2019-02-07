@@ -19,11 +19,14 @@ entrevistas = [entrevista_1, entrevista_2];
 e1_cont = 0;
 e2_cont = 0;
 
-var item_1 = new Item(1, '¿Cómo se ha encontrado a lo largo del día de hoy?', 'radio',
-    ['Muy bien', 'Bien', 'Mal', 'Otro'], '2019');
-var item_2 = new Item(2, 'Item 2', 'radio', ['A2', 'B', 'C', 'Otro'], '2019');
-var item_3 = new Item(3, 'Item 3', 'checkbox', ['A3', 'B', 'C', 'Otro'], '2019');
-var item_4 = new Item(4, 'Item 4', 'checkbox', ['A4', 'B', 'C', 'Otro'], '2019');
+var item_1 = new Item(1, '1 -> ¿Cómo se ha encontrado a lo largo del día de hoy?', 'radio',
+['Muy bien', 'Bien', 'Mal', 'Otro'], '2019');
+var item_2 = new Item(2, '2 -> ¿Cómo se ha encontrado a lo largo del día de hoy?', 'radio',
+['Muy bien', 'Bien', 'Mal', 'Otro'], '2019');
+var item_3 = new Item(3, '3 -> ¿Cómo se ha encontrado a lo largo del día de hoy?', 'checkbox',
+['Muy bien', 'Bien', 'Mal', 'Otro'], '2019');
+var item_4 = new Item(4, '4 -> ¿Cómo se ha encontrado a lo largo del día de hoy?', 'checkbox',
+['Muy bien', 'Bien', 'Mal', 'Otro'], '2019');
 items = [item_1, item_2, item_3, item_4];
 
 valores_e1 = [];

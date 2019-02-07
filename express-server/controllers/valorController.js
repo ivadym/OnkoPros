@@ -11,7 +11,11 @@ exports.setValor = function (req, res, next) {
     almacenarValor(id_entrevista, id_valor, valor, valorTexto)
     .then(function(valor) {
         if(valor) {
-            res.status(201).json(valor);
+            var alerta = null;
+            if(valor.valor.includes('Mal')) {
+                alerta = "Acuda al centro médico más cercano."
+            }
+            res.status(201).json({alerta: alerta, valor: valor});
         } else {
             // TODO: Mejor manejo de errores
             res.sendStatus(500); // HTTP 500 Internal Server Error

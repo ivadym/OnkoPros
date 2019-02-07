@@ -58,9 +58,9 @@ export class EntrevistasService {
   /**
    * Envío de la respuesta del usuario al servidor
    */
-  postValor(entrevistaId: number, valor: Valor): Observable<Valor> {
+  postValor(entrevistaId: number, valor: Valor): Observable<any> {
     const url = `${this.entrevistasURL}/${entrevistaId}`;
-    return this.http.post<Valor>(url, valor, httpOptions);
+    return this.http.post<any>(url, valor, httpOptions);
   }
 
 }
