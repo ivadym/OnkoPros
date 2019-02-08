@@ -26,6 +26,8 @@ export class HttpErrorHandlerService {
       this.notFound();
     } else if(error.status === 403 && operacion != 'login()') {
       this.forbidden();
+    } else if(error.status === 0 || error.status === 500) {
+      this.serverError();
     }
     const mensaje = (error.error instanceof ErrorEvent) ?
       error.error.message : // Error en la red o en el lado del cliente
@@ -58,6 +60,16 @@ export class HttpErrorHandlerService {
       'Si lo desea, puede volver a iniciar sesión.'
     );
     this.authService.logout();
+  }
+
+  /**
+   * Trata el error HTTP 500 - Internal Server Error
+   */
+  serverError() {
+    this.avisosService.alerta(
+      'Se ha producido un error en el servidor',
+      'Vuelva a intentar la operación más adelante.'
+    )
   }
 
 }
