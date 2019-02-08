@@ -1,9 +1,33 @@
 .inicio-component {
-    margin-top: 10%;
+    margin-top: 0%;
 }
 
 .bienvenida-header {
     color: #4D2A7B;
     font-size: 22px;
     padding: 5%;
+}
+
+.card {
+    color: #4D2A7B;
+    border-radius: 5px;
+    margin: 5%;
+}
+.card-header {
+    font-size: 18px;
+    font-weight: 450;
+    background-color: rgba(77, 42, 123, 0.1);
+    border-color: #4D2A7B;
+}
+
+.card-footer {
+    color: #4D2A7B;
+    background-color: rgba(77, 42, 123, 0.1);
+    box-shadow: none;
+    border-top-color: #4D2A7B;
+}
+
+.card-footer:hover {
+    color: white;
+    background-color: #4D2A7B;
 }
