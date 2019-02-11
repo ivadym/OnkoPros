@@ -15,8 +15,8 @@
                         </label>
                     </div>
                 </div>
-                <div *ngIf="valor?.valor.includes('Otro')" class="row">
-                    <div class="col-12">
+                <div *ngIf="valor" class="row">
+                    <div *ngIf="valor.valor.indexOf('Otro') > -1" class="col-12">
                         <input #otro class="opcion-otro" [(ngModel)]="valor.valorTexto" name="valorTexto"
                             placeholder="Elabore su propia respuesta" autocomplete="off">
                     </div>

@@ -4,6 +4,10 @@
     align-items: center;
 }
 
+.row {
+    display: block; /* IE11 */
+}
+
 .logo {
     width: 60%;
     display: table;

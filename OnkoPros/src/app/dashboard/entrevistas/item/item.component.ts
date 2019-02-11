@@ -16,10 +16,10 @@ import { dashCaseToCamelCase } from '@angular/compiler/src/util';
   styleUrls: ['./item.component.css']
 })
 export class ItemComponent implements OnInit {
-
+  
   @ViewChild("otro") nameField: ElementRef;
   autofocus(valor: string): void {
-    if (valor == 'Otro' && this.valoresSeleccionados.includes(valor)) {
+    if (valor == 'Otro' && this.valoresSeleccionados.indexOf(valor) >= 0) {
       setTimeout(() => {
         this.nameField.nativeElement.focus();
       }, 50);
@@ -136,7 +136,7 @@ export class ItemComponent implements OnInit {
     } else if(this.item.tipo === 'checkbox') { // CHECKBOX
       if(!this.valoresSeleccionados) {
         this.valoresSeleccionados = [valor];
-      } else if(this.valoresSeleccionados.includes(valor)) {
+      } else if(this.valoresSeleccionados.indexOf(valor) >= 0) {
         this.valoresSeleccionados.splice(this.valoresSeleccionados.indexOf(valor), 1);
       } else {
         this.valoresSeleccionados.push(valor);
@@ -157,7 +157,7 @@ export class ItemComponent implements OnInit {
    */
   responder(): void {
     const entrevistaId = +this.route.snapshot.paramMap.get('id');
-    if(!this.valoresSeleccionados.includes('Otro')) {
+    if(this.valoresSeleccionados.indexOf('Otro') < 0) {
       this.valor.valorTexto = null;
     }
     this.enviarValor(entrevistaId, this.valor);

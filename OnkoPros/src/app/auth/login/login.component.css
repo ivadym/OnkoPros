@@ -1,3 +1,7 @@
+.row {
+    display: block; /* IE11 */
+}
+
 .login-descripcion {
     font-size: 16px;
 }
