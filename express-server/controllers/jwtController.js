@@ -1,8 +1,8 @@
 const fs   = require('fs');
 const jwt = require('jsonwebtoken');
 
-var privateKEY  = fs.readFileSync('./RSA/private.key');
-var publicKEY  = fs.readFileSync('./RSA/public.key');
+var privateKey  = fs.readFileSync('./RSA/private.key');
+var publicKey  = fs.readFileSync('./RSA/public.key');
 
 /**
  * Genera un JWT asociado a un usuario determinado
@@ -10,8 +10,8 @@ var publicKEY  = fs.readFileSync('./RSA/public.key');
 exports.generarJWT = function (req, res, next) {
   try {
     req.usuario.jwt = jwt.sign(
-      { usuario: req.usuario.id },
-      privateKEY,
+      { id: req.usuario.id },
+      privateKey,
       {
         expiresIn: '2h',
         algorithm: 'RS256'
@@ -30,9 +30,24 @@ exports.generarJWT = function (req, res, next) {
  */
 exports.verificarJWT = function (req, res, next) {
     try {
-        var token = req.headers['authorization'].split(' ')[1];
-        jwt.verify(token, publicKEY);
-        next();
+      var id = req.headers['id'];
+      var token = req.headers['authorization'].split(' ')[1];
+      jwt.verify(token, publicKey, function(err, decoded) {
+        if (err) {
+          // TODO: Mejor manejo errores
+          res.sendStatus(403); // HTTP 403 Forbidden
+        } else if(decoded) {
+          if(decoded.id == id) {
+            next();
+          } else {
+            // TODO: Mejor manejo errores
+            res.sendStatus(403); // HTTP 403 Forbidden
+          }
+        } else {
+          // TODO: Mejor manejo errores
+          res.sendStatus(403); // HTTP 403 Forbidden
+        }
+      });
     } catch (error) {
         // TODO: Mejor manejo errores
         res.sendStatus(403); // HTTP 403 Forbidden

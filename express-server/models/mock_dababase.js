@@ -3,6 +3,8 @@ var Entrevista = require('./entrevista');
 var Item = require('./item');
 var Valor = require('./valor');
 
+/* USUARIOS & CLAVES */
+
 var usuario_1 = new Usuario(1, 'test1', 'Paciente', 'Paciente', 'Apellido1', 'Apellido2');
 var usuario_2 = new Usuario(2, 'a', 'Administrador', 'Admin', 'Apellido1', 'Apellido2', 'Hombre',
     '01/01/1001', '+34 601 01 01 01', 'admin@onkologikoa.org', 'activo');
@@ -12,12 +14,16 @@ var clave_1 = 'pass1';
 var clave_2 = 'a';
 claves = [clave_1, clave_2];
 
+/*  ENTREVISTAS */
+
 var entrevista_1 = new Entrevista(1, 'Entrevista 1', 'Descripción de la entrevista 1','estado',
     'f_creacion', 'f_limite');
 var entrevista_2 = new Entrevista(2, 'Entrevista 2', 'Descripción de la entrevista 2');
 entrevistas = [entrevista_1, entrevista_2];
 e1_cont = 0;
 e2_cont = 0;
+
+/* ITEMS */
 
 var item_1 = new Item(1, '1 -> ¿Cómo se ha encontrado a lo largo del día de hoy?', 'radio',
 ['Muy bien', 'Bien', 'Mal', 'Otro'], '2019');
@@ -28,6 +34,8 @@ var item_3 = new Item(3, '3 -> ¿Cómo se ha encontrado a lo largo del día de h
 var item_4 = new Item(4, '4 -> ¿Cómo se ha encontrado a lo largo del día de hoy?', 'checkbox',
 ['Muy bien', 'Bien', 'Mal', 'Otro'], '2019');
 items = [item_1, item_2, item_3, item_4];
+
+/* VALORES */
 
 valores_e1 = [];
 valores_e2 = [];
