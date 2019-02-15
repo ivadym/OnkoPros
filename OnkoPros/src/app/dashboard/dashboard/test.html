@@ -1,0 +1,46 @@
+<nav class="navbar navbar-expand">
+    <div class="container">
+      <a class="navbar-brand text-center d-none d-md-block">
+        <img src="./../../../assets/logos/onkologikoa.ico" class="d-inline-block align-top" alt="Logo Onkologikoa">
+        <h1 class="brand-title display-4">
+          OnkoPros
+        </h1>
+      </a>
+      <ul class="navbar-nav nav-fill w-100">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/dashboard" routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }">
+              Inicio
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/dashboard/entrevistas" routerLinkActive="active">
+            Entrevistas
+          </a>
+        </li>
+        <li class="nav-item dropdown" ngbDropdown>
+          <button class="btn btn-dropdown"  routerLinkActive="active" id="dropdown" ngbDropdownToggle>
+              {{usuarioLogueado.nombre}} {{usuarioLogueado.apellido_1}}
+            <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="dropdown">
+              <a class="dropdown-item" routerLink="/dashboard/perfil" routerLinkActive="active">
+                Perfil de usuario
+              </a>
+              <a class="dropdown-item" routerLink="/dashboard/notificaciones" routerLinkActive="active">
+                Notificaciones
+              </a>
+              <div class="dropdown-divider"></div>
+              <button class="btn btn-logout dropdown-item" (click)="logout()">
+                Cerrar sesión
+                <i class="fas fa-sign-out-alt fa-md p-2"></i>
+              </button>
+            </div>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  
+  <div class="container">
+    <router-outlet></router-outlet>
+  </div>
+  

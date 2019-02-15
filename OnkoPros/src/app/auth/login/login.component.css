@@ -37,6 +37,9 @@
     color: white;
     background-color: #2A367B;
     border-radius: 5px;
+}
+
+.btn:disabled {
     cursor: not-allowed;
 }
 
