@@ -3,11 +3,10 @@
         <div *ngFor="let entrevista of entrevistas" class="row justify-content-center">    
             <button class="btn col-6 btn-entrevista p-2 m-1"  popoverClass="popover"
                 ngbPopover="{{entrevista.descripcion}}" triggers="mouseenter:mouseleave"
-                    [placement]="['left', 'auto']" 
-                        routerLink="/dashboard/entrevistas/{{entrevista.id}}" routerLinkActive="active">
-                            <a class="ent-nombre">
-                                {{entrevista.titulo}}
-                            </a>
+                    [placement]="['left', 'auto']" routerLink="/dashboard/entrevistas/{{entrevista.id}}">
+                        <a class="ent-nombre">
+                            {{entrevista.titulo}}
+                        </a>
             </button>
         </div>
         <div *ngIf="!entrevistasDisponibles" class="row justify-content-center">

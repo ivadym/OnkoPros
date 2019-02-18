@@ -8,7 +8,6 @@ import { EntrevistasService } from '../entrevistas.service';
 import { NavegacionService } from 'src/app/navegacion.service';
 import { HttpErrorHandlerService } from 'src/app/http-error-handler.service';
 import { AvisosService } from 'src/app/avisos.service';
-import { dashCaseToCamelCase } from '@angular/compiler/src/util';
 
 @Component({
   selector: 'app-item',

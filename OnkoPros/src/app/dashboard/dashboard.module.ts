@@ -10,8 +10,8 @@ import { PerfilComponent } from './perfil/perfil.component';
 import { NotificacionesComponent } from './notificaciones/notificaciones.component';
 import { EntrevistasComponent } from './entrevistas/entrevistas/entrevistas.component';
 import { EntrevistasListaComponent } from './entrevistas/entrevistas-lista/entrevistas-lista.component';
+import { EntrevistasInstruccionesComponent } from './entrevistas/entrevistas-instrucciones/entrevistas-instrucciones.component';
 import { ItemComponent } from './entrevistas/item/item.component';
-
 import { DashboardRoutingModule } from './dashboard-routing.module';
 
 
@@ -23,6 +23,7 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
     NotificacionesComponent,
     EntrevistasComponent,
     EntrevistasListaComponent,
+    EntrevistasInstruccionesComponent,
     ItemComponent
   ],
   imports: [
