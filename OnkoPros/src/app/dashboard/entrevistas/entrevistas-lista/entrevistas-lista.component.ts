@@ -4,6 +4,7 @@ import { Entrevista } from '../entrevista';
 
 import { EntrevistasService } from '../entrevistas.service';
 import { HttpErrorHandlerService } from 'src/app/http-error-handler.service';
+import { NavegacionService } from 'src/app/navegacion.service';
 
 @Component({
   selector: 'app-entrevistas-lista',
@@ -18,6 +19,7 @@ export class EntrevistasListaComponent implements OnInit {
 
   constructor(
     private entrevistasService: EntrevistasService,
+    private navegacionService: NavegacionService,
     private errorHandler: HttpErrorHandlerService
   ) { }
 
@@ -45,6 +47,13 @@ export class EntrevistasListaComponent implements OnInit {
         this.errorHandler.handleError(error, 'getEntrevistas()');
       }
     );
+  }
+
+  /**
+   * Redirige al usuario a la página de inicio
+   */
+  goToInicio(): void {
+    this.navegacionService.goToInicio();
   }
 
 }

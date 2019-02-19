@@ -50,3 +50,15 @@
     border-width: 1px;
     border-color: #2A367B;
 }
+
+.btn-ent-ini {
+    color: #4D2A7B;
+    background-color: rgba(77, 42, 123, 0.1);
+    box-shadow: none;
+    border-radius: 5px;
+}
+
+.btn-ent-ini:hover {
+    color: white;
+    background-color: rgba(77, 42, 123, 1);
+}
