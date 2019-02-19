@@ -57,11 +57,24 @@ export class EntrevistasService {
   }
 
   /**
+   * Extrae del servidor la entrevista asociada al ID: id
+   */
+  getEntrevista(id: number): Observable<Entrevista> {
+    this.spinner.show();
+    return this.http.get<Entrevista>(`${this.entrevistasURL}/${id}`)
+      .pipe(
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+
+  /**
    * Extrae la siguiente pregunta
    */
   getItem(id: number): Observable<Item> {
     this.spinner.show();
-    const url = `${this.entrevistasURL}/${id}`;
+    const url = `${this.entrevistasURL}/${id}/items`;
     return this.http.get<Item>(url)
       .pipe(
         finalize(() => {
@@ -75,7 +88,7 @@ export class EntrevistasService {
    */
   postValor(entrevistaId: number, valor: Valor): Observable<any> {
     this.spinner.show();
-    const url = `${this.entrevistasURL}/${entrevistaId}`;
+    const url = `${this.entrevistasURL}/${entrevistaId}/items`;
     return this.http.post<any>(url, valor, httpOptions)
       .pipe(
         finalize(() => {

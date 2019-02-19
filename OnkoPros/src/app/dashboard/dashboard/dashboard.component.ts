@@ -32,7 +32,7 @@ export class DashboardComponent implements OnInit {
    */
   logout() {
     var url = this.router.url;
-    var regEx = /\/dashboard\/entrevistas\/\d/
+    var regEx = /\/dashboard\/entrevistas\/\d\/items/
     if (regEx.test(url)) {
       this.avisosService.advertencia(
         '¿Desea cerrar la sesión actual?',

@@ -11,6 +11,7 @@ import { ItemComponent } from './entrevistas/item/item.component';
 
 import { AuthGuard } from '../auth/auth.guard';
 import { CanDeactivateGuard } from '../auth/can-deactivate.guard';
+import { EntrevistasInstruccionesComponent } from './entrevistas/entrevistas-instrucciones/entrevistas-instrucciones.component';
 
 const dashboardRoutes: Routes = [
   {
@@ -44,9 +45,14 @@ const dashboardRoutes: Routes = [
               },
               {
                 path: ':id',
+                component: EntrevistasInstruccionesComponent,
+              },
+              {
+                path: ':id/items',
                 component: ItemComponent,
                 canDeactivate: [CanDeactivateGuard]
-              }
+              },
+
             ]
           }
         ]

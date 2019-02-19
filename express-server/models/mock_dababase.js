@@ -16,9 +16,13 @@ claves = [clave_1, clave_2];
 
 /*  ENTREVISTAS */
 
-var entrevista_1 = new Entrevista(1, 'Entrevista 1', 'Descripción de la entrevista 1','estado',
-    'f_creacion', 'f_limite');
-var entrevista_2 = new Entrevista(2, 'Entrevista 2', 'Descripción de la entrevista 2');
+var entrevista_1 = new Entrevista(1, 'Entrevista 1', 'Descripción de la entrevista 1',
+    'Responda a las cuestiones que se le vayan mostrando a lo largo de la entrevista (1)',
+    'Asimismo, tenga en cuenta que hay preguntas tanto de opción única, como de múltiple selección (1)',
+    'estado', 'f_creacion', 'f_limite');
+var entrevista_2 = new Entrevista(2, 'Entrevista 2', 'Descripción de la entrevista 2',
+    'Responda a las cuestiones que se le vayan mostrando a lo largo de la entrevista (2)',
+    'Asimismo, tenga en cuenta que hay preguntas tanto de opción única, como de múltiple selección (2)');
 entrevistas = [entrevista_1, entrevista_2];
 e1_cont = 0;
 e2_cont = 0;
@@ -57,6 +61,18 @@ exports.checkCredenciales = function (usuario, clave) {
  */
 exports.getEntrevistas = function () {
     return Promise.resolve(entrevistas);
+}
+
+/**
+ * Devuelve la entrevista asociada al ID: id
+ */
+exports.getEntrevista = function (id) {
+    for (var i = 0; i < entrevistas.length; i++) {
+        if (entrevistas[i].id == id) {
+            return Promise.resolve(entrevistas[i]);
+        }
+    }
+    return Promise.resolve(null);
 }
 
 /**

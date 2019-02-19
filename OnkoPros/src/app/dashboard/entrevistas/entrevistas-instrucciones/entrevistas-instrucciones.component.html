@@ -7,7 +7,7 @@
               <i class="fas fa-lightbulb"></i>
             </div>
             <div class="col-10 instr-info">
-              Responda a las cuestiones que se le vayan mostrando a lo largo de la entrevista.
+              {{entrevista?.instr_1}}
             </div>
           </div>
           <br>
@@ -16,14 +16,15 @@
               <i class="fas fa-lightbulb"></i>
             </div>
             <div class="col-10 instr-secondary">
-              Asimismo, tenga en cuenta que hay preguntas tanto de opción única, como de múltiple selección.
+              {{entrevista?.instr_2}}
             </div>
           </div>
         </h1>
     </div>
     <div class="row justify-content-center">
-      <button class="btn btn-instr col-12 col-md-6">
-        ¡Comenzar la entrevista!
+      <button class="btn btn-instr col-12 col-md-6"
+        routerLink="/dashboard/entrevistas/{{entrevista?.id}}/items">
+          ¡Comenzar la entrevista!
       </button>
     </div>
   </div>
