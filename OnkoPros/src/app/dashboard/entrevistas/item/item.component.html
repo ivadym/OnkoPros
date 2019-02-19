@@ -29,24 +29,4 @@
             </div>
         </form>
     </div>
-    <div *ngIf="!itemDisponible" class="col-12 col-item text-center">
-        <div class="row ent-fin justify-content-center">
-            <div class="col-md-4 felicitacion-col">
-                <h1 class="msj-ent-finalizada display-4 text-center">
-                    <i>¡Enhorabuena, ha finalizado la entrevista!</i>    
-                </h1>
-            </div>
-            <div class="col-md-4 img-col">
-                <i class="fas fa-flag-checkered fa-4x p-5"></i>
-            </div>
-        </div>
-        <div class="row justify-content-center">
-            <div class="col-md-4 col-sm-12 m-1 btn btn-ent-fin" (click)="goToEntrevistas()">
-                Realizar otra entrevista
-            </div>
-            <div class="col-md-4 col-sm-12 m-1 left btn btn-ent-fin" (click)="goToInicio()">
-                Volver al inicio
-            </div>
-        </div>
-    </div>
 </div>

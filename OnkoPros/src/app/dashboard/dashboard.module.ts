@@ -11,9 +11,10 @@ import { NotificacionesComponent } from './notificaciones/notificaciones.compone
 import { EntrevistasComponent } from './entrevistas/entrevistas/entrevistas.component';
 import { EntrevistasListaComponent } from './entrevistas/entrevistas-lista/entrevistas-lista.component';
 import { EntrevistasInstruccionesComponent } from './entrevistas/entrevistas-instrucciones/entrevistas-instrucciones.component';
+import { EntrevistasFinComponent } from './entrevistas/entrevistas-fin/entrevistas-fin.component';
 import { ItemComponent } from './entrevistas/item/item.component';
-import { DashboardRoutingModule } from './dashboard-routing.module';
 
+import { DashboardRoutingModule } from './dashboard-routing.module';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
     EntrevistasComponent,
     EntrevistasListaComponent,
     EntrevistasInstruccionesComponent,
+    EntrevistasFinComponent,
     ItemComponent
   ],
   imports: [

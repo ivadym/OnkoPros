@@ -9,18 +9,18 @@
     padding-bottom: 5%;
 }
 
-.col-bulb {
+.col-bulb, .instr-1, .instr-2 {
     color: #4D2A7B;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.instr-info {
+.instr-1 {
     color: #2A367B;
 }
 
-.instr-secondary {
+.instr-2 {
     color: rgba(42, 54, 123, 0.7);
 }
 

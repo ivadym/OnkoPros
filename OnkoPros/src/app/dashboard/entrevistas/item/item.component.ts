@@ -1,11 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { ActivatedRoute, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
+import { ActivatedRoute, RouterStateSnapshot, ActivatedRouteSnapshot, Router } from '@angular/router';
 
 import { Item } from '../item';
 import { Valor } from '../valor';
 
 import { EntrevistasService } from '../entrevistas.service';
-import { NavegacionService } from 'src/app/navegacion.service';
 import { HttpErrorHandlerService } from 'src/app/http-error-handler.service';
 import { AvisosService } from 'src/app/avisos.service';
 
@@ -28,13 +27,12 @@ export class ItemComponent implements OnInit {
   item: Item;
   valor: Valor;
   private valoresSeleccionados: string[];
-  itemDisponible: boolean = true;
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private entrevistasService: EntrevistasService,
     private avisosService: AvisosService,
-    private navegacionService: NavegacionService,
     private errorHandler: HttpErrorHandlerService
   ) { }
 
@@ -76,11 +74,10 @@ export class ItemComponent implements OnInit {
         if(item) {
           //TODO: Fichero de logs
           console.log('SERVIDOR - Item extraído: ' + item.titulo);
-          this.item = item,
-          this.itemDisponible = true;
+          this.item = item;
         } else {
           console.error('LOG getItem() (no hay más items)');
-          this.itemDisponible = false;
+          this.router.navigate([`/dashboard/entrevistas/${id}/fin`]);
         }
       },
       error => {
@@ -175,20 +172,6 @@ export class ItemComponent implements OnInit {
   clearValorActual(): void {
     this.valoresSeleccionados = null;
     this.valor = null;
-  }
-
-  /**
-   * Redirige al usuario a la lista de entrevistas
-   */
-  goToEntrevistas(): void {
-    this.navegacionService.goToEntrevistas();
-  }
-
-  /**
-   * Redirige al usuario a la página de inicio
-   */
-  goToInicio(): void {
-    this.navegacionService.goToInicio();
   }
 
 }

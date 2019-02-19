@@ -6,12 +6,13 @@ import { InicioComponent } from './inicio/inicio.component';
 import { PerfilComponent } from './perfil/perfil.component';
 import { NotificacionesComponent } from './notificaciones/notificaciones.component';
 import { EntrevistasComponent } from './entrevistas/entrevistas/entrevistas.component';
+import { EntrevistasInstruccionesComponent } from './entrevistas/entrevistas-instrucciones/entrevistas-instrucciones.component';
 import { EntrevistasListaComponent } from './entrevistas/entrevistas-lista/entrevistas-lista.component';
+import { EntrevistasFinComponent } from './entrevistas/entrevistas-fin/entrevistas-fin.component';
 import { ItemComponent } from './entrevistas/item/item.component';
 
 import { AuthGuard } from '../auth/auth.guard';
 import { CanDeactivateGuard } from '../auth/can-deactivate.guard';
-import { EntrevistasInstruccionesComponent } from './entrevistas/entrevistas-instrucciones/entrevistas-instrucciones.component';
 
 const dashboardRoutes: Routes = [
   {
@@ -45,14 +46,17 @@ const dashboardRoutes: Routes = [
               },
               {
                 path: ':id',
-                component: EntrevistasInstruccionesComponent,
+                component: EntrevistasInstruccionesComponent
               },
               {
                 path: ':id/items',
                 component: ItemComponent,
                 canDeactivate: [CanDeactivateGuard]
               },
-
+              {
+                path: ':id/fin',
+                component: EntrevistasFinComponent
+              },
             ]
           }
         ]
