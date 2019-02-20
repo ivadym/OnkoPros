@@ -24,13 +24,13 @@ export class EntrevistasListaComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.getEntrevistas();
+    this.extraerEntrevistas();
   }
 
   /**
-   * Lista las entrevistas enviadas por el servidor
+   * Lista las entrevistas extraídas del servidor
    */
-  getEntrevistas(): void {
+  extraerEntrevistas(): void {
     this.entrevistasService.getEntrevistas().subscribe(
       entrevistas => {
         if(entrevistas) {

@@ -37,7 +37,7 @@ export class ItemComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.getItem(+this.route.snapshot.paramMap.get('id'));
+    this.extraerItem(+this.route.snapshot.paramMap.get('id'));
   }
 
   /**
@@ -66,9 +66,9 @@ export class ItemComponent implements OnInit {
   }
 
   /**
-   * Lista la pregunta enviada por el servidor
+   * Lista la pregunta extraida por el servidor
    */
-  getItem(id: number): void {
+  extraerItem(id: number): void {
     this.entrevistasService.getItem(id).subscribe(
       item => {
         if(item) {
@@ -87,7 +87,7 @@ export class ItemComponent implements OnInit {
   }
 
   /**
-   * Envío de la respuesta del usuario y actualización de la pregunta
+   * Envía la respuesta del usuario y actualiza el contexto (limpia los campos obsoletos y extrae nuevo item)
    */
   enviarValor(entrevistaId: number, valor: Valor): void {
     this.entrevistasService.postValor(entrevistaId, valor).subscribe(
@@ -102,7 +102,7 @@ export class ItemComponent implements OnInit {
               console.log(datos.valor.id); console.log(datos.valor.valor); console.log(datos.valor.valorTexto);
               this.clearItemActual();
               this.clearValorActual();
-              this.getItem(entrevistaId);
+              this.extraerItem(entrevistaId);
             }
           );
         } else if(datos.valor) {
@@ -110,7 +110,7 @@ export class ItemComponent implements OnInit {
           console.log(datos.valor.id); console.log(datos.valor.valor); console.log(datos.valor.valorTexto);
           this.clearItemActual();
           this.clearValorActual();
-          this.getItem(entrevistaId);
+          this.extraerItem(entrevistaId);
         } else {
           // TODO: Tratamiento del error/Mensaje de error al usuario (footer popup)
           console.error('ERROR enviarValor()');
@@ -152,11 +152,11 @@ export class ItemComponent implements OnInit {
    * Registra la respuesta de usuario
    */
   responder(): void {
-    const entrevistaId = +this.route.snapshot.paramMap.get('id');
+    const id = +this.route.snapshot.paramMap.get('id');
     if(this.valoresSeleccionados.indexOf('Otro') < 0) {
       this.valor.valorTexto = null;
     }
-    this.enviarValor(entrevistaId, this.valor);
+    this.enviarValor(id, this.valor);
   }
 
   /**

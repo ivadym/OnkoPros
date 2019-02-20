@@ -24,10 +24,13 @@ export class EntrevistasInstruccionesComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.getEntrevista(+this.route.snapshot.paramMap.get('id'));
+    this.extraerEntrevista(+this.route.snapshot.paramMap.get('id'));
   }
   
-  getEntrevista(id: number): void {
+  /**
+   * Extrae la entrevista asociada a un determinado id
+   */
+  extraerEntrevista(id: number): void {
     this.entrevistasService.getEntrevista(id).subscribe(
       entrevista => {
         if(entrevista) {
