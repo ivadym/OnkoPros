@@ -1,30 +1,30 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
-import { ModalComponent } from './modal/modal.component';
-import { PaginaNoEncontradaComponent } from './pagina-no-encontrada/pagina-no-encontrada.component';
+import { CuadroDialogoComponent } from './components/cuadro-dialogo/cuadro-dialogo.component';
+import { NoEncontradoComponent } from './components/no-encontrado/no-encontrado.component';
 
-import { AuthModule } from './auth/auth.module';
-import { DashboardModule } from './dashboard/dashboard.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { AppRoutingModule } from './app-routing.module';
 
-import { httpInterceptorProviders } from './http-interceptor-providers';
+import { httpInterceptorProviders } from './interceptors/http-interceptor-providers';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ModalComponent,
-    PaginaNoEncontradaComponent
+    CuadroDialogoComponent,
+    NoEncontradoComponent,
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
+    NgxSpinnerModule,
     AuthModule,
     DashboardModule,
-    NgxSpinnerModule,
     AppRoutingModule
   ],
   providers: [
@@ -34,7 +34,7 @@ import { httpInterceptorProviders } from './http-interceptor-providers';
     AppComponent    
   ],
   entryComponents: [
-    ModalComponent    
+    CuadroDialogoComponent // Permite que el cuadro de diálogo sea un componente
   ]
 })
 export class AppModule { }

@@ -1,0 +1,32 @@
+<div class="row row-item">
+  <div *ngIf="item" class="col-sm-12 col-md-6 col-item">
+    <div class="titulo-item text-center">
+      {{item.titulo}}
+    </div>
+    <form (ngSubmit)="responder()">
+      <!-- RADIO BUTTON & CHECKBOX -->
+      <div *ngIf="item.tipo === 'radio' || item.tipo === 'checkbox'" class="opciones-item">
+        <div *ngFor="let valor of item.valores; let i = index" class="row">
+          <div class="col-12 p-1 custom-control custom-{{item.tipo}}">
+            <input type="{{item.tipo}}" name="valor" id="{{item.tipo}}_{{i}}"
+              class="custom-control-input" (click)="setValor(item.id, item.valores[i])">
+            <label class="custom-control-label" for="{{item.tipo}}_{{i}}">
+              {{item.valores[i]}}
+            </label>
+          </div>
+        </div>
+        <div *ngIf="valor" class="row">
+          <div *ngIf="valor.valor.indexOf('Otro') > -1" class="col-12">
+            <input #otro class="opcion-otro" [(ngModel)]="valor.valorTexto" name="valorTexto"
+              placeholder="Elabore su propia respuesta" autocomplete="off">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <button type="submit" class="btn btn-responder col-12" [disabled]="!valor?.valor.length">
+          Responder
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

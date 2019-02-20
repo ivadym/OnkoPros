@@ -1,0 +1,38 @@
+.row-instr {
+    margin-top: 10%;
+}
+
+.instrucciones {
+    font-size: 22px;
+    font-weight: 350;
+    padding-top: 5%;
+    padding-bottom: 5%;
+}
+
+.col-bulb, .instr-1, .instr-2 {
+    color: #4D2A7B;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.instr-1 {
+    color: #2A367B;
+}
+
+.instr-2 {
+    color: rgba(42, 54, 123, 0.7);
+}
+
+.btn-instr {
+    color: #4D2A7B;
+    font-size: 20px;
+    background-color: rgba(77, 42, 123, 0.1);
+    box-shadow: none;
+    border-radius: 5px;
+}
+
+.btn-instr:hover {
+    color: white;
+    background-color: #4D2A7B;
+}

@@ -28,7 +28,8 @@
             ],
             "scripts": [
               "node_modules/chart.js/dist/Chart.js"
-            ]
+            ],
+            "es5BrowserSupport": true
           },
           "configurations": {
             "production": {
@@ -137,5 +138,8 @@
       }
     }
   },
-  "defaultProject": "OnkoPros"
+  "defaultProject": "OnkoPros",
+  "cli": {
+    "defaultCollection": "@nativescript/schematics"
+  }
 }
