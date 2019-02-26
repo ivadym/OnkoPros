@@ -68,7 +68,7 @@ export class HttpErrorHandlerService {
    */
   serverError() {
     this.cuadroDialogoService.alerta(
-      'Se ha producido un error en el servidor',
+      'Se ha producido un error en el servidor.',
       'Vuelva a intentar la operación más adelante.'
     )
   }

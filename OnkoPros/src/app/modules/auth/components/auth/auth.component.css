@@ -1,4 +1,4 @@
-.login-container {
+.auth-container {
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -9,11 +9,11 @@
 }
 
 .logo {
-    width: 60%;
+    width: 50%;
     display: table;
     margin: auto; 
 }
 
-.login-header {
+.auth-header {
     font-size: 22px;
 }

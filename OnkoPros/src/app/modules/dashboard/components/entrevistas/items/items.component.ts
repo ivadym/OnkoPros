@@ -15,12 +15,16 @@ import { HttpErrorHandlerService } from '../../../../../services/error-handler/h
 })
 export class ItemsComponent implements OnInit {
 
-  @ViewChild("otro") nameField: ElementRef;
+  @ViewChild("otroField") otroField: ElementRef;
+
+  /**
+   * Centra el cursor en el campo de "Respuesta personalizada" cuando se seleciona la opción "Otro"
+   */
   autofocus(valor: string): void {
     if (valor == 'Otro' && this.valoresSeleccionados.indexOf(valor) >= 0) {
       setTimeout(() => {
-        this.nameField.nativeElement.focus();
-      }, 50);
+        this.otroField.nativeElement.focus();
+      }, 100);
     }
   }
 

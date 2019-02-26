@@ -1,4 +1,36 @@
-<StackLayout class="m-15" sdkExampleTitle sdkToggleNavButton>
-  <Label text="3--LOGIN-COMPONENT--"></Label>
-  <Button class="btn btn-primary btn-active" id="button" text="¡Autenticarse!" [nsRouterLink]="['/dashboard']"></Button>
-</StackLayout>
+<GridLayout class="login-form" rows="auto, auto, auto, auto" [formGroup]="loginForm">
+  <GridLayout class="row" row="0">
+    <Label class="login-instrucciones" text="Escriba su nombre de usuario y contraseña"></Label>
+  </GridLayout>
+  <GridLayout class="row" row="1" rows="auto, auto">
+    <GridLayout row="0">
+      <TextField #usuarioField required style.placeholderColor="rgba(42, 54, 123, 0.5)"
+        class="form-control"
+        formControlName="usuario"
+        hint="Usuario">
+      </TextField>
+    </GridLayout>
+    <GridLayout row="1">
+      <Label *ngIf="usuario.invalid && (usuario.dirty || usuario.touched) && usuario.errors.required" class="alert-warning"
+        text="Introduzca un nombre de usuario"></Label>
+    </GridLayout>
+  </GridLayout>
+  <GridLayout class="row" row="2" rows="auto, auto">
+    <GridLayout row="0">
+      <TextField required style.placeholderColor="rgba(42, 54, 123, 0.5)"
+        class="form-control"
+        formControlName="clave"
+        hint="Clave" 
+        secure="true">
+      </TextField>
+    </GridLayout>
+    <GridLayout row="1">
+      <Label *ngIf="clave.invalid && (clave.dirty || clave.touched) && clave.errors.required" class="alert-warning"
+        text="Introduzca una clave de usuario"></Label>
+    </GridLayout>
+  </GridLayout>
+  <GridLayout class="row" row="3">
+    <Button [isEnabled]="loginForm.valid" class="btn-login" text="Iniciar sesión" (tap)="login()"></Button>
+  </GridLayout>
+</GridLayout>
+  

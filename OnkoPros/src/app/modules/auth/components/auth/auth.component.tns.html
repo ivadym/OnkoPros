@@ -1,4 +1,11 @@
-<StackLayout>
-  <Label text="2--AUTH-COMPONENT--"></Label>
-  <page-router-outlet actionBarVisibility="never"></page-router-outlet>
-</StackLayout>
+<GridLayout rows="auto, auto, auto" horizontalAlignment="center" verticalAlignment="center">
+  <GridLayout row="0">
+    <Image class="logo" src="~/assets/logos/onkologikoa.png"></Image>
+  </GridLayout>
+  <GridLayout row="1">
+    <Label class="auth-header" text="Bienvenido a OnkoPros"></Label>
+  </GridLayout>
+  <GridLayout row="2">
+    <page-router-outlet actionBarVisibility="never"></page-router-outlet>
+  </GridLayout>
+</GridLayout>

@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { Validators, FormBuilder } from '@angular/forms';
 
 import { AuthService } from '../../../../services/auth/auth.service';
+import { CuadroDialogoService } from '../../../../services/cuadro-dialogo/cuadro-dialogo.service';
 import { HttpErrorHandlerService } from '../../../../services/error-handler/http-error-handler.service';
 
 @Component({
@@ -11,8 +12,17 @@ import { HttpErrorHandlerService } from '../../../../services/error-handler/http
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
+  
+  @ViewChild("usuarioField") usuarioField: ElementRef;
 
-  falloAutenticacion: boolean;
+  /**
+   * Centra el cursor en el campo de "Usuario" al cargarse la página
+   */
+  autofocus(): void {
+    setTimeout(() => {
+      this.usuarioField.nativeElement.focus();
+    }, 500);
+  }
 
   loginForm = this.formBuilder.group({
     usuario: ['', Validators.required],
@@ -23,10 +33,13 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private formBuilder: FormBuilder,
     private authService: AuthService,
+    private cuadroDialogoService: CuadroDialogoService,
     private errorHandler: HttpErrorHandlerService
   ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.autofocus();
+  }
 
   /**
    * Devuelve el nombre de usuario introducido en el login form
@@ -51,7 +64,6 @@ export class LoginComponent implements OnInit {
         if (usuario && usuario.jwt) {
           // TODO: Fichero de logs
           console.log('SERVIDOR - Autenticación: ' + usuario.usuario + '/' + usuario.jwt);
-          this.falloAutenticacion = false;
           this.authService.usuarioLogueado = usuario;
           let redirect = this.authService.urlInicial ? this.authService.urlInicial : '/dashboard';
           this.router.navigate([redirect]);
@@ -64,7 +76,10 @@ export class LoginComponent implements OnInit {
       },
       error => {
         if(error.status === 403) {
-          this.falloAutenticacion = true;
+          this.cuadroDialogoService.alerta(
+            "Las credenciales introducidas son incorrectas.",
+            "Vuelva a intentarlo o contacte con su personal clínico."
+          );
         }
         this.errorHandler.handleError(error, 'login()');
       }

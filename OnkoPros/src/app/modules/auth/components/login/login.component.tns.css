@@ -1,1 +1,45 @@
-/* Add mobile styles for the component here.  */
+.login-form {
+    margin: 30;
+}
+
+.row {
+    margin: 5;
+}
+
+.login-instrucciones {
+    font-size: 16;
+    font-weight: 400; 
+}
+
+.form-control {
+    font-size: 18;
+    font-weight: 400; 
+    color: #2A367B;
+    background-color:#F2F4FF;
+    border-radius: 5;
+}
+
+.alert-warning {
+    font-size: 16;
+    font-weight: 400; 
+    color: darkorange;
+}
+
+.btn-login {
+    font-size: 18;
+    font-weight: 500;
+    color: white;
+    background-color: #2A367B;
+    border-radius: 5;
+    margin-top: 30;
+    text-transform: capitalize;
+}
+
+/*
+.btn-login:disabled {
+    color: rgba(42, 54, 123, 0.5);
+    background-color: rgba(42, 54, 123, 0.1);
+    border-width: 1;
+    border-color: #2A367B;
+}
+*/

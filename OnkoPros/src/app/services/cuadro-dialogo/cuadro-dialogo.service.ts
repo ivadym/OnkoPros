@@ -38,6 +38,7 @@ export class CuadroDialogoService {
     const modal = this.modalService.open(
       CuadroDialogoComponent,
       {
+        centered: true,
         windowClass: 'window-modal',
         backdropClass: 'backdrop-color',
         backdrop: 'static',
