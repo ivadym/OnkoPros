@@ -41,14 +41,14 @@ export class HttpErrorHandlerService {
    * Trata el error HTTP 400 Bad Request
    */
   badRequest() {
-    this.navegacionService.goToPaginaNoEncontrada();
+    this.navegacionService.navegar('/404', false);
   }
 
   /**
    * Trata el error HTTP 404 Not Found
    */
   notFound() {
-    this.navegacionService.goToPaginaNoEncontrada();
+    this.navegacionService.navegar('/404', false);
   }
 
   /**

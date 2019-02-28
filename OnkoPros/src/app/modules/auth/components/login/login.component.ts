@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Router } from '@angular/router';
 import { Validators, FormBuilder } from '@angular/forms';
 
 import { AuthService } from '../../../../services/auth/auth.service';
+import { NavegacionService } from '../../../../services/navegacion/navegacion.service';
 import { CuadroDialogoService } from '../../../../services/cuadro-dialogo/cuadro-dialogo.service';
 import { HttpErrorHandlerService } from '../../../../services/error-handler/http-error-handler.service';
 
@@ -13,7 +13,7 @@ import { HttpErrorHandlerService } from '../../../../services/error-handler/http
 })
 export class LoginComponent implements OnInit {
   
-  @ViewChild("usuarioField") usuarioField: ElementRef;
+  @ViewChild('usuarioField') usuarioField: ElementRef;
 
   /**
    * Centra el cursor en el campo de "Usuario" al cargarse la página
@@ -30,9 +30,9 @@ export class LoginComponent implements OnInit {
   });
 
   constructor(
-    private router: Router,
     private formBuilder: FormBuilder,
     private authService: AuthService,
+    private navegacionService: NavegacionService,
     private cuadroDialogoService: CuadroDialogoService,
     private errorHandler: HttpErrorHandlerService
   ) { }
@@ -65,8 +65,8 @@ export class LoginComponent implements OnInit {
           // TODO: Fichero de logs
           console.log('SERVIDOR - Autenticación: ' + usuario.usuario + '/' + usuario.jwt);
           this.authService.usuarioLogueado = usuario;
-          let redirect = this.authService.urlInicial ? this.authService.urlInicial : '/dashboard';
-          this.router.navigate([redirect]);
+          let redirect = this.authService.urlInicial ? this.authService.urlInicial : '';
+          this.navegacionService.navegar(redirect, true);
         } else {
           // TODO: ¿Código nunca alcanzable?
           // TODO: Manejo fallo autenticación / Fichero de logs
@@ -77,8 +77,8 @@ export class LoginComponent implements OnInit {
       error => {
         if(error.status === 403) {
           this.cuadroDialogoService.alerta(
-            "Las credenciales introducidas son incorrectas.",
-            "Vuelva a intentarlo o contacte con su personal clínico."
+            'Las credenciales introducidas son incorrectas.',
+            'Vuelva a intentarlo o contacte con su personal clínico.'
           );
         }
         this.errorHandler.handleError(error, 'login()');

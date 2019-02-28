@@ -108,7 +108,7 @@ export class AuthService {
     this.localStorageService.removeItem('usuarioLogueado');
     this.usuarioLogueado = null;
     this.urlInicial = null;
-    this.navegacionService.goToLogin();
+    this.navegacionService.navegar('/login', true);
   }
 
   /**

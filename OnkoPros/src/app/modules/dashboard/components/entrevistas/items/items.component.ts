@@ -1,10 +1,11 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { ActivatedRoute, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 import { Item } from '../../../../../classes/item';
 import { Valor } from '../../../../../classes/valor';
 
 import { EntrevistasService } from '../../../../../services/entrevistas/entrevistas.service';
+import { NavegacionService } from '../../../../../services/navegacion/navegacion.service';
 import { CuadroDialogoService } from '../../../../../services/cuadro-dialogo/cuadro-dialogo.service';
 import { HttpErrorHandlerService } from '../../../../../services/error-handler/http-error-handler.service';
 
@@ -34,8 +35,8 @@ export class ItemsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private entrevistasService: EntrevistasService,
+    private navegacionService: NavegacionService,
     private cuadroDialogoService: CuadroDialogoService,
     private errorHandler: HttpErrorHandlerService
   ) { }
@@ -81,7 +82,7 @@ export class ItemsComponent implements OnInit {
           this.item = item;
         } else {
           console.error('LOG getItem() (no hay más items)');
-          this.router.navigate([`/dashboard/entrevistas/${id}/fin`]);
+          this.navegacionService.navegar(`/dashboard/entrevistas/${id}/fin`, true);
         }
       },
       error => {

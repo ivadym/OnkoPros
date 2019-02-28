@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { RouterExtensions } from "nativescript-angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -7,14 +7,14 @@ import { Router } from '@angular/router';
 export class NavegacionService {
 
   constructor(
-    private router: Router
+    private routerExtensions: RouterExtensions
   ) { }
-
+  
   /**
    * Redirige al usuario a la URL especificada
    */
   navegar(url: string, borrarHistorial: boolean): void {
-    this.router.navigate([url], { replaceUrl: borrarHistorial });
+    this.routerExtensions.navigate([url], { clearHistory: borrarHistorial });
   }
 
 }

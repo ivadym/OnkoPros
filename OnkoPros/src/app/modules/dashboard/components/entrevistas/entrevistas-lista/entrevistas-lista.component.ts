@@ -3,7 +3,6 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Entrevista } from '../../../../../classes/entrevista';
 
 import { EntrevistasService } from '../../../../../services/entrevistas/entrevistas.service';
-import { NavegacionService } from '../../../../../services/navegacion/navegacion.service';
 import { HttpErrorHandlerService } from '../../../../../services/error-handler/http-error-handler.service';
 
 @Component({
@@ -19,7 +18,6 @@ export class EntrevistasListaComponent implements OnInit {
 
   constructor(
     private entrevistasService: EntrevistasService,
-    private navegacionService: NavegacionService,
     private errorHandler: HttpErrorHandlerService
   ) { }
 
@@ -47,13 +45,6 @@ export class EntrevistasListaComponent implements OnInit {
         this.errorHandler.handleError(error, 'getEntrevistas()');
       }
     );
-  }
-
-  /**
-   * Redirige al usuario a la página de inicio
-   */
-  goToInicio(): void {
-    this.navegacionService.goToInicio();
   }
 
 }

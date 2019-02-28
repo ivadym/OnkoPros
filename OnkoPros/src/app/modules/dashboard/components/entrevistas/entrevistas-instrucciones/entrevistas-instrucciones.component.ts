@@ -39,7 +39,7 @@ export class EntrevistasInstruccionesComponent implements OnInit {
           this.entrevista = entrevista;
         } else {
           console.error(`LOG getEntrevista(${id}) (no existe la entrevista solicitada)`);
-          this.navegacionService.goToPaginaNoEncontrada();
+          this.navegacionService.navegar('/404', false);
         }
       },
       error => {
