@@ -1,19 +1,24 @@
 <page-router-outlet actionBarVisibility="never"></page-router-outlet>
 
-<GridLayout columns="*, *, *, *, *" height="10%" verticalAlignment="bottom" backgroundColor="lightblue">
-  <GridLayout col="0" [nsRouterLink]="['/login']">
-    <Label text="Login"></Label>
+<GridLayout rows="*, *">
+  <GridLayout row="0" verticalAlignment="bottom">
+    <Button class= "btn-logout" text="Cerrar Sesión" (tap)="logout()"></Button>
   </GridLayout>
-  <GridLayout col="1" [nsRouterLink]="['']">
-    <Label text="Inicio"></Label>
-  </GridLayout>
-  <GridLayout col="2" [nsRouterLink]="['/dashboard/entrevistas']">
-    <Label text="Entrevistas"></Label>
-  </GridLayout>
-  <GridLayout col="3" [nsRouterLink]="['/dashboard/notificaciones']">
-    <Label text="Notificaciones"></Label>
-  </GridLayout>
-  <GridLayout col="4" [nsRouterLink]="['/dashboard/perfil']">
-    <Label text="Pefil"></Label>
+  <GridLayout row="1" columns="*, *, *, *, *" height="10%" verticalAlignment="bottom" backgroundColor="lightblue">
+    <GridLayout col="0" [nsRouterLink]="['/login']">
+      <Label text="Login"></Label>
+    </GridLayout>
+    <GridLayout col="1" [nsRouterLink]="['']">
+      <Label text="Inicio"></Label>
+    </GridLayout>
+    <GridLayout col="2" [nsRouterLink]="['/dashboard/entrevistas']">
+      <Label text="Entrevistas"></Label>
+    </GridLayout>
+    <GridLayout col="3" [nsRouterLink]="['/dashboard/notificaciones']">
+      <Label text="Notificaciones"></Label>
+    </GridLayout>
+    <GridLayout col="4" [nsRouterLink]="['/dashboard/perfil']">
+      <Label text="Pefil"></Label>
+    </GridLayout>
   </GridLayout>
 </GridLayout>

@@ -4,10 +4,12 @@
   </GridLayout>
   <GridLayout class="row" row="1" rows="auto, auto">
     <GridLayout row="0">
-      <TextField #usuarioField required style.placeholderColor="rgba(42, 54, 123, 0.5)"
+      <TextField #usuarioField style.placeholderColor="rgba(42, 54, 123, 0.5)" required
         class="form-control"
         formControlName="usuario"
-        hint="Usuario">
+        hint="Usuario"
+        autocorrect="false"
+        autocapitalizationType="none">
       </TextField>
     </GridLayout>
     <GridLayout row="1">
@@ -17,11 +19,13 @@
   </GridLayout>
   <GridLayout class="row" row="2" rows="auto, auto">
     <GridLayout row="0">
-      <TextField required style.placeholderColor="rgba(42, 54, 123, 0.5)"
+      <TextField style.placeholderColor="rgba(42, 54, 123, 0.5)" required
         class="form-control"
         formControlName="clave"
         hint="Clave" 
-        secure="true">
+        secure="true"
+        autocorrect="false"
+        autocapitalizationType="none">
       </TextField>
     </GridLayout>
     <GridLayout row="1">

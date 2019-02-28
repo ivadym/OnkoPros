@@ -38,7 +38,7 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.autofocus();
+    // this.autofocus();
   }
 
   /**

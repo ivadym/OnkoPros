@@ -10,7 +10,6 @@ import { NavegacionService } from '../navegacion/navegacion.service';
 })
 export class HttpErrorHandlerService {
 
-
   constructor(
     private authService: AuthService,
     private cuadroDialogoService: CuadroDialogoService,

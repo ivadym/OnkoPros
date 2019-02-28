@@ -35,11 +35,6 @@
     text-transform: capitalize;
 }
 
-/*
 .btn-login:disabled {
-    color: rgba(42, 54, 123, 0.5);
-    background-color: rgba(42, 54, 123, 0.1);
-    border-width: 1;
-    border-color: #2A367B;
+    background-color: rgba(28, 43, 124, 0.5);
 }
-*/

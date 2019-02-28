@@ -11,7 +11,7 @@ export class LocalStorageService {
    * Extrae del almacenamiento local el valor asociado a una clave determinada
    */
   getItem(key: string): string | null {
-    return localStorage.getItem(key);
+    return localStorage.getItem(key) ? localStorage.getItem(key) : JSON.stringify(null);
   }
 
   /**
