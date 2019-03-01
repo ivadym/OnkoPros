@@ -38,10 +38,11 @@ export class DashboardComponent implements OnInit {
         'Se perderán los cambios no guardados.'
       ).then(
         res => {
-          this.authService.logout();
-        },
-        error => {
-          return;
+          if(res) {
+            this.authService.logout();
+          } else {
+            return;
+          }
         }
       );
     } else {

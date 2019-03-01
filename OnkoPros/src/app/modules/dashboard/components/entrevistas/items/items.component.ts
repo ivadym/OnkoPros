@@ -59,10 +59,11 @@ export class ItemsComponent implements OnInit {
         'Se perderán los cambios no guardados.'
       ).then(
         res => {
-          return true;
-        },
-        error => {
-          return false;
+          if(res) {
+            return true;
+          } else {
+            return false;
+          }
         }
       );
     } else {

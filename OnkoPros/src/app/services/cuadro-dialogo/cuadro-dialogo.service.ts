@@ -28,7 +28,16 @@ export class CuadroDialogoService {
     modal.componentInstance.mensaje_1 = mensaje_1;
     modal.componentInstance.mensaje_2 = mensaje_2;
     modal.componentInstance.alerta = false;
-    return modal.result;
+    return modal.result.then(
+      res => {
+        // Botón aceptar
+        return true;
+      },
+      err => {
+        // Botón cancelar
+        return false;
+      }
+    );
   }
 
   /**
