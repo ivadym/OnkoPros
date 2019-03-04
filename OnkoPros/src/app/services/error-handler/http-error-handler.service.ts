@@ -26,15 +26,21 @@ export class HttpErrorHandlerService {
       this.notFound();
     } else if(error.status === 403 && operacion != 'login()') {
       this.forbidden();
-    } else if(error.status === 0 || error.status === 500) {
+    } else if(error.status === 0 || error.status === 500 || error.status === 504) {
       this.serverError();
     }
+
+    /**
+     * TODO: Tratamiento de los errores > Web & Móvil
     const mensaje = (error.error instanceof ErrorEvent) ?
       error.error.message : // Error en la red o en el lado del cliente
       `El servidor ha devuelto el código de error: "${error.status}", 
       con el cuerpo: "${error.error}"`; // Error del backend -> se analiza el body
     // TODO: Mejorar el tratamiento del error para que sea digerido por el usuario
     console.error(`ERROR en la operación ${operacion}: ${mensaje}`);
+    */
+
+    console.error(error);
   };
 
   /**

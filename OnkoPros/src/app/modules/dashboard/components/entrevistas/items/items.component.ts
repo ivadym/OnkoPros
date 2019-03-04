@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 import { Item } from '../../../../../classes/item';
 import { Valor } from '../../../../../classes/valor';
@@ -8,6 +9,7 @@ import { EntrevistasService } from '../../../../../services/entrevistas/entrevis
 import { NavegacionService } from '../../../../../services/navegacion/navegacion.service';
 import { CuadroDialogoService } from '../../../../../services/cuadro-dialogo/cuadro-dialogo.service';
 import { HttpErrorHandlerService } from '../../../../../services/error-handler/http-error-handler.service';
+import { SpinnerService } from '../../../../../services/spinner/spinner.service';
 
 @Component({
   selector: 'app-items',
@@ -15,7 +17,7 @@ import { HttpErrorHandlerService } from '../../../../../services/error-handler/h
   styleUrls: ['./items.component.css']
 })
 export class ItemsComponent implements OnInit {
-
+  
   @ViewChild("otroField") otroField: ElementRef;
 
   /**
@@ -29,6 +31,9 @@ export class ItemsComponent implements OnInit {
     }
   }
 
+  spinner: boolean = false;
+  private _spinnerSubscription: Subscription;
+
   item: Item;
   valor: Valor;
   private valoresSeleccionados: string[];
@@ -37,12 +42,21 @@ export class ItemsComponent implements OnInit {
     private route: ActivatedRoute,
     private entrevistasService: EntrevistasService,
     private navegacionService: NavegacionService,
+    private spinnerService: SpinnerService,
     private cuadroDialogoService: CuadroDialogoService,
     private errorHandler: HttpErrorHandlerService
-  ) { }
+  ) {
+    this._spinnerSubscription = this.spinnerService.estadoSpinnerObservable.subscribe(
+      estado => this.spinner = estado
+    );
+  }
 
   ngOnInit() {
     this.extraerItem(+this.route.snapshot.paramMap.get('id'));
+  }
+
+  ngOnDestroy() {
+    this._spinnerSubscription.unsubscribe();
   }
 
   /**

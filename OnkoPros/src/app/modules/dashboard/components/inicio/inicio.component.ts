@@ -87,11 +87,11 @@ export class InicioComponent implements OnInit {
     ]
   }];
 
-  public pregutnasClicked(e:any):void {
+  public preguntasClicked(e:any):void {
     console.log(e);
   }
  
-  public pregutnasHovered(e:any):void {
+  public preguntasHovered(e:any):void {
     console.log(e);
   }
   
@@ -135,11 +135,11 @@ export class InicioComponent implements OnInit {
     }
   ];
  
-  public chartClicked(e:any):void {
+  public sintomasClicked(e:any):void {
     console.log(e);
   }
  
-  public chartHovered(e:any):void {
+  public sintomasHovered(e:any):void {
     console.log(e);
   }
   

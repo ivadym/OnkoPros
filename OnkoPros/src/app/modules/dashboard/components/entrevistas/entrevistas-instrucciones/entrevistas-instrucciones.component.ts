@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 import { Entrevista } from '../../../../../classes/entrevista';
 
 import { EntrevistasService } from '../../../../../services/entrevistas/entrevistas.service';
 import { NavegacionService } from '../../../../../services/navegacion/navegacion.service';
+import { SpinnerService } from '../../../../../services/spinner/spinner.service';
 import { HttpErrorHandlerService } from '../../../../../services/error-handler/http-error-handler.service';
 
 @Component({
@@ -14,17 +16,29 @@ import { HttpErrorHandlerService } from '../../../../../services/error-handler/h
 })
 export class EntrevistasInstruccionesComponent implements OnInit {
 
+  spinner: boolean = false;
+  private _spinnerSubscription: Subscription;
+
   entrevista: Entrevista;
 
   constructor(
     private route: ActivatedRoute,
     private entrevistasService: EntrevistasService,
     private navegacionService: NavegacionService,
+    private spinnerService: SpinnerService,
     private errorHandler: HttpErrorHandlerService
-  ) { }
+  ) {
+    this._spinnerSubscription = this.spinnerService.estadoSpinnerObservable.subscribe(
+      estado => this.spinner = estado
+    );
+  }
 
   ngOnInit() {
     this.extraerEntrevista(+this.route.snapshot.paramMap.get('id'));
+  }
+
+  ngOnDestroy() {
+    this._spinnerSubscription.unsubscribe();
   }
   
   /**

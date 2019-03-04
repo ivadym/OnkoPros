@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Validators, FormBuilder } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 import { AuthService } from '../../../../services/auth/auth.service';
 import { NavegacionService } from '../../../../services/navegacion/navegacion.service';
+import { SpinnerService } from '../../../../services/spinner/spinner.service';
 import { CuadroDialogoService } from '../../../../services/cuadro-dialogo/cuadro-dialogo.service';
 import { HttpErrorHandlerService } from '../../../../services/error-handler/http-error-handler.service';
 
@@ -24,6 +26,9 @@ export class LoginComponent implements OnInit {
     }, 500);
   }
 
+  spinner: boolean = false;
+  private _spinnerSubscription: Subscription;
+
   loginForm = this.formBuilder.group({
     usuario: ['', Validators.required],
     clave: ['', Validators.required]
@@ -33,12 +38,21 @@ export class LoginComponent implements OnInit {
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private navegacionService: NavegacionService,
+    private spinnerService: SpinnerService,
     private cuadroDialogoService: CuadroDialogoService,
     private errorHandler: HttpErrorHandlerService
-  ) { }
+  ) {
+    this._spinnerSubscription = this.spinnerService.estadoSpinnerObservable.subscribe(
+      estado => this.spinner = estado
+    );
+  }
 
   ngOnInit() {
     // this.autofocus();
+  }
+
+  ngOnDestroy() {
+    this._spinnerSubscription.unsubscribe();
   }
 
   /**

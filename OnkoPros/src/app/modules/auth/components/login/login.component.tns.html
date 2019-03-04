@@ -1,10 +1,12 @@
 <GridLayout class="login-form" rows="auto, auto, auto, auto" [formGroup]="loginForm">
   <GridLayout class="row" row="0">
-    <Label class="login-instrucciones" text="Escriba su nombre de usuario y contraseña" textWrap="true"></Label>
+    <Label class="login-instrucciones" [isEnabled]="!spinner" text="Escriba su nombre de usuario y contraseña"
+      textWrap="true"></Label>
   </GridLayout>
   <GridLayout class="row" row="1" rows="auto, auto">
     <GridLayout row="0">
       <TextField #usuarioField style.placeholderColor="rgba(42, 54, 123, 0.5)" required
+        [isEnabled]="!spinner"
         class="form-control"
         formControlName="usuario"
         hint="Usuario"
@@ -20,6 +22,7 @@
   <GridLayout class="row" row="2" rows="auto, auto">
     <GridLayout row="0">
       <TextField style.placeholderColor="rgba(42, 54, 123, 0.5)" required
+        [isEnabled]="!spinner"
         class="form-control"
         formControlName="clave"
         hint="Clave" 
@@ -34,7 +37,14 @@
     </GridLayout>
   </GridLayout>
   <GridLayout class="row" row="3">
-    <Button [isEnabled]="loginForm.valid" class="btn-login" text="Iniciar sesión" (tap)="login()"></Button>
+    <Button [isEnabled]="loginForm.valid && !spinner" class="btn-login" text="Iniciar sesión" (tap)="login()"></Button>
   </GridLayout>
+  <ActivityIndicator
+    [busy]="spinner"
+    color="#2A367B" 
+    width="100" 
+    height="100"
+    rowspan="3">
+  </ActivityIndicator>
 </GridLayout>
   

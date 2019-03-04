@@ -35,6 +35,6 @@
     text-transform: capitalize;
 }
 
-.btn-login:disabled {
-    background-color: rgba(28, 43, 124, 0.5);
+:disabled {
+    opacity: 0.5;
 }

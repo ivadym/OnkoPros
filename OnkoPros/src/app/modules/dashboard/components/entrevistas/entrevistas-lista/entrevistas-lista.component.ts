@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Subscription } from 'rxjs';
 
 import { Entrevista } from '../../../../../classes/entrevista';
 
 import { EntrevistasService } from '../../../../../services/entrevistas/entrevistas.service';
+import { SpinnerService } from '../../../../../services/spinner/spinner.service';
 import { HttpErrorHandlerService } from '../../../../../services/error-handler/http-error-handler.service';
 
 @Component({
@@ -13,16 +15,28 @@ import { HttpErrorHandlerService } from '../../../../../services/error-handler/h
 })
 export class EntrevistasListaComponent implements OnInit {
 
+  spinner: boolean = false;
+  private _spinnerSubscription: Subscription;
+
   entrevistas: Entrevista[];
   entrevistasDisponibles: boolean = true;
 
   constructor(
     private entrevistasService: EntrevistasService,
+    private spinnerService: SpinnerService,
     private errorHandler: HttpErrorHandlerService
-  ) { }
+  ) {
+    this._spinnerSubscription = this.spinnerService.estadoSpinnerObservable.subscribe(
+      estado => this.spinner = estado
+    );
+  }
 
   ngOnInit() {
     this.extraerEntrevistas();
+  }
+  
+  ngOnDestroy() {
+    this._spinnerSubscription.unsubscribe();
   }
 
   /**
