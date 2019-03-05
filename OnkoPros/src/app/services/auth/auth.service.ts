@@ -20,7 +20,10 @@ const httpOptions = {
 })
 export class AuthService {
 
-  private _authURL = 'http://172.27.6.220:8080/api/auth'; // URL de la web api
+  // private _authURL = 'api/auth'; // URL de la web api (NGINX)
+  // private _authURL = 'https://172.27.6.220:443/api/auth'; // URL de la web api (Nginx + nodejs)
+  private _authURL = 'http://172.27.6.220:8080/api/auth'; // URL de la web api (nodejs)
+  
   private _urlInicial: string; // URL de redirección
   private _usuarioSubject: BehaviorSubject<Usuario>;
   private _currentUser: Observable<Usuario>;
