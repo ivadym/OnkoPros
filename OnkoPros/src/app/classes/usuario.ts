@@ -5,10 +5,10 @@ export class Usuario {
     nombre:             string;
     apellido_1:         string;
     apellido_2:         string;
-    sexo:               string;
-    fecha_nacimiento:   string;
+    sexo:               number;
+    fecha_nacimiento:   Date;
     telefono:           string;
     email:              string;
-    estado:             string;
+    activo:             boolean;
     jwt:                string;
 }

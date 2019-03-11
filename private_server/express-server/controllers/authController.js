@@ -1,4 +1,4 @@
-const db = require('../models/mock_dababase');
+const authData = require('../data/authData');
 
 /**
  * Lleva a cabo la autenticación del usuario
@@ -26,6 +26,5 @@ exports.autenticarse = function (req, res, next) {
  * Comprueba las credenciales de usuario recibidas
  */
 function checkCredenciales(usuario, clave) {
-    // TODO: Acceso BBDD / Envío de la petición al siguiente servidor
-    return db.checkCredenciales(usuario, clave);
+    return authData.checkCredenciales(usuario, clave);
 }

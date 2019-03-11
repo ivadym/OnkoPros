@@ -1,18 +1,6 @@
-var Usuario = require ('./usuario');
 var Entrevista = require('./entrevista');
 var Item = require('./item');
 var Valor = require('./valor');
-
-/* USUARIOS & CLAVES */
-
-var usuario_1 = new Usuario(1, 'test1', 'Paciente', 'Paciente', 'Apellido1', 'Apellido2');
-var usuario_2 = new Usuario(2, 'a', 'Administrador', 'Admin', 'Apellido1', 'Apellido2', 'Hombre',
-    '01/01/1001', '+34 601 01 01 01', 'admin@onkologikoa.org', 'activo');
-usuarios = [usuario_1, usuario_2];
-
-var clave_1 = 'pass1';
-var clave_2 = 'a';
-claves = [clave_1, clave_2];
 
 /*  ENTREVISTAS */
 
@@ -43,18 +31,6 @@ items = [item_1, item_2, item_3, item_4];
 
 valores_e1 = [];
 valores_e2 = [];
-
-/**
- * Comprueba las credenciales de usuario
- */
-exports.checkCredenciales = function (usuario, clave) {
-    for (var i = 0; i < usuarios.length; i++) {
-        if (usuarios[i].usuario == usuario && claves[i] == clave) {
-            return Promise.resolve(usuarios[i]);
-        }
-    }
-    return Promise.resolve(null);
-}
 
 /**
  * Devuelve las entrevistas disponibles

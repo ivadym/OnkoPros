@@ -4,10 +4,11 @@
   </div> 
   <div class="col-md-8 datos-col">
     <h1 class="usuario-header display-4 text-center">
-      <i>{{usuarioLogueado.nombre}} {{usuarioLogueado.apellido_1}} {{usuarioLogueado.apellido_2}}</i>
+      <i>{{usuarioLogueado.nombre  | titlecase}} {{usuarioLogueado.apellido_1  | titlecase}}
+        {{usuarioLogueado.apellido_2 | titlecase}}</i>
       <br>
       <span class="rol-header display-4">
-        {{usuarioLogueado.rol}}
+        {{usuarioLogueado.rol | titlecase}}
       </span>
     </h1>
     <div class="datos-usuario">
@@ -24,7 +25,12 @@
           Sexo
         </div>
         <div class="col-6 campos-usuario">
-          {{usuarioLogueado.sexo}}
+          <div *ngIf="usuarioLogueado.sexo == 1">
+            Hombre
+          </div>
+          <div *ngIf="usuarioLogueado.sexo == 2">
+            Mujer
+          </div>
         </div>
       </div>
       <div class="row dato p-1">
@@ -32,7 +38,7 @@
           Fecha de nacimiento
         </div>
         <div class="col-6 campos-usuario">
-          {{usuarioLogueado.fecha_nacimiento}}
+          {{usuarioLogueado.fecha_nacimiento | date: 'dd/MM/yyy'}}
         </div>
       </div>
       <div class="row dato p-1">
