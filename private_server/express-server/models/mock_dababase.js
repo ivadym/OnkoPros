@@ -1,17 +1,8 @@
-var Entrevista = require('./entrevista');
 var Item = require('./item');
 var Valor = require('./valor');
 
 /*  ENTREVISTAS */
 
-var entrevista_1 = new Entrevista(1, 'Entrevista 1', 'Descripción de la entrevista 1',
-    'Responda a las cuestiones que se le vayan mostrando a lo largo de la entrevista (1)',
-    'Asimismo, tenga en cuenta que hay preguntas tanto de opción única, como de múltiple selección (1)',
-    'estado', 'f_creacion', 'f_limite');
-var entrevista_2 = new Entrevista(2, 'Entrevista 2', 'Descripción de la entrevista 2',
-    'Responda a las cuestiones que se le vayan mostrando a lo largo de la entrevista (2)',
-    'Asimismo, tenga en cuenta que hay preguntas tanto de opción única, como de múltiple selección (2)');
-entrevistas = [entrevista_1, entrevista_2];
 e1_cont = 0;
 e2_cont = 0;
 
@@ -31,25 +22,6 @@ items = [item_1, item_2, item_3, item_4];
 
 valores_e1 = [];
 valores_e2 = [];
-
-/**
- * Devuelve las entrevistas disponibles
- */
-exports.getEntrevistas = function () {
-    return Promise.resolve(entrevistas);
-}
-
-/**
- * Devuelve la entrevista asociada al ID: id
- */
-exports.getEntrevista = function (id) {
-    for (var i = 0; i < entrevistas.length; i++) {
-        if (entrevistas[i].id == id) {
-            return Promise.resolve(entrevistas[i]);
-        }
-    }
-    return Promise.resolve(null);
-}
 
 /**
  * Devuvelve la siguiente pregunta asociada a la entrevista con ID: id

@@ -4,7 +4,7 @@ export class Entrevista {
     descripcion:    string;
     instr_1:        string;
     instr_2:        string;
-    estado:         string;
-    fecha_creacion: string;
-    fecha_limite:   string;
+    fecha_creacion: Date;
+    fecha_limite:   Date;
+    activo:         boolean;
 }

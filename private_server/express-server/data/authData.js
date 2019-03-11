@@ -10,7 +10,7 @@ const config = require('./config');
 exports.checkCredenciales = function (usuario, clave) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
-        var query = `SELECT * FROM GEOP_USUARIO WHERE usuario=@usuario AND activo='true';`;
+        var query = `SELECT * FROM GEOP_USUARIO WHERE usuario=@usuario AND clave=@clave AND activo='true';`;
         var result = [];
 
         connection.on('connect', function(err) {
@@ -25,6 +25,7 @@ exports.checkCredenciales = function (usuario, clave) {
                 });
 
                 request.addParameter('usuario', TYPES.VarChar, usuario);
+                request.addParameter('clave', TYPES.VarChar, clave);
 
                 request.on('row', function(columns) {
                     var rowObject = {};
@@ -35,7 +36,7 @@ exports.checkCredenciales = function (usuario, clave) {
                 });
                 
                 request.on('requestCompleted', function () {
-                    if(result[0] && result[0].clave == clave) {
+                    if(result[0]) {
                         delete result[0].clave;
                         resolve(result[0]);
                     } else {

@@ -1,4 +1,4 @@
-const db = require('../models/mock_dababase');
+const entrevistasData = require('../data/entrevistasData');
 
 /**
  * Devuelve las entrevistas disponibles actualmente
@@ -6,7 +6,7 @@ const db = require('../models/mock_dababase');
 exports.getEntrevistas = function (req, res, next) {
     extraerEntrevistas()
     .then(function(entrevistas) {
-        if(entrevistas[0]) {
+        if(entrevistas[0]) { // Hay al menos 1 entrevista
             res.status(200).json(entrevistas);
         } else {
             res.status(200).json(null);
@@ -22,12 +22,11 @@ exports.getEntrevistas = function (req, res, next) {
  * Extrae las entrevistas disponibles
  */
 function extraerEntrevistas() {
-    // TODO: Acceso BBDD / Envío de la petición al siguiente servidor
-    return db.getEntrevistas();
+    return entrevistasData.getEntrevistas();
 }
 
 /**
- * Devuelve las entrevistas disponibles actualmente
+ * Devuelve la entrevista asociada a un ID determinado
  */
 exports.getEntrevista = function (req, res, next) {
     var id = req.params['id'];
@@ -46,6 +45,5 @@ exports.getEntrevista = function (req, res, next) {
 };
 
 function extraerEntrevista(id) {
-    // TODO: Acceso BBDD / Envío de la petición al siguiente servidor
-    return db.getEntrevista(id);
+    return entrevistasData.getEntrevista(id);
 }
