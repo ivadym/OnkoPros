@@ -7,7 +7,7 @@
       <!-- RADIO BUTTON & CHECKBOX -->
       <div *ngIf="item.tipo === 'radio' || item.tipo === 'checkbox'" class="opciones-item">
         <div *ngFor="let valor of item.valores; let i = index" class="row">
-          <div class="col-12 p-1 custom-control custom-{{item.tipo}}">
+          <div *ngIf="valor" class="col-12 p-1 custom-control custom-{{item.tipo}}">
             <input type="{{item.tipo}}" name="valor" id="{{item.tipo}}_{{i}}"
               class="custom-control-input" (click)="setValor(item.id, item.valores[i])">
             <label class="custom-control-label" for="{{item.tipo}}_{{i}}">

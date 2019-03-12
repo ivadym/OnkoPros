@@ -1,18 +1,16 @@
-const db = require('../models/mock_dababase');
+const itemData = require('../data/itemData');
 
 /**
  * Devuelve la siguiente pregunta disponible
  */
 exports.getItem = function (req, res, next) {
-    var id = req.params['id'];
-    extraerItem(id)
+    var id_entrevista = req.params['id'];
+    extraerItem(id_entrevista)
     .then(function(item) {
-        if(item[0]) {
-            res.status(200).json(item[0]);
-        } else if(item[0] === undefined) {
-            res.status(200).json(null);
+        if(item) {
+            res.status(200).json(item);
         } else {
-            res.sendStatus(400); // HTTP 400 Bad Request
+            res.status(200).json(null);
         }
     })
     .catch(function(error) {
@@ -25,6 +23,5 @@ exports.getItem = function (req, res, next) {
  * Extrae las entrevistas disponibles
  */
 function extraerItem(id) {
-    // TODO: Acceso BBDD / Envío de la petición al siguiente servidor
-    return db.getItem(id);
+    return itemData.getItem(id);
 }

@@ -1,7 +1,8 @@
 export class Item {
     id:             number;
+    id_entrevista:  number;
     titulo:         string;
     tipo:           string;
     valores:        object;
-    fecha_creacion: Date;
+    activo:         boolean;
 }
