@@ -16,14 +16,14 @@
           </div>
         </div>
         <div *ngIf="valor" class="row">
-          <div *ngIf="valor.valor.indexOf('Otro') > -1" class="col-12">
-            <input #otroField class="opcion-otro" [(ngModel)]="valor.valorTexto" name="valorTexto"
+          <div *ngIf="valor.valores.indexOf('Otro') > -1" class="col-12">
+            <input #otroField class="opcion-otro" [(ngModel)]="valor_personal" name="valor_personal"
               placeholder="Elabore su propia respuesta" autocomplete="off">
           </div>
         </div>
       </div>
       <div class="row">
-        <button type="submit" class="btn btn-responder col-12" [disabled]="!valor?.valor.length">
+        <button type="submit" class="btn btn-responder col-12" [disabled]="!valor?.valores.length">
           Responder
         </button>
       </div>

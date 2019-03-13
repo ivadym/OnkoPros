@@ -21,7 +21,7 @@ const httpOptions = {
 export class EntrevistasService {
 
   private _entrevistasURL = 'api/entrevistas';  // URL de la web api (NGINX)
-  // private _entrevistasURL = 'https://172.27.6.220:443/api/entrevistas'; // URL de la web api (Nginx + nodejs)
+  // private _entrevistasURL = 'http://172.27.6.220:8081/api/entrevistas'; // URL de la web api (nodejs)
 
   constructor(
     private http: HttpClient,
@@ -87,9 +87,9 @@ export class EntrevistasService {
   /**
    * Envío de la respuesta del usuario al servidor
    */
-  postValor(entrevistaId: number, valor: Valor): Observable<any> {
+  postValor(id_entrevista: number, valor: Valor): Observable<any> {
     this.spinnerService.show();
-    const url = `${this.entrevistasURL}/${entrevistaId}/items`;
+    const url = `${this.entrevistasURL}/${id_entrevista}/items`;
     return this.http.post<any>(url, valor, httpOptions)
       .pipe(
         finalize(() => {

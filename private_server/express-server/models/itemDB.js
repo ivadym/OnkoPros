@@ -35,7 +35,21 @@ exports.getItem = function(id_entrevista) {
                 });
                 
                 request.on('requestCompleted', function () {
-                    resolve(estructurarItem(result));
+                    if(result[0]) {
+                        resolve(estructurarItem(result));
+                    } else {
+                        desactivarEntrevista(id_entrevista)
+                        .then(function(res) {
+                            if(res) {
+                                resolve();
+                            } else {
+                                reject();
+                            }
+                        })
+                        .catch(function(error) {
+                            reject(error);
+                        });
+                    }
                 });
 
                 connection.execSql(request);
@@ -57,4 +71,35 @@ function estructurarItem(result) {
         'valores': valores,
         'activo': result[0].activo
     }
+}
+
+/**
+ * Desactiva la entrevista correspondiente al ID: id
+ */
+function desactivarEntrevista(id) {
+    return new Promise(function(resolve, reject) {
+        var connection = new Connection(config.auth);
+        var query = `UPDATE GEOP_ENTREVISTA SET activo=0 WHERE id=@id;`;
+
+        connection.on('connect', function(err) {
+            if (err) {
+                reject(err);
+            } else {
+                request = new Request(query, function(err, rowCount, rows) {
+                    if (err) {
+                        reject(err);
+                    }
+                    connection.close();
+                });
+
+                request.addParameter('id', TYPES.Int, id);
+                
+                request.on('requestCompleted', function () {
+                    resolve(true);
+                });
+
+                connection.execSql(request);
+            }
+        });
+    });    
 }

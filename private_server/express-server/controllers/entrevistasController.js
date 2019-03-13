@@ -1,4 +1,4 @@
-const entrevistasData = require('../data/entrevistasData');
+const entrevistasData = require('../models/entrevistasDB');
 
 /**
  * Devuelve las entrevistas disponibles actualmente

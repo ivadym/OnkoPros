@@ -1,4 +1,4 @@
-const authData = require('../data/authData');
+const authData = require('../models/authDB');
 
 /**
  * Lleva a cabo la autenticación del usuario

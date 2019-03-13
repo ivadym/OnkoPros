@@ -1,4 +1,4 @@
-const itemData = require('../data/itemData');
+const itemData = require('../models/itemDB');
 
 /**
  * Devuelve la siguiente pregunta disponible

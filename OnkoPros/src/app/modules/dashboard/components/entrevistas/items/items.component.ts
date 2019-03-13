@@ -36,6 +36,7 @@ export class ItemsComponent implements OnInit {
 
   item: Item;
   valor: Valor;
+  valor_personal: string;
   private valoresSeleccionados: string[];
 
   constructor(
@@ -109,8 +110,8 @@ export class ItemsComponent implements OnInit {
   /**
    * Envía la respuesta del usuario y actualiza el contexto (limpia los campos obsoletos y extrae nuevo item)
    */
-  enviarValor(entrevistaId: number, valor: Valor): void {
-    this.entrevistasService.postValor(entrevistaId, valor).subscribe(
+  enviarValor(id_entrevista: number, valor: Valor): void {
+    this.entrevistasService.postValor(id_entrevista, valor).subscribe(
       datos => {
         if(datos.alerta) {
           this.cuadroDialogoService.alerta(
@@ -122,7 +123,7 @@ export class ItemsComponent implements OnInit {
               console.log(datos.valor.id); console.log(datos.valor.valor); console.log(datos.valor.valorTexto);
               this.clearItemActual();
               this.clearValorActual();
-              this.extraerItem(entrevistaId);
+              this.extraerItem(id_entrevista);
             }
           );
         } else if(datos.valor) {
@@ -130,7 +131,7 @@ export class ItemsComponent implements OnInit {
           console.log(datos.valor.id); console.log(datos.valor.valor); console.log(datos.valor.valorTexto);
           this.clearItemActual();
           this.clearValorActual();
-          this.extraerItem(entrevistaId);
+          this.extraerItem(id_entrevista);
         } else {
           // TODO: Tratamiento del error/Mensaje de error al usuario (footer popup)
           console.error('ERROR enviarValor()');
@@ -138,7 +139,7 @@ export class ItemsComponent implements OnInit {
       },
       error => {
         //TODO: Fichero de logs
-        this.errorHandler.handleError(error, `enviarValor(${valor.id}, ${valor.valor}, ${valor.valorTexto})`);
+        this.errorHandler.handleError(error, `enviarValor(${id_entrevista}, ${valor})`);
       }
     )
   }
@@ -163,8 +164,9 @@ export class ItemsComponent implements OnInit {
 
     this.valor = {
       id: id,
-      valor: this.valoresSeleccionados,
-      valorTexto: this.valor ? this.valor.valorTexto : null
+      titulo: this.item.titulo,
+      tipo: this.item.tipo,
+      valores: this.valoresSeleccionados
     }
   }
 
@@ -173,8 +175,8 @@ export class ItemsComponent implements OnInit {
    */
   responder(): void {
     const id = +this.route.snapshot.paramMap.get('id');
-    if(this.valoresSeleccionados.indexOf('Otro') < 0) {
-      this.valor.valorTexto = null;
+    if(this.valoresSeleccionados.indexOf('Otro') >= 0 && this.valor_personal != null  && this.valor_personal != ' ') {
+      this.valor.valores[this.valoresSeleccionados.indexOf('Otro')] = this.valor_personal;
     }
     this.enviarValor(id, this.valor);
   }
@@ -190,8 +192,9 @@ export class ItemsComponent implements OnInit {
    * Limpia la respuesta del usuario
    */
   clearValorActual(): void {
-    this.valoresSeleccionados = null;
     this.valor = null;
+    this.valoresSeleccionados = null;
+    this.valor_personal = null;
   }
 
 }
