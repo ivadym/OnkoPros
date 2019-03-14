@@ -3,9 +3,8 @@
 # compiled output
 /dist
 /tmp
-/temp
-/logs
 /out-tsc
+/iisnode
 
 # dependencies
 /node_modules
@@ -39,7 +38,7 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
-/ssl
+/RSA
 
 # System Files
 .DS_Store
