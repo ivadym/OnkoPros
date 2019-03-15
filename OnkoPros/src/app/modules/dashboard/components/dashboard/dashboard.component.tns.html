@@ -1,24 +1,68 @@
-<page-router-outlet actionBarVisibility="never"></page-router-outlet>
-
-<GridLayout rows="*, *">
-  <GridLayout row="0" verticalAlignment="bottom">
-    <Button class= "btn-logout" text="Cerrar Sesión" (tap)="logout()"></Button>
+<RadSideDrawer tkExampleTitle tkToggleNavButton drawerLocation="Bottom" drawerContentSize="150">
+  <GridLayout tkDrawerContent rows="auto, *" class="drawer-content">
+    <GridLayout row="0" horizontalAlignment="center" (tap)="cerrarDrawer()">
+      <Label class="fas drawer-caret-down" text="&#xf0d7;"></Label>
+    </GridLayout>
+    <GridLayout row="1" columns="*, *" class="container" verticalAlignment="center">
+      <StackLayout col="0" rows="*, *" class="drawer-feature drawer-nav" [nsRouterLink]="['/dashboard/perfil']"
+        nsRouterLinkActive="active">
+          <StackLayout row="0" horizontalAlignment="center">
+            <Label class="fas" text="&#xf007;"></Label>
+          </StackLayout>
+          <StackLayout row="1" horizontalAlignment="center">
+            <Label text="{{usuarioLogueado.nombre}} {{usuarioLogueado.apellido_1}}"></Label>
+          </StackLayout>
+      </StackLayout>
+      <StackLayout col="1" rows="*, *" class="drawer-feature" (tap)="logout()">
+        <StackLayout row="0" horizontalAlignment="center">
+          <Label class="fas" text="&#xf2f5;"></Label>
+        </StackLayout>
+        <StackLayout row="1" horizontalAlignment="center">
+          <Label text="Cerrar sesión"></Label>
+        </StackLayout>
+      </StackLayout>
+    </GridLayout>
   </GridLayout>
-  <GridLayout row="1" columns="*, *, *, *, *" height="10%" verticalAlignment="bottom" backgroundColor="lightblue">
-    <GridLayout col="0" [nsRouterLink]="['/login']">
-      <Label text="Login"></Label>
+  <GridLayout tkMainContent rows="*, *" class="container">
+    <GridLayout row="0" columns="*">
+      <GridLayout col="0">
+        <page-router-outlet actionBarVisibility="never"></page-router-outlet>
+      </GridLayout>
     </GridLayout>
-    <GridLayout col="1" [nsRouterLink]="['']">
-      <Label text="Inicio"></Label>
-    </GridLayout>
-    <GridLayout col="2" [nsRouterLink]="['/dashboard/entrevistas']">
-      <Label text="Entrevistas"></Label>
-    </GridLayout>
-    <GridLayout col="3" [nsRouterLink]="['/dashboard/notificaciones']">
-      <Label text="Notificaciones"></Label>
-    </GridLayout>
-    <GridLayout col="4" [nsRouterLink]="['/dashboard/perfil']">
-      <Label text="Pefil"></Label>
+    <GridLayout row="1" columns="*, *, *, *" class="nav-container" verticalAlignment="bottom">
+      <StackLayout col="0" rows="*, *" class="nav" [nsRouterLink]="['/dashboard']" nsRouterLinkActive="active"
+        [nsRouterLinkActiveOptions]="{exact: true}">
+          <StackLayout row="0" class="nav-feature">
+            <Label class="fas" text="&#xf015;"></Label>
+          </StackLayout>
+          <StackLayout row="1" class="nav-feature">
+            <Label text="Inicio"></Label>
+          </StackLayout>
+      </StackLayout>
+      <StackLayout col="1" rows="*, *" class="nav" [nsRouterLink]="['/dashboard/entrevistas']" nsRouterLinkActive="active">
+        <StackLayout row="0" class="nav-feature">
+          <Label class="fas" text="&#xf481;"></Label>
+        </StackLayout>
+        <StackLayout row="1" class="nav-feature">
+          <Label text="Entrevistas"></Label>
+        </StackLayout>
+      </StackLayout>
+      <StackLayout col="2" rows="*, *" class="nav" [nsRouterLink]="['/dashboard/notificaciones']" nsRouterLinkActive="active">
+        <StackLayout row="0" class="nav-feature">
+          <Label class="fas" text="&#xf7f5;"></Label>
+        </StackLayout>
+        <StackLayout row="1" class="nav-feature">
+          <Label text="Avisos"></Label>
+        </StackLayout>
+      </StackLayout>
+      <StackLayout col="3" rows="*, *" class="nav nav-drawer" (tap)="abrirDrawer()">
+        <StackLayout row="0" class="nav-feature">
+          <Label class="fas" text="&#xf0c9;"></Label>
+        </StackLayout>
+        <StackLayout row="1" class="nav-feature">
+          <Label text="Más"></Label>
+        </StackLayout>
+      </StackLayout>
     </GridLayout>
   </GridLayout>
-</GridLayout>
+</RadSideDrawer>

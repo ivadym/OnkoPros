@@ -36,7 +36,7 @@ a, .btn {
     border-radius: 5px;
 }
 
-.dropdown:hover >.dropdown-menu {
+.dropdown:hover > .dropdown-menu {
     display: block;
 }
 

@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
 import { Usuario } from '../../classes/usuario';
 
-import { SpinnerService } from '../spinner/spinner.service';
-import { NavegacionService } from '../navegacion/navegacion.service';
 import { LocalStorageService } from '../local-storage/local-storage.service';
+import { SpinnerService } from '../spinner/spinner.service';
+import { CuadroDialogoService } from '../cuadro-dialogo/cuadro-dialogo.service';
+import { NavegacionService } from '../navegacion/navegacion.service';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -30,7 +32,9 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private localStorageService: LocalStorageService,
+    private router: Router,
     private spinnerService: SpinnerService,
+    private cuadroDialogoService: CuadroDialogoService,
     private navegacionService: NavegacionService
   ) {
     this._usuarioSubject = new BehaviorSubject(JSON.parse(this.localStorageService.getItem('usuarioLogueado')));
@@ -101,11 +105,35 @@ export class AuthService {
         })
       );
   }
-  
+
   /**
    * Cierra la sesión
    */
   logout(): void {
+    var url = this.router.url;
+    var regEx = /\/dashboard\/entrevistas\/\d\/items/
+    if (regEx.test(url)) {
+      this.cuadroDialogoService.advertencia(
+        '¿Desea cerrar la sesión actual?',
+        'Se perderán los cambios no guardados.'
+      ).then(
+        res => {
+          if(res) {
+            this.limpiarSesion();
+          } else {
+            return;
+          }
+        }
+      );
+    } else {
+      this.limpiarSesion();
+    }
+  }
+
+  /**
+   * Limpia las credenciales de la sesión iniciada
+   */
+  limpiarSesion(): void {
     // TODO: Fichero de logs
     this.localStorageService.removeItem('usuarioLogueado');
     this.usuarioLogueado = null;

@@ -1,0 +1,41 @@
+.container {
+    margin-left: 5;
+    margin-right: 5;
+}
+
+.nav-container {
+    height: 80;
+}
+
+.nav.active {
+    color: #2A367B;
+    border-bottom-width: 10;
+    border-bottom-color: #2A367B;
+}
+
+.nav-feature, .drawer-feature {
+    text-align: center;
+    font-size: 18;
+}
+
+.fas {
+    font-family: Font Awesome 5 Free, fa-solid-900;
+    font-size: 32;
+    margin: 5;
+}
+
+.drawer-content {
+    background-color: white;
+    border-top-width: 5;
+    border-color: #2A367B;
+}
+
+.drawer-caret-down {
+    color: #2A367B;
+    font-size: 42;
+    margin-top: -10;
+}
+
+.drawer-nav.active {
+    color: #2A367B;
+}

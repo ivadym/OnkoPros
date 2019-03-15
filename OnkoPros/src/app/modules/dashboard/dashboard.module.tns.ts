@@ -1,5 +1,6 @@
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { NativeScriptCommonModule } from 'nativescript-angular/common';
+import { NativeScriptUISideDrawerModule } from "nativescript-ui-sidedrawer/angular";
 
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { InicioComponent } from './components/inicio/inicio.component';
@@ -27,6 +28,7 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
   ],
   imports: [
     NativeScriptCommonModule,
+    NativeScriptUISideDrawerModule,
     DashboardRoutingModule
   ],
   schemas: [
