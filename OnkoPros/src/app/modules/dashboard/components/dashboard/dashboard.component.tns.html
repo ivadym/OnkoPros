@@ -10,10 +10,10 @@
             <Label class="fas" text="&#xf007;"></Label>
           </StackLayout>
           <StackLayout row="1" horizontalAlignment="center">
-            <Label text="{{usuarioLogueado.nombre}} {{usuarioLogueado.apellido_1}}"></Label>
+            <Label text="{{usuarioLogueado.nombre}} {{usuarioLogueado.apellido_1}}" textWrap="true"></Label>
           </StackLayout>
       </StackLayout>
-      <StackLayout col="1" rows="*, *" class="drawer-feature" (tap)="logout()">
+      <StackLayout col="1" rows="*, *" class="drawer-feature drawer-feature-logout" (tap)="logout()">
         <StackLayout row="0" horizontalAlignment="center">
           <Label class="fas" text="&#xf2f5;"></Label>
         </StackLayout>
@@ -23,7 +23,7 @@
       </StackLayout>
     </GridLayout>
   </GridLayout>
-  <GridLayout tkMainContent rows="*, *" class="container">
+  <GridLayout tkMainContent rows="*, auto" class="container">
     <GridLayout row="0" columns="*">
       <GridLayout col="0">
         <page-router-outlet actionBarVisibility="never"></page-router-outlet>

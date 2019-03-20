@@ -1,4 +1,7 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
+import { ListViewEventData, PullToRefreshStyle } from "nativescript-ui-listview";
+import { RadListViewComponent } from "nativescript-ui-listview/angular";
+import { Color } from "tns-core-modules/color";
 import { Subscription } from 'rxjs';
 
 import { Entrevista } from '../../../../../classes/entrevista';
@@ -14,6 +17,8 @@ import { HttpErrorHandlerService } from '../../../../../services/error-handler/h
   styleUrls: ['./entrevistas-lista.component.css']
 })
 export class EntrevistasListaComponent implements OnInit {
+
+  @ViewChild("listView") listViewComponent: RadListViewComponent;
 
   spinner: boolean = false;
   private _spinnerSubscription: Subscription;
@@ -32,7 +37,13 @@ export class EntrevistasListaComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.extraerEntrevistas();
+    this.extraerEntrevistas(null);
+    if (this.listViewComponent && this.listViewComponent.listView) {
+      let style = new PullToRefreshStyle();
+      style.indicatorColor = new Color("white");
+      style.indicatorBackgroundColor = new Color("#2A367B");
+      this.listViewComponent.listView.pullToRefreshStyle = style;
+    }
   }
   
   ngOnDestroy() {
@@ -42,18 +53,19 @@ export class EntrevistasListaComponent implements OnInit {
   /**
    * Lista las entrevistas extraídas del servidor
    */
-  extraerEntrevistas(): void {
+  extraerEntrevistas(args: ListViewEventData): void {
     this.entrevistasService.getEntrevistas().subscribe(
       entrevistas => {
         if(entrevistas) {
-        //TODO: Fichero de logs
-        console.log('SERVIDOR - Entrevistas: ' + entrevistas.length);
-        this.entrevistas = entrevistas;
-        this.entrevistasDisponibles = true;
+          //TODO: Fichero de logs
+          console.log('SERVIDOR - Entrevistas: ' + entrevistas.length);
+          this.entrevistas = entrevistas;
+          this.entrevistasDisponibles = true;
         } else {
           console.error("LOG getEntrevistas() (no hay más entrevistas disponibles)");
           this.entrevistasDisponibles = false;
         }
+        args ? args.object.notifyPullToRefreshFinished() : null;
       },
       error => {
         this.errorHandler.handleError(error, 'getEntrevistas()');

@@ -1,0 +1,55 @@
+.container-lista {
+    margin: 20 5 10 5;
+}
+
+.entrevista-item {
+    background-color: rgba(77, 42, 123, 0.1);
+    padding: 5;
+    border-radius: 5;
+    margin-bottom: 10;
+}
+
+.entrevista-item.active {
+    background-color: white;
+}
+
+.entrevista-titulo {
+    color: #2A367B;
+    font-size: 22;
+    margin-bottom: 5;
+}
+
+.entrevista-descripcion {
+    color: #4D2A7B;
+    font-size: 18;
+}
+
+.entrevista-fin {
+    color: #2A367B;
+    font-size: 22;
+    text-align: center;
+    margin: 5;
+}
+
+.fas-entrevista {
+    color: #2A7B6F;
+    font-family: Font Awesome 5 Free, fa-solid-900;
+    font-size: 82;
+    text-align: center;
+    margin-top: 40;
+    margin-bottom: 40;
+}
+
+.entrevista-fin-btn {
+    color: #2A367B;
+    background-color: rgba(77, 42, 123, 0.1);
+    font-size: 22;
+    text-align: center;
+    padding: 10;
+    border-radius: 5;
+    margin: 5;
+}
+
+.entrevista-fin-btn.active {
+    background-color: white;
+}
