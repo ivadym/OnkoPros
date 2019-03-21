@@ -56,18 +56,19 @@ export class EntrevistasListaComponent implements OnInit {
   extraerEntrevistas(args: ListViewEventData): void {
     this.entrevistasService.getEntrevistas().subscribe(
       entrevistas => {
+        args ? args.object.notifyPullToRefreshFinished() : null;
         if(entrevistas) {
           //TODO: Fichero de logs
           console.log('SERVIDOR - Entrevistas: ' + entrevistas.length);
           this.entrevistas = entrevistas;
           this.entrevistasDisponibles = true;
         } else {
-          console.error("LOG getEntrevistas() (no hay más entrevistas disponibles)");
+          console.log("LOG getEntrevistas() (no hay más entrevistas disponibles)");
           this.entrevistasDisponibles = false;
         }
-        args ? args.object.notifyPullToRefreshFinished() : null;
       },
       error => {
+        args ? args.object.notifyPullToRefreshFinished() : null;
         this.errorHandler.handleError(error, 'getEntrevistas()');
       }
     );

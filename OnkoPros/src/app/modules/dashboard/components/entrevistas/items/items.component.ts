@@ -97,7 +97,7 @@ export class ItemsComponent implements OnInit {
           console.log('SERVIDOR - Item extraído: ' + item.titulo);
           this.item = item;
         } else {
-          console.error('LOG getItem() (no hay más items)');
+          console.log('LOG getItem() (no hay más items)');
           this.navegacionService.navegar(`/dashboard/entrevistas/${id}/fin`, true);
         }
       },

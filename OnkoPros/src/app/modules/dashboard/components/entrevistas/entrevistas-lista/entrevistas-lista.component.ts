@@ -51,7 +51,7 @@ export class EntrevistasListaComponent implements OnInit {
         this.entrevistas = entrevistas;
         this.entrevistasDisponibles = true;
         } else {
-          console.error("LOG getEntrevistas() (no hay más entrevistas disponibles)");
+          console.log("LOG getEntrevistas() (no hay más entrevistas disponibles)");
           this.entrevistasDisponibles = false;
         }
       },

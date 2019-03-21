@@ -2,8 +2,8 @@
   (pullToRefreshInitiated)="extraerEntrevistas($event)">
     <ng-template let-entrevista="item" let-i="index">
       <ScrollView scrollDirection="Vertical">
-        <GridLayout *ngIf="entrevistasDisponibles" rows="*, *" class="entrevista-item" [nsRouterLink]="['/dashboard/entrevistas/' + entrevista.id]"
-          nsRouterLinkActive="active">
+        <GridLayout *ngIf="entrevistasDisponibles" rows="*, *" class="entrevista-item"
+          [nsRouterLink]="['/dashboard/entrevistas/' + entrevista.id]" nsRouterLinkActive="active">
             <StackLayout row="0" class="entrevista-titulo">
               <Label text="{{entrevista.titulo}}" textWrap="true"></Label>
             </StackLayout>
@@ -28,8 +28,8 @@
 </GridLayout>
 <ActivityIndicator
   [busy]="spinner"
-  color="#2A367B" 
-  width="100" 
+  color="#2A367B"
+  width="100"
   height="100"
   rowspan="3">
 </ActivityIndicator>

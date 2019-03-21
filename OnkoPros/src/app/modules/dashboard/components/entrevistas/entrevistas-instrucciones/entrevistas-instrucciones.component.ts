@@ -52,7 +52,7 @@ export class EntrevistasInstruccionesComponent implements OnInit {
           console.log('SERVIDOR - Entrevista seleccionada: ' + entrevista.id);
           this.entrevista = entrevista;
         } else {
-          console.error(`LOG getEntrevista(${id}) (no existe la entrevista solicitada)`);
+          console.log(`LOG getEntrevista(${id}) (no existe la entrevista solicitada)`);
           this.navegacionService.navegar('/404', false);
         }
       },

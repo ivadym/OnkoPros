@@ -1,0 +1,38 @@
+.container-instr {
+    margin: 0 5 0 5;
+}
+
+.intrucciones-header {
+    color: white;
+    background-color: #2A367B;
+    font-size: 24;
+    text-align: center;
+    padding: 10;
+    border-radius: 5;
+    margin-bottom: 40;
+}
+
+.instrucciones-txt {
+    color: #2A367B;
+    font-size: 22;
+    margin-left: 10;
+    margin-bottom: 20;
+}
+
+.instrucciones-txt-2 {
+    color: rgba(42, 54, 123, 0.7);
+    margin-bottom: 40;
+}
+
+.instrucciones-btn {
+    color: #2A367B;
+    background-color: rgba(77, 42, 123, 0.1);
+    font-size: 24;
+    text-align: center;
+    padding: 10;
+    border-radius: 5;
+}
+
+.instrucciones-btn.active {
+    background-color: transparent;
+}

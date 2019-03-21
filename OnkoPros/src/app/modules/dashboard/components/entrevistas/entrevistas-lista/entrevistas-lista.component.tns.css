@@ -10,7 +10,7 @@
 }
 
 .entrevista-item.active {
-    background-color: white;
+    background-color: transparent;
 }
 
 .entrevista-titulo {
@@ -28,7 +28,6 @@
     color: #2A367B;
     font-size: 22;
     text-align: center;
-    margin: 5;
 }
 
 .fas-entrevista {
@@ -47,9 +46,8 @@
     text-align: center;
     padding: 10;
     border-radius: 5;
-    margin: 5;
 }
 
 .entrevista-fin-btn.active {
-    background-color: white;
+    background-color: transparent;
 }

@@ -1,3 +1,30 @@
-<StackLayout class="m-15" sdkExampleTitle sdkToggleNavButton>
-  <Label text="4--ENTREVISTAS-INSTRUCCIONES-COMPONENT--"></Label>
-</StackLayout>
+<GridLayout rows="auto, auto, auto, auto" class="container-instr" verticalAlignment="center">
+  <GridLayout row="0" class="intrucciones-header">
+    <Label text="Instrucciones"></Label>
+  </GridLayout>
+  <GridLayout row="1" columns="auto, *">
+    <StackLayout col="0" verticalAlignment="center">
+    </StackLayout>
+    <StackLayout col="1" class="instrucciones-txt">
+      <Label text="{{entrevista?.instr_1}}" textWrap="true"></Label>
+    </StackLayout>
+  </GridLayout>
+  <GridLayout row="2" columns="auto, *">
+    <StackLayout col="0" verticalAlignment="center">
+    </StackLayout>
+    <StackLayout col="1" class="instrucciones-txt instrucciones-txt-2">
+      <Label text="{{entrevista?.instr_2}}" textWrap="true"></Label>
+    </StackLayout>
+  </GridLayout>
+  <GridLayout row="3" class="instrucciones-btn" [nsRouterLink]="['/dashboard/entrevistas/' + entrevista?.id + '/items']"
+    nsRouterLinkActive="active" clearHistory="true">
+      <Label text="¡Comenzar la entrevista!"></Label>
+  </GridLayout>
+</GridLayout>
+<ActivityIndicator
+  [busy]="spinner"
+  color="#2A367B" 
+  width="100" 
+  height="100"
+  rowspan="3">
+</ActivityIndicator>
