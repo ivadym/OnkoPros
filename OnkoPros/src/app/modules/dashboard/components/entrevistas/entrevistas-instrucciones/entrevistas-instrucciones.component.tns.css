@@ -9,6 +9,8 @@
     text-align: center;
     padding: 10;
     border-radius: 5;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
     margin-bottom: 40;
 }
 
@@ -25,14 +27,17 @@
 }
 
 .instrucciones-btn {
-    color: #2A367B;
-    background-color: rgba(77, 42, 123, 0.1);
+    color: white;
+    background-color: #4D2A7B;
     font-size: 24;
     text-align: center;
     padding: 10;
     border-radius: 5;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 .instrucciones-btn.active {
+    color: #4D2A7B;
     background-color: transparent;
 }

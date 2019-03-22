@@ -6,14 +6,14 @@
     <StackLayout col="0" verticalAlignment="center">
     </StackLayout>
     <StackLayout col="1" class="instrucciones-txt">
-      <Label text="{{entrevista?.instr_1}}" textWrap="true"></Label>
+      <Label [text]="entrevista?.instr_1" textWrap="true"></Label>
     </StackLayout>
   </GridLayout>
   <GridLayout row="2" columns="auto, *">
     <StackLayout col="0" verticalAlignment="center">
     </StackLayout>
     <StackLayout col="1" class="instrucciones-txt instrucciones-txt-2">
-      <Label text="{{entrevista?.instr_2}}" textWrap="true"></Label>
+      <Label [text]="entrevista?.instr_2" textWrap="true"></Label>
     </StackLayout>
   </GridLayout>
   <GridLayout row="3" class="instrucciones-btn" [nsRouterLink]="['/dashboard/entrevistas/' + entrevista?.id + '/items']"

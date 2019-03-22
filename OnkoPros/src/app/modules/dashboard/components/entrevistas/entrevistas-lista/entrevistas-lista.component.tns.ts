@@ -23,7 +23,7 @@ export class EntrevistasListaComponent implements OnInit {
   spinner: boolean = false;
   private _spinnerSubscription: Subscription;
 
-  entrevistas: Entrevista[];
+  entrevistas: Entrevista[] = [];
   entrevistasDisponibles: boolean = true;
 
   constructor(
