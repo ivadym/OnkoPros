@@ -1,7 +1,9 @@
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { NativeScriptCommonModule } from 'nativescript-angular/common';
+import { NativeScriptFormsModule } from "nativescript-angular/forms"
 import { NativeScriptUISideDrawerModule } from "nativescript-ui-sidedrawer/angular";
 import { NativeScriptUIListViewModule } from "nativescript-ui-listview/angular";
+import { TNSCheckBoxModule } from 'nativescript-checkbox/angular';
 
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { InicioComponent } from './components/inicio/inicio.component';
@@ -29,8 +31,10 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
   ],
   imports: [
     NativeScriptCommonModule,
+    NativeScriptFormsModule,
     NativeScriptUISideDrawerModule,
     NativeScriptUIListViewModule,
+    TNSCheckBoxModule,
     DashboardRoutingModule
   ],
   schemas: [

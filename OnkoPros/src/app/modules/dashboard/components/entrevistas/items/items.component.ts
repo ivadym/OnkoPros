@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, BehaviorSubject } from 'rxjs';
 
 import { Item } from '../../../../../classes/item';
 import { Valor } from '../../../../../classes/valor';
@@ -24,7 +24,7 @@ export class ItemsComponent implements OnInit {
    * Centra el cursor en el campo de "Respuesta personalizada" cuando se seleciona la opción "Otro"
    */
   autofocus(valor: string): void {
-    if (valor == 'Otro' && this.valoresSeleccionados.indexOf(valor) >= 0) {
+    if (valor == 'Otro' && this.valores_seleccionados.indexOf(valor) >= 0) {
       setTimeout(() => {
         this.otroField.nativeElement.focus();
       }, 100);
@@ -37,7 +37,10 @@ export class ItemsComponent implements OnInit {
   item: Item;
   valor: Valor;
   valor_personal: string;
-  private valoresSeleccionados: string[];
+  private valores_seleccionados: string[];
+
+  checked$: string;
+  private _checkedSubject: BehaviorSubject<string>;
 
   constructor(
     private route: ActivatedRoute,
@@ -49,6 +52,10 @@ export class ItemsComponent implements OnInit {
   ) {
     this._spinnerSubscription = this.spinnerService.estadoSpinnerObservable.subscribe(
       estado => this.spinner = estado
+    );
+    this._checkedSubject = new BehaviorSubject("");
+    this._checkedSubject.asObservable().subscribe(
+      opcion => this.checked$ = opcion
     );
   }
 
@@ -115,22 +122,20 @@ export class ItemsComponent implements OnInit {
       datos => {
         if(datos.alerta) {
           this.cuadroDialogoService.alerta(
-            'Según los resultados reportados, es necesario que siga las siguientes intrucciones:',
+            'Atención, es necesario que siga las siguientes intrucciones:',
             datos.alerta
           ).then(
             res => {
               console.log('SERVIDOR - Confirmación respuesta usuario: ');
-              console.log(datos.valor.id); console.log(datos.valor.valor); console.log(datos.valor.valorTexto);
-              this.clearItemActual();
-              this.clearValorActual();
+              console.log(datos.valor.id); console.log(datos.valor.valores);
+              this.limpiarContexto();
               this.extraerItem(id_entrevista);
             }
           );
         } else if(datos.valor) {
           console.log('SERVIDOR - Confirmación respuesta usuario: ');
-          console.log(datos.valor.id); console.log(datos.valor.valor); console.log(datos.valor.valorTexto);
-          this.clearItemActual();
-          this.clearValorActual();
+          console.log(datos.valor.id); console.log(datos.valor.valores);
+          this.limpiarContexto();
           this.extraerItem(id_entrevista);
         } else {
           // TODO: Tratamiento del error/Mensaje de error al usuario (footer popup)
@@ -149,14 +154,15 @@ export class ItemsComponent implements OnInit {
    */
   setValor(id: number, valor: string): void {
     if(this.item.tipo === 'radio') { // RADIO BUTTON
-      this.valoresSeleccionados = [valor];
+      this.valores_seleccionados = [valor];
+      this._checkedSubject.next(valor);
     } else if(this.item.tipo === 'checkbox') { // CHECKBOX
-      if(!this.valoresSeleccionados) {
-        this.valoresSeleccionados = [valor];
-      } else if(this.valoresSeleccionados.indexOf(valor) >= 0) {
-        this.valoresSeleccionados.splice(this.valoresSeleccionados.indexOf(valor), 1);
+      if(!this.valores_seleccionados) {
+        this.valores_seleccionados = [valor];
+      } else if(this.valores_seleccionados.indexOf(valor) >= 0) {
+        this.valores_seleccionados.splice(this.valores_seleccionados.indexOf(valor), 1);
       } else {
-        this.valoresSeleccionados.push(valor);
+        this.valores_seleccionados.push(valor);
       }
     }
 
@@ -166,7 +172,7 @@ export class ItemsComponent implements OnInit {
       id: id,
       titulo: this.item.titulo,
       tipo: this.item.tipo,
-      valores: this.valoresSeleccionados
+      valores: this.valores_seleccionados
     }
   }
 
@@ -175,26 +181,21 @@ export class ItemsComponent implements OnInit {
    */
   responder(): void {
     const id = +this.route.snapshot.paramMap.get('id');
-    if(this.valoresSeleccionados.indexOf('Otro') >= 0 && this.valor_personal != null  && this.valor_personal != ' ') {
-      this.valor.valores[this.valoresSeleccionados.indexOf('Otro')] = this.valor_personal;
+    if(this.valores_seleccionados.indexOf('Otro') >= 0 && this.valor_personal != null  && this.valor_personal != '') {
+        this.valor.valores[this.valores_seleccionados.indexOf('Otro')] = this.valor_personal;
     }
     this.enviarValor(id, this.valor);
   }
 
   /**
-   * Limpia la pregunta actual
+   * Limpia la pregunta descargada y la respuesta del usuario
    */
-  clearItemActual(): void {
+  limpiarContexto(): void {
     this.item = null;
-  }
-
-  /**
-   * Limpia la respuesta del usuario
-   */
-  clearValorActual(): void {
     this.valor = null;
-    this.valoresSeleccionados = null;
+    this.valores_seleccionados = null;
     this.valor_personal = null;
+    this.checked$ = null;
   }
 
 }
