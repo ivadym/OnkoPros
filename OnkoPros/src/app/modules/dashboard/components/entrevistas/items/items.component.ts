@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Subscription, BehaviorSubject } from 'rxjs';
 
@@ -48,11 +48,10 @@ export class ItemsComponent implements OnInit {
     private navegacionService: NavegacionService,
     private spinnerService: SpinnerService,
     private cuadroDialogoService: CuadroDialogoService,
-    private errorHandler: HttpErrorHandlerService
+    private errorHandler: HttpErrorHandlerService,
+    private _changeDetectionRef: ChangeDetectorRef
+
   ) {
-    this._spinnerSubscription = this.spinnerService.estadoSpinnerObservable.subscribe(
-      estado => this.spinner = estado
-    );
     this._checkedSubject = new BehaviorSubject("");
     this._checkedSubject.asObservable().subscribe(
       opcion => this.checked$ = opcion
@@ -61,6 +60,12 @@ export class ItemsComponent implements OnInit {
 
   ngOnInit() {
     this.extraerItem(+this.route.snapshot.paramMap.get('id'));
+    this._spinnerSubscription = this.spinnerService.estadoSpinnerObservable.subscribe(
+      estado => {
+        this.spinner = estado
+        , this._changeDetectionRef.detectChanges()
+      }
+    );
   }
 
   ngOnDestroy() {

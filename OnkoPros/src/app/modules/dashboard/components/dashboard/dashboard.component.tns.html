@@ -36,7 +36,7 @@
             <Label class="fas" text="&#xf015;"></Label>
           </StackLayout>
           <StackLayout row="1" class="nav-feature">
-            <Label text="Inicio"></Label>
+            <Label text="Inicio" textWrap="true"></Label>
           </StackLayout>
       </StackLayout>
       <StackLayout col="1" rows="*, *" class="nav" [nsRouterLink]="['/dashboard/entrevistas']" nsRouterLinkActive="active">
@@ -44,7 +44,7 @@
           <Label class="fas" text="&#xf481;"></Label>
         </StackLayout>
         <StackLayout row="1" class="nav-feature">
-          <Label text="Entrevistas"></Label>
+          <Label text="Entrevistas" textWrap="true"></Label>
         </StackLayout>
       </StackLayout>
       <StackLayout col="2" rows="*, *" class="nav" [nsRouterLink]="['/dashboard/notificaciones']" nsRouterLinkActive="active">
@@ -52,7 +52,7 @@
           <Label class="fas" text="&#xf7f5;"></Label>
         </StackLayout>
         <StackLayout row="1" class="nav-feature">
-          <Label text="Avisos"></Label>
+          <Label text="Avisos" textWrap="true"></Label>
         </StackLayout>
       </StackLayout>
       <StackLayout col="3" rows="*, *" class="nav nav-drawer" (tap)="abrirDrawer()">
@@ -60,7 +60,7 @@
           <Label class="fas" text="&#xf0c9;"></Label>
         </StackLayout>
         <StackLayout row="1" class="nav-feature">
-          <Label text="Más"></Label>
+          <Label text="Más" textWrap="true"></Label>
         </StackLayout>
       </StackLayout>
     </GridLayout>
