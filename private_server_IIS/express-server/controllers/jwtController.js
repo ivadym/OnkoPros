@@ -13,7 +13,7 @@ exports.generarJWT = function (req, res, next) {
       { id: req.usuario.id },
       privateKey,
       {
-        expiresIn: '2h',
+        expiresIn: '24h',
         algorithm: 'RS256'
       }
     );

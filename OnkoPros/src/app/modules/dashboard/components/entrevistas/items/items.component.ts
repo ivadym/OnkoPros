@@ -149,7 +149,7 @@ export class ItemsComponent implements OnInit {
       },
       error => {
         //TODO: Fichero de logs
-        this.errorHandler.handleError(error, `enviarValor(${id_entrevista}, ${valor})`);
+        this.errorHandler.handleError(error, `enviarValor(${id_entrevista}, ${valor.id})`);
       }
     )
   }

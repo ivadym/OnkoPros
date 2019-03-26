@@ -39,43 +39,42 @@ export class HttpErrorHandlerService {
     // TODO: Mejorar el tratamiento del error para que sea digerido por el usuario
     console.error(`ERROR en la operación ${operacion}: ${mensaje}`);
     */
-
-    console.error(error);
+    console.error(`ERROR en la operación ${operacion}: ${error.error}`);
   };
 
   /**
    * Trata el error HTTP 400 Bad Request
    */
-  badRequest() {
+  badRequest(): void {
     this.navegacionService.navegar('/404', false);
   }
 
   /**
    * Trata el error HTTP 404 Not Found
    */
-  notFound() {
+  notFound(): void {
     this.navegacionService.navegar('/404', false);
   }
 
   /**
    * Trata el error HTTP 403 Forbidden
    */
-  forbidden() {
+  forbidden(): void {
     this.cuadroDialogoService.alerta(
       'Su sesión ha caducado.',
       'Si lo desea, puede volver a iniciar sesión.'
     );
-    this.authService.logout();
+    this.authService.limpiarSesion();
   }
 
   /**
    * Trata el error HTTP 500 - Internal Server Error
    */
-  serverError() {
+  serverError(): void {
     this.cuadroDialogoService.alerta(
       'Se ha producido un error en el servidor.',
       'Vuelva a intentar la operación más adelante.'
-    )
+    );
   }
   
 }
