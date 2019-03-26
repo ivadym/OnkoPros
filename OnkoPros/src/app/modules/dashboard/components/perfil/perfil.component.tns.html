@@ -1,3 +1,56 @@
-<StackLayout class="m-15" sdkExampleTitle sdkToggleNavButton>
-  <Label text="3--PERFIL-COMPONENT--"></Label>
-</StackLayout>
+<GridLayout class="perfil-container" rows="auto, auto, auto" verticalalignment="center">
+  <GridLayout row="0">
+    <Label class="fas-perfil" text="&#xf2bd;"></Label>
+  </GridLayout>
+  <GridLayout row="1" rows="auto, auto" class="perfil-header">
+    <GridLayout row="0" class="perfil-usuario">
+      <Label text="{{usuarioLogueado.nombre  | titlecase}} {{usuarioLogueado.apellido_1  | titlecase}} {{usuarioLogueado.apellido_2 | titlecase}}" textWrap="true"></Label>
+    </GridLayout>
+    <GridLayout row="1" class="perfil-rol">
+      <Label text="{{usuarioLogueado.rol | titlecase}}" textWrap="true"></Label>
+    </GridLayout>
+  </GridLayout>
+  <GridLayout row="2" rows="auto, auto, auto, auto, auto" class="perfil-datos">
+    <GridLayout row="0" columns="*, *" class="perfil-datos-row">
+      <StackLayout col="0" class="perfil-datos-col-1">
+        <Label text="Nombre de usuario" textWrap="true"></Label>
+      </StackLayout>
+      <StackLayout col="1" class="perfil-datos-col-2">
+        <Label text="{{usuarioLogueado.usuario}}" textWrap="true"></Label>
+      </StackLayout>
+    </GridLayout>
+    <GridLayout row="1" columns="*, *" class="perfil-datos-row">
+      <StackLayout col="0" class="perfil-datos-col-1">
+        <Label text="Sexo" textWrap="true"></Label>
+      </StackLayout>
+      <StackLayout col="1" class="perfil-datos-col-2">
+        <Label *ngIf="usuarioLogueado.sexo == 1" text="Hombre" textWrap="true"></Label>
+        <Label *ngIf="usuarioLogueado.sexo == 2" text="Mujer" textWrap="true"></Label>
+      </StackLayout>
+    </GridLayout>
+    <GridLayout row="2" columns="*, *" class="perfil-datos-row">
+      <StackLayout col="0" class="perfil-datos-col-1">
+        <Label text="Fecha de nacimiento" textWrap="true"></Label>
+      </StackLayout>
+      <StackLayout col="1" class="perfil-datos-col-2">
+        <Label text="{{usuarioLogueado.fecha_nacimiento | date: 'dd/MM/yyy'}}" textWrap="true"></Label>
+      </StackLayout>
+    </GridLayout>
+    <GridLayout row="3" columns="*, *" class="perfil-datos-row">
+      <StackLayout col="0" class="perfil-datos-col-1">
+        <Label text="Número de teléfono" textWrap="true"></Label>
+      </StackLayout>
+      <StackLayout col="1" class="perfil-datos-col-2">
+        <Label text="{{usuarioLogueado.telefono}}" textWrap="true"></Label>
+      </StackLayout>
+    </GridLayout>
+    <GridLayout row="4" columns="*, *" class="perfil-datos-row">
+      <StackLayout col="0" class="perfil-datos-col-1">
+        <Label text="Correo electrónico" textWrap="true"></Label>
+      </StackLayout>
+      <StackLayout col="1" class="perfil-datos-col-2">
+        <Label text="{{usuarioLogueado.email}}" textWrap="true"></Label>
+      </StackLayout>
+    </GridLayout>
+  </GridLayout>
+</GridLayout>

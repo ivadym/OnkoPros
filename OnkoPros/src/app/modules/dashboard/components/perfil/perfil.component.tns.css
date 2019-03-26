@@ -1,0 +1,43 @@
+.perfil-container {
+    margin: 5;
+}
+
+.fas-perfil {
+    color: #2A7B6F;
+    font-family: Font Awesome 5 Free, fa-solid-900;
+    font-size: 150;
+    text-align: center;
+}
+
+.perfil-header {
+    margin-top: 40;
+    margin-bottom: 40;
+    text-align: center;
+}
+
+.perfil-usuario {
+    color: #2A367B;
+    font-size: 24;
+    font-weight: bold;
+}
+
+.perfil-rol {
+    color: #2A7B6F;
+    font-size: 20;
+}
+
+.perfil-datos {
+    font-size: 18;
+}
+
+.perfil-datos-row {
+    padding-bottom: 5;
+}
+
+.perfil-datos-col-1 {
+    color: #2A367B;
+}
+
+.perfil-datos-col-2 {
+    color: #4D2A7B;
+}

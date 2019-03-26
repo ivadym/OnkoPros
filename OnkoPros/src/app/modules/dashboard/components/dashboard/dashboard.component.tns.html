@@ -10,7 +10,7 @@
             <Label class="fas" text="&#xf007;"></Label>
           </StackLayout>
           <StackLayout row="1" horizontalAlignment="center">
-            <Label text="{{usuarioLogueado.nombre}} {{usuarioLogueado.apellido_1}}" textWrap="true"></Label>
+            <Label text="{{usuarioLogueado.nombre | titlecase}} {{usuarioLogueado.apellido_1 | titlecase}}" textWrap="true"></Label>
           </StackLayout>
       </StackLayout>
       <StackLayout col="1" rows="*, *" class="drawer-feature drawer-feature-logout" (tap)="logout()">
