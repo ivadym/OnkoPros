@@ -1,13 +1,12 @@
-<GridLayout class="login-form" rows="auto, auto, auto, auto" [formGroup]="loginForm">
-  <GridLayout class="row" row="0">
-    <Label class="login-instrucciones" [isEnabled]="!spinner" text="Escriba su nombre de usuario y contraseña"
-      textWrap="true"></Label>
+<GridLayout rows="auto, auto, auto, auto" [formGroup]="loginForm">
+  <GridLayout row="0" class="login-instrucciones" [isEnabled]="!spinner">
+    <Label text="Escriba su nombre de usuario y contraseña" textWrap="true"></Label>
   </GridLayout>
-  <GridLayout class="row" row="1" rows="auto, auto">
+  <GridLayout row="1" rows="auto, auto" class="login-form-user">
     <GridLayout row="0">
       <TextField #usuarioField style.placeholderColor="rgba(42, 54, 123, 0.5)" required
         [isEnabled]="!spinner"
-        class="form-control"
+        class="login-form-control"
         formControlName="usuario"
         hint="Usuario"
         autocorrect="false"
@@ -19,11 +18,11 @@
         text="Introduzca un nombre de usuario"></Label>
     </GridLayout>
   </GridLayout>
-  <GridLayout class="row" row="2" rows="auto, auto">
+  <GridLayout row="2" rows="auto, auto" class="login-form-pssw">
     <GridLayout row="0">
       <TextField style.placeholderColor="rgba(42, 54, 123, 0.5)" required
         [isEnabled]="!spinner"
-        class="form-control"
+        class="login-form-control"
         formControlName="clave"
         hint="Clave" 
         secure="true"
@@ -36,8 +35,8 @@
         text="Introduzca una clave de usuario"></Label>
     </GridLayout>
   </GridLayout>
-  <GridLayout class="row" row="3">
-    <Button [isEnabled]="loginForm.valid && !spinner" class="btn-login" text="Iniciar sesión" (tap)="login()"></Button>
+  <GridLayout row="3" [isEnabled]="loginForm.valid && !spinner" class="login-btn" (tap)="login()">
+    <Label text="Iniciar sesión"></Label>
   </GridLayout>
   <ActivityIndicator
     [busy]="spinner"

@@ -1,5 +1,10 @@
 .container-lista {
-    margin: 20 5 10 5;
+    margin: 5;
+}
+
+.entrevista-lista {
+    margin-top: 20;
+    margin-bottom: 5;
 }
 
 .entrevista-item {
@@ -35,7 +40,7 @@
     border-radius: 5;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-    margin-bottom: 40;
+    margin-bottom: 50;
 }
 
 .fas-entrevista {
@@ -53,7 +58,7 @@
     border-radius: 5;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
-    margin-top: 40;
+    margin-top: 50;
 }
 
 .entrevista-fin-btn.active {

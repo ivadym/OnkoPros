@@ -1,38 +1,38 @@
-.login-form {
-    margin: 30;
-}
-
-.row {
-    margin: 5;
-}
-
 .login-instrucciones {
-    font-size: 16;
-    font-weight: 400; 
+    font-size: 18;
+    font-weight: 400;
+    margin-bottom: 10;
 }
 
-.form-control {
-    font-size: 18;
+.login-form-user, .login-form-pssw {
+    font-size: 22;
     font-weight: 400; 
     color: #2A367B;
+}
+
+.login-form-user {
+    margin-bottom: 10;
+}
+
+.login-form-control {
     background-color:#F2F4FF;
     border-radius: 5;
 }
 
 .alert-warning {
-    font-size: 16;
+    font-size: 18;
     font-weight: 400; 
     color: darkorange;
 }
 
-.btn-login {
-    font-size: 18;
-    font-weight: 500;
+.login-btn {
+    font-size: 24;
     color: white;
-    background-color: #2A367B;
+    background-color: #2A7B6F;
+    text-align: center;
+    padding: 10;
     border-radius: 5;
-    margin-top: 30;
-    text-transform: capitalize;
+    margin-top: 40;
 }
 
 :disabled {

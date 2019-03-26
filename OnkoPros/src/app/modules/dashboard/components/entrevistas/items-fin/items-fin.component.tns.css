@@ -7,10 +7,10 @@
     border-radius: 5;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-    margin-bottom: 40;
+    margin-bottom: 50;
 }
 
-.fas-entrevista {
+.fas-item {
     font-family: Font Awesome 5 Free, fa-solid-900;
     font-size: 82;
     text-align: center;
@@ -25,7 +25,7 @@
     border-radius: 5;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
-    margin-top: 40;
+    margin-top: 50;
 }
 
 .item-fin-btn-l {
