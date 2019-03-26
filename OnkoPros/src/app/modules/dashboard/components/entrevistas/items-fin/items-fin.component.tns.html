@@ -1,4 +1,18 @@
-<StackLayout class="m-15" sdkExampleTitle sdkToggleNavButton>
-  <Label text="4--ITEMS-FIN-COMPONENT--"></Label>
-  <Button class="btn btn-primary btn-active" id="button" text="Inicio" [nsRouterLink]="['/dashboard']"></Button>
-</StackLayout>
+<GridLayout rows="auto, *, auto" verticalAlignment="center">
+  <StackLayout row="0" class="item-fin">
+    <Label text="¡Enhorabuena, ha finalizado la entrevista!" textWrap="true"></Label>
+  </StackLayout>
+  <StackLayout row="1">
+    <Label class="fas-entrevista" text="&#xf46c;"></Label>
+  </StackLayout>
+  <GridLayout row="2" columns="*, *">
+    <StackLayout col="0" class="item-fin-btn-l" [nsRouterLink]="['/dashboard/entrevistas']" nsRouterLinkActive="active"
+    [nsRouterLinkActiveOptions]="{exact: true}">
+        <Label text="Realizar otra entrevista" textWrap="true"></Label>
+    </StackLayout>
+    <StackLayout col="1" class="item-fin-btn-r" [nsRouterLink]="['/dashboard']" nsRouterLinkActive="active"
+      [nsRouterLinkActiveOptions]="{exact: true}">
+        <Label text="Volver a la pantalla de inicio" textWrap="true"></Label>
+    </StackLayout>
+  </GridLayout>
+</GridLayout>

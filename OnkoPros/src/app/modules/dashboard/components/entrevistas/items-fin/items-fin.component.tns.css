@@ -1,0 +1,43 @@
+.item-fin {
+    color: white;
+    background-color: #2A367B;
+    font-size: 24;
+    text-align: center;
+    padding: 10;
+    border-radius: 5;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-bottom: 40;
+}
+
+.fas-entrevista {
+    font-family: Font Awesome 5 Free, fa-solid-900;
+    font-size: 82;
+    text-align: center;
+}
+
+.item-fin-btn-l, .item-fin-btn-r {
+    color: white;
+    background-color: #2A7B6F;
+    font-size: 24;
+    text-align: center;
+    padding: 10;
+    border-radius: 5;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    margin-top: 40;
+}
+
+.item-fin-btn-l {
+    margin-right: 5;
+    border-bottom-right-radius: 0;
+}
+
+.item-fin-btn-r {
+    border-bottom-left-radius: 0;
+}
+
+.item-fin-btn-l.active, .item-fin-btn-r.active {
+    color: #2A7B6F;
+    background-color: transparent;
+}
