@@ -2,7 +2,7 @@
   <RadListView #listView [items]="entrevistas" pullToRefresh="true" (pullToRefreshInitiated)="extraerEntrevistas($event)">
     <ng-template let-entrevista="item" let-i="index">
       <ScrollView scrollDirection="Vertical">
-        <GridLayout *ngIf="entrevistasDisponibles" rows="*, *" class="entrevista-item"
+        <GridLayout *ngIf="entrevistasDisponibles" rows="*, *" [isEnabled]="!spinner" class="entrevista-item"
           [nsRouterLink]="['/dashboard/entrevistas/' + entrevista.id]" nsRouterLinkActive="active">
             <StackLayout row="0" class="entrevista-titulo">
               <Label [text]="entrevista.titulo" textWrap="true"></Label>

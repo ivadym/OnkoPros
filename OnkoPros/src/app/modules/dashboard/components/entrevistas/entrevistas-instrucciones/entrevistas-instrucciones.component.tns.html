@@ -16,8 +16,8 @@
       <Label [text]="entrevista?.instr_2" textWrap="true"></Label>
     </StackLayout>
   </GridLayout>
-  <GridLayout row="3" class="instrucciones-btn" [nsRouterLink]="['/dashboard/entrevistas/' + entrevista?.id + '/items']"
-    nsRouterLinkActive="active" clearHistory="true">
+  <GridLayout row="3" class="instrucciones-btn" [isEnabled]="!spinner"
+    [nsRouterLink]="['/dashboard/entrevistas/' + entrevista?.id + '/items']" nsRouterLinkActive="active" clearHistory="true">
       <Label text="¡Comenzar la entrevista!"></Label>
   </GridLayout>
 </GridLayout>

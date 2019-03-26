@@ -24,30 +24,39 @@
     font-size: 18;
 }
 
+/* ENTREVISTAS FINALIZADAS */
+
 .entrevista-fin {
-    color: #2A367B;
-    font-size: 22;
-    text-align: center;
-}
-
-.fas-entrevista {
-    color: #2A7B6F;
-    font-family: Font Awesome 5 Free, fa-solid-900;
-    font-size: 82;
-    text-align: center;
-    margin-top: 40;
-    margin-bottom: 40;
-}
-
-.entrevista-fin-btn {
-    color: #2A367B;
-    background-color: rgba(77, 42, 123, 0.1);
-    font-size: 22;
+    color: white;
+    background-color: #2A367B;
+    font-size: 24;
     text-align: center;
     padding: 10;
     border-radius: 5;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-bottom: 40;
+}
+
+.fas-entrevista {
+    font-family: Font Awesome 5 Free, fa-solid-900;
+    font-size: 82;
+    text-align: center;
+}
+
+.entrevista-fin-btn {
+    color: white;
+    background-color: #2A7B6F;
+    font-size: 24;
+    text-align: center;
+    padding: 10;
+    border-radius: 5;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    margin-top: 40;
 }
 
 .entrevista-fin-btn.active {
+    color: #2A7B6F;
     background-color: transparent;
 }

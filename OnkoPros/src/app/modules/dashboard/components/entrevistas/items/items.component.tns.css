@@ -36,18 +36,13 @@
 
 .item-btn {
     color: white;
-    background-color: #4D2A7B;
+    background-color: #2A7B6F;
     font-size: 24;
     text-align: center;
     padding: 10;
     border-radius: 5;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
-}
-
-.item-btn.active {
-    color: #4D2A7B;
-    background-color: transparent;
 }
 
 :disabled {

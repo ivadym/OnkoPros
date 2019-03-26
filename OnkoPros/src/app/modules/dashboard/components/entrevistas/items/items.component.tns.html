@@ -7,6 +7,7 @@
       <StackLayout orientation="vertical">
         <GridLayout class="item-opcion" rows="auto, auto, auto" *ngIf="item.tipo === 'radio' || item.tipo === 'checkbox'">
           <CheckBox class="item-opcion-cb" row="0" *ngIf="item.tipo ==='radio' && val != null"
+            [isEnabled]="!spinner"
             [checked]="val === checked$"
             [text]="val" textWrap="true"
             boxType="circle"
@@ -14,14 +15,15 @@
             (tap)="setValor(item.id, item.valores[i])">
           </CheckBox>
           <CheckBox class="item-opcion-cb" row="1" *ngIf="item.tipo ==='checkbox' && val != null"
+            [isEnabled]="!spinner"
             [text]="val" textWrap="true"
             boxType="square"
             fillColor="#2A367B"
             (tap)="setValor(item.id, item.valores[i])">
           </CheckBox>
           <TextField #otroField row="2" *ngIf="val === 'Otro' && valor ? valor.valores.indexOf('Otro') > -1 : false"
-            [(ngModel)]="valor_personal"
             [isEnabled]="!spinner"
+            [(ngModel)]="valor_personal"
             class="item-otro"
             hint="Elabore su propia respuesta"
             secure="false"
@@ -33,7 +35,7 @@
       </StackLayout>
     </ng-template>
   </RadListView>
-  <GridLayout row="2" class="item-btn" [isEnabled]="valor?.valores.length > 0" (tap)="responder()">
+  <GridLayout row="2" class="item-btn" [isEnabled]="valor?.valores.length > 0 && !spinner" (tap)="responder()">
     <Label text="Responder"></Label>
   </GridLayout>
   <ActivityIndicator
