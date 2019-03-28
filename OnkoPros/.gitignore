@@ -44,6 +44,8 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
+google-services.json
+GoogleService-Info.plist
 
 # System Files
 .DS_Store
