@@ -69,23 +69,38 @@ export class LoginComponent implements OnInit {
     return this.loginForm.get('clave'); 
   }
 
-  /**
+/**
    * Verifica las credenciales introducidas
    */
   login(): void {
     this.authService.postLogin(this.usuario.value, this.clave.value).subscribe(
       usuario => {
-        if (usuario && usuario.jwt) {
+        if (usuario && usuario.JWT) {
           // TODO: Fichero de logs
-          console.log('SERVIDOR - Autenticación: ' + usuario.usuario + '/' + usuario.jwt);
-          this.authService.usuarioLogueado = usuario;
-          let redirect = this.authService.urlInicial ? this.authService.urlInicial : '';
-          this.navegacionService.navegar(redirect, true);
+          if(usuario.Perfil.length > 1) { // Usuario con múltiples perfiles
+            this.cuadroDialogoService.seleccionPerfil(usuario).then(
+              res => {
+                if(res) {
+                  console.log('SERVIDOR - Autenticación: ' + res.Usuario + '/' + res.JWT);
+                  this.authService.usuarioLogueado = res;
+                  let redirect = this.authService.urlInicial ? this.authService.urlInicial : '';
+                  this.navegacionService.navegar(redirect, true);
+                } else {
+                  return; // El usuario ha cancelado la selección de perfil (y por lo tanto el login)
+                }
+              }
+            );
+          } else { // Usuario con un único perfil
+            console.log('SERVIDOR - Autenticación: ' + usuario.Usuario + '/' + usuario.JWT);
+            this.authService.usuarioLogueado = usuario;
+            let redirect = this.authService.urlInicial ? this.authService.urlInicial : '';
+            this.navegacionService.navegar(redirect, true);
+          }
         } else {
           // TODO: ¿Código nunca alcanzable?
           // TODO: Manejo fallo autenticación / Fichero de logs
           // TODO: Diferenciar fallo autenticación y caída posible del servidor
-          // console.error('LOG login() (fallo de autenticación)');
+          console.log('LOG login() (fallo de autenticación)');
         }
       },
       error => {

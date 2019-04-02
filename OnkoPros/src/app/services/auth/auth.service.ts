@@ -22,8 +22,8 @@ const httpOptions = {
 })
 export class AuthService {
 
-  private _authURL = 'api/auth'; // URL de la web api (NGINX)
-  // private _authURL = 'http://172.27.6.220:8081/api/auth'; // URL de la web api (nodejs)
+  // private _authURL = 'api/auth'; // URL de la web api (NGINX)
+  private _authURL = 'http://172.27.6.220:8081/api/auth'; // URL de la web api (nodejs)
   
   private _urlInicial: string; // URL de redirección
   private _usuarioSubject: BehaviorSubject<Usuario>;
@@ -145,7 +145,7 @@ export class AuthService {
    * Devuelve el token asociado al usuario
    */
   getJWT(): string {
-    return this.usuarioLogueado ? this.usuarioLogueado.jwt : null;
+    return this.usuarioLogueado ? this.usuarioLogueado.JWT : null;
   }
 
 }

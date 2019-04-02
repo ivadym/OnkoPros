@@ -20,8 +20,8 @@ const httpOptions = {
 })
 export class EntrevistasService {
 
-  private _entrevistasURL = 'api/entrevistas';  // URL de la web api (NGINX)
-  // private _entrevistasURL = 'http://172.27.6.220:8081/api/entrevistas'; // URL de la web api (nodejs)
+  // private _entrevistasURL = 'api/entrevistas';  // URL de la web api (NGINX)
+  private _entrevistasURL = 'http://172.27.6.220:8081/api/entrevistas'; // URL de la web api (nodejs)
 
   constructor(
     private http: HttpClient,

@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
-import { confirm, alert } from "tns-core-modules/ui/dialogs";
+import { confirm, alert, action } from "tns-core-modules/ui/dialogs";
+
+import { Usuario } from '../../classes/usuario';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +31,34 @@ export class CuadroDialogoService {
       message: mensaje_2,
       okButtonText: "Aceptar"
     });
+  }
+
+  /**
+   * Muestra un cuadro de diálogo para elegir el perfil de la sesión iniciada
+   */
+  seleccionPerfil(usuario): Promise<Usuario> {
+    return action({
+      message: "Elija el perfil con el que desee iniciar sesión",
+      cancelButtonText: "Cancelar",
+      actions: usuario.Perfil
+    }).then(
+      res => {
+        switch(res) {
+          case "Administrador": {
+            usuario.Perfil = ["Administrador"];
+            return usuario;
+          } 
+          case "Profesional de la salud": {
+            usuario.Perfil = ["Profesional de la salud"];
+            return usuario;
+          } 
+          case "Paciente": {
+            usuario.Perfil = ["Paciente"];
+            return usuario; 
+          }
+        }
+      }
+    );
   }
 
 }

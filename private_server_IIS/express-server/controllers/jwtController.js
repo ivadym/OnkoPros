@@ -1,4 +1,4 @@
-const fs   = require('fs');
+const fs = require('fs');
 const jwt = require('jsonwebtoken');
 
 var privateKey  = fs.readFileSync('./RSA/private.key');
@@ -9,15 +9,14 @@ var publicKey  = fs.readFileSync('./RSA/public.key');
  */
 exports.generarJWT = function (req, res, next) {
   try {
-    req.usuario.jwt = jwt.sign(
+    req.usuario.JWT = jwt.sign(
       { id: req.usuario.id },
       privateKey,
       {
-        expiresIn: '24h',
+        expiresIn: '2h',
         algorithm: 'RS256'
       }
     );
-    // TODO: Filtrar los datos que son necesarios enviar en primera instancia
     res.status(200).json(req.usuario);
   } catch (error) {
     // TODO: Tratamiento error interno servidor

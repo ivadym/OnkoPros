@@ -10,7 +10,9 @@ const config = require('./config');
 exports.checkCredenciales = function (usuario, clave) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
-        var query = `SELECT * FROM GEOP_USUARIO WHERE usuario=@usuario AND clave=@clave AND activo='true';`;
+        var query = `SELECT u.IdUsuario, up.Perfil, u.Usuario, u.Nombre, u.PrimerApellido, u.SegundoApellido, u.Sexo,  u.FechaNacimiento, u.Telefono, u.Email
+                    FROM GEOP_USUARIO u INNER JOIN GEOP_USUARIO_PERFIL up
+                    ON u.Usuario=@usuario AND u.Clave=@clave AND u.IdUsuario=up.IdUsuario AND up.Estado=1;`
         var result = [];
 
         connection.on('connect', function(err) {
@@ -37,8 +39,23 @@ exports.checkCredenciales = function (usuario, clave) {
                 
                 request.on('requestCompleted', function () {
                     if(result[0]) {
-                        delete result[0].clave;
-                        resolve(result[0]);
+                        var perfiles = [];
+                        for (var i = 0; i < result.length; i++) {
+                            switch (result[i].Perfil) {
+                                case 0:
+                                    perfiles.push('Administrador');
+                                    break; 
+                                case 1:
+                                    perfiles.push('Profesional de la salud');
+                                    break; 
+                                case 2:
+                                    perfiles.push('Paciente');
+                                    break; 
+                            }
+                        }
+                        result = result[0];
+                        result.Perfil = perfiles;
+                        resolve(result);
                     } else {
                         resolve(null);
                     }

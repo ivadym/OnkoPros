@@ -13,7 +13,7 @@ export class JwtInterceptor implements HttpInterceptor {
  
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>>  {
     const authToken = this.authService.getJWT();
-    const id = this.authService.usuarioLogueado ? this.authService.usuarioLogueado.id.toString() : '';
+    const id = this.authService.usuarioLogueado ? this.authService.usuarioLogueado.IdUsuario.toString() : '';
     const authReq = req.clone({ // Clonado de la petición y añadido el header de autenticación
       setHeaders: {
         id: id,
