@@ -1,6 +1,6 @@
 <GridLayoyt rows="*">
   <StackLayout row="0" class="bienvenido" verticalAlignment="center" horizontalAlignment="center">
-    <Label text="Bienvenido {{usuarioLogueado.nombre}} {{usuarioLogueado.apellido_1}} {{usuarioLogueado.apellido_2}}"
+    <Label text="Bienvenido {{usuarioLogueado.Nombre | titlecase}} {{usuarioLogueado.PrimerApellido | titlecase}} {{usuarioLogueado.SegundoApellido | titlecase}}"
       textWrap="true">
     </Label>
   </StackLayout>

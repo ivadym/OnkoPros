@@ -4,11 +4,10 @@
   </div> 
   <div class="col-md-8 datos-col">
     <h1 class="usuario-header display-4 text-center">
-      <i>{{usuarioLogueado.nombre  | titlecase}} {{usuarioLogueado.apellido_1  | titlecase}}
-        {{usuarioLogueado.apellido_2 | titlecase}}</i>
+      <i>{{usuarioLogueado.Nombre  | titlecase}} {{usuarioLogueado.PrimerApellido  | titlecase}} {{usuarioLogueado.SegundoApellido | titlecase}}</i>
       <br>
       <span class="rol-header display-4">
-        {{usuarioLogueado.rol | titlecase}}
+        {{usuarioLogueado.Perfil[0]}}
       </span>
     </h1>
     <div class="datos-usuario">
@@ -17,7 +16,7 @@
           Nombre de usuario
         </div>
         <div class="col-6 campos-usuario">
-          {{usuarioLogueado.usuario}}
+          {{usuarioLogueado.Usuario}}
         </div>
       </div>
       <div class="row dato p-1">
@@ -25,12 +24,7 @@
           Sexo
         </div>
         <div class="col-6 campos-usuario">
-          <div *ngIf="usuarioLogueado.sexo == 1">
-            Hombre
-          </div>
-          <div *ngIf="usuarioLogueado.sexo == 2">
-            Mujer
-          </div>
+          {{usuarioLogueado.Sexo}}
         </div>
       </div>
       <div class="row dato p-1">
@@ -38,7 +32,7 @@
           Fecha de nacimiento
         </div>
         <div class="col-6 campos-usuario">
-          {{usuarioLogueado.fecha_nacimiento | date: 'dd/MM/yyy'}}
+          {{usuarioLogueado.FechaNacimiento | date: 'dd/MM/yyy'}}
         </div>
       </div>
       <div class="row dato p-1">
@@ -46,7 +40,7 @@
           Número de teléfono
         </div>
         <div class="col-6 campos-usuario">
-          {{usuarioLogueado.telefono}}
+          {{usuarioLogueado.Telefono}}
         </div>
       </div>
       <div class="row dato p-1">
@@ -54,7 +48,7 @@
           Correo electrónico
         </div>
         <div class="col-6 campos-usuario">
-          {{usuarioLogueado.email}}
+          {{usuarioLogueado.Email}}
         </div>
       </div>
     </div>

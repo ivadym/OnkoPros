@@ -10,7 +10,7 @@ var publicKey  = fs.readFileSync('./RSA/public.key');
 exports.generarJWT = function (req, res, next) {
   try {
     req.usuario.JWT = jwt.sign(
-      { id: req.usuario.id },
+      { id: req.usuario.IdUsuario },
       privateKey,
       {
         expiresIn: '2h',
@@ -28,27 +28,27 @@ exports.generarJWT = function (req, res, next) {
  * Verifica el JWT asociado a un determinado cliente
  */
 exports.verificarJWT = function (req, res, next) {
-    try {
-      var id = req.headers['id'];
-      var token = req.headers['authorization'].split(' ')[1];
-      jwt.verify(token, publicKey, function(err, decoded) {
-        if (err) {
-          // TODO: Mejor manejo errores
-          res.sendStatus(403); // HTTP 403 Forbidden
-        } else if(decoded) {
-          if(decoded.id == id) {
-            next();
-          } else {
-            // TODO: Mejor manejo errores
-            res.sendStatus(403); // HTTP 403 Forbidden
-          }
+  try {
+    var id = req.headers['id'];
+    var token = req.headers['authorization'].split(' ')[1];
+    jwt.verify(token, publicKey, function(err, decoded) {
+      if (err) {
+        // TODO: Mejor manejo errores
+        res.sendStatus(403); // HTTP 403 Forbidden
+      } else if(decoded) {
+        if(decoded.id == id) {
+          next();
         } else {
           // TODO: Mejor manejo errores
           res.sendStatus(403); // HTTP 403 Forbidden
         }
-      });
-    } catch (error) {
+      } else {
         // TODO: Mejor manejo errores
         res.sendStatus(403); // HTTP 403 Forbidden
-    }
+      }
+    });
+  } catch (error) {
+    // TODO: Mejor manejo errores
+    res.sendStatus(403); // HTTP 403 Forbidden
+  }
 };

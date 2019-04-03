@@ -4,10 +4,10 @@
   </GridLayout>
   <GridLayout row="1" rows="auto, auto" class="perfil-header">
     <GridLayout row="0" class="perfil-usuario">
-      <Label text="{{usuarioLogueado.nombre  | titlecase}} {{usuarioLogueado.apellido_1  | titlecase}} {{usuarioLogueado.apellido_2 | titlecase}}" textWrap="true"></Label>
+      <Label text="{{usuarioLogueado.Nombre | titlecase}} {{usuarioLogueado.PrimerApellido | titlecase}} {{usuarioLogueado.SegundoApellido | titlecase}}" textWrap="true"></Label>
     </GridLayout>
     <GridLayout row="1" class="perfil-rol">
-      <Label text="{{usuarioLogueado.rol | titlecase}}" textWrap="true"></Label>
+      <Label text="{{usuarioLogueado.Perfil[0]}}" textWrap="true"></Label>
     </GridLayout>
   </GridLayout>
   <GridLayout row="2" rows="auto, auto, auto, auto, auto" class="perfil-datos">
@@ -16,7 +16,7 @@
         <Label text="Nombre de usuario" textWrap="true"></Label>
       </StackLayout>
       <StackLayout col="1" class="perfil-datos-col-2">
-        <Label text="{{usuarioLogueado.usuario}}" textWrap="true"></Label>
+        <Label text="{{usuarioLogueado.Usuario}}" textWrap="true"></Label>
       </StackLayout>
     </GridLayout>
     <GridLayout row="1" columns="*, *" class="perfil-datos-row">
@@ -24,8 +24,7 @@
         <Label text="Sexo" textWrap="true"></Label>
       </StackLayout>
       <StackLayout col="1" class="perfil-datos-col-2">
-        <Label *ngIf="usuarioLogueado.sexo == 1" text="Hombre" textWrap="true"></Label>
-        <Label *ngIf="usuarioLogueado.sexo == 2" text="Mujer" textWrap="true"></Label>
+        <Label text="{{usuarioLogueado.Sexo}}" textWrap="true"></Label>
       </StackLayout>
     </GridLayout>
     <GridLayout row="2" columns="*, *" class="perfil-datos-row">
@@ -33,7 +32,7 @@
         <Label text="Fecha de nacimiento" textWrap="true"></Label>
       </StackLayout>
       <StackLayout col="1" class="perfil-datos-col-2">
-        <Label text="{{usuarioLogueado.fecha_nacimiento | date: 'dd/MM/yyy'}}" textWrap="true"></Label>
+        <Label text="{{usuarioLogueado.FechaNacimiento | date: 'dd/MM/yyy'}}" textWrap="true"></Label>
       </StackLayout>
     </GridLayout>
     <GridLayout row="3" columns="*, *" class="perfil-datos-row">
@@ -41,7 +40,7 @@
         <Label text="Número de teléfono" textWrap="true"></Label>
       </StackLayout>
       <StackLayout col="1" class="perfil-datos-col-2">
-        <Label text="{{usuarioLogueado.telefono}}" textWrap="true"></Label>
+        <Label text="{{usuarioLogueado.Telefono}}" textWrap="true"></Label>
       </StackLayout>
     </GridLayout>
     <GridLayout row="4" columns="*, *" class="perfil-datos-row">
@@ -49,7 +48,7 @@
         <Label text="Correo electrónico" textWrap="true"></Label>
       </StackLayout>
       <StackLayout col="1" class="perfil-datos-col-2">
-        <Label text="{{usuarioLogueado.email}}" textWrap="true"></Label>
+        <Label text="{{usuarioLogueado.Email}}" textWrap="true"></Label>
       </StackLayout>
     </GridLayout>
   </GridLayout>

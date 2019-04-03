@@ -39,23 +39,9 @@ exports.checkCredenciales = function (usuario, clave) {
                 
                 request.on('requestCompleted', function () {
                     if(result[0]) {
-                        var perfiles = [];
-                        for (var i = 0; i < result.length; i++) {
-                            switch (result[i].Perfil) {
-                                case 0:
-                                    perfiles.push('Administrador');
-                                    break; 
-                                case 1:
-                                    perfiles.push('Profesional de la salud');
-                                    break; 
-                                case 2:
-                                    perfiles.push('Paciente');
-                                    break; 
-                            }
-                        }
-                        result = result[0];
-                        result.Perfil = perfiles;
-                        resolve(result);
+                        result[0].Perfil = adaptarPerfiles(result);
+                        result[0].Sexo = adaptarSexo(result[0].Sexo);
+                        resolve(result[0]);
                     } else {
                         resolve(null);
                     }
@@ -66,4 +52,41 @@ exports.checkCredenciales = function (usuario, clave) {
             }
         });
     });
+}
+
+/**
+ * Adapta los perfiles extraídos de la BBDD para su presentación
+ */
+function adaptarPerfiles(usuarios) {
+    var perfiles = [];
+    for (var i = 0; i < usuarios.length; i++) {
+        switch (usuarios[i].Perfil) {
+            case 0:
+                perfiles.push('Administrador');
+                break; 
+            case 1:
+                perfiles.push('Profesional de la salud');
+                break; 
+            case 2:
+                perfiles.push('Paciente');
+                break; 
+        }
+    }
+    return perfiles;
+}
+
+/**
+ * Adapta los sexos de los usuarios extraídos de la BBDD para su presentación
+ */
+function adaptarSexo(sexo) {
+    switch (sexo) {
+        case 0:
+            return 'Desconocido';
+        case 1:
+            return 'Hombre';
+        case 2:
+            return 'Mujer';
+        case 9:
+            return 'No aplicable'
+    }
 }
