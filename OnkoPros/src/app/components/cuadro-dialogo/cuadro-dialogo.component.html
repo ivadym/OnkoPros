@@ -15,19 +15,23 @@
 </div>
 <div class="modal-footer">
   <div class="container">
-    <div class="row justify-content-center">
-      <button *ngIf="alerta"ngbAutofocus type="button" class="btn btn-modal col-5 m-2"
-        (click)="modal.close('Aceptar')">
-          Aceptar
+    <div *ngIf="!perfiles" class="row justify-content-center">
+      <button *ngIf="alerta"ngbAutofocus type="button" class="btn btn-modal col-5 m-2" (click)="modal.close('Aceptar')">
+        Aceptar
       </button>
-      <button *ngIf="!alerta" type="button" class="btn btn-modal col-5 m-2"
-        (click)="modal.close('Aceptar')">
-          Aceptar
+      <button *ngIf="!alerta" type="button" class="btn btn-modal col-5 m-2" (click)="modal.close('Aceptar')">
+        Aceptar
       </button>
-      <button *ngIf="!alerta" ngbAutofocus type="button" class="btn btn-modal col-5 m-2"
-        (click)="modal.dismiss('Cancelar')">
-          Cancelar
+      <button *ngIf="!alerta" ngbAutofocus type="button" class="btn btn-modal col-5 m-2" (click)="modal.dismiss('Cancelar')">
+        Cancelar
       </button>
+    </div>
+    <div *ngIf="perfiles">
+      <div *ngFor="let perfil of perfiles" class="row justify-content-center">
+        <button type="button" class="btn btn-modal col-5 m-2" (click)="modal.close(perfil)">
+          {{perfil}}
+        </button>
+      </div>
     </div>
   </div>
 </div>

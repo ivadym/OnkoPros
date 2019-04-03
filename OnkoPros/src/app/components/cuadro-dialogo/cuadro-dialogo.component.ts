@@ -20,6 +20,7 @@ export class CuadroDialogoComponent implements OnInit {
 
   mensaje_1: string;
   mensaje_2: string;
+  perfiles: string[];
   alerta: boolean;
 
   constructor(
