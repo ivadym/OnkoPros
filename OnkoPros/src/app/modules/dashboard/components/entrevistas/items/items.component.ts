@@ -62,8 +62,8 @@ export class ItemsComponent implements OnInit {
     this.extraerItem(+this.route.snapshot.paramMap.get('id'));
     this._spinnerSubscription = this.spinnerService.estadoSpinnerObservable.subscribe(
       estado => {
-        this.spinner = estado
-        , this._changeDetectionRef.detectChanges()
+        this.spinner = estado,
+        this._changeDetectionRef.detectChanges()
       }
     );
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Validators, FormBuilder } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
@@ -15,17 +15,6 @@ import { HttpErrorHandlerService } from '../../../../services/error-handler/http
 })
 export class LoginComponent implements OnInit {
   
-  @ViewChild('usuarioField') usuarioField: ElementRef;
-
-  /**
-   * Centra el cursor en el campo de "Usuario" al cargarse la página
-   */
-  autofocus(): void {
-    setTimeout(() => {
-      this.usuarioField.nativeElement.focus();
-    }, 500);
-  }
-
   spinner: boolean = false;
   private _spinnerSubscription: Subscription;
 
@@ -40,16 +29,15 @@ export class LoginComponent implements OnInit {
     private navegacionService: NavegacionService,
     private spinnerService: SpinnerService,
     private cuadroDialogoService: CuadroDialogoService,
-    private errorHandler: HttpErrorHandlerService
+    private errorHandler: HttpErrorHandlerService,
+    private _changeDetectionRef: ChangeDetectorRef
   ) {
     this._spinnerSubscription = this.spinnerService.estadoSpinnerObservable.subscribe(
       estado => this.spinner = estado
     );
   }
 
-  ngOnInit() {
-    // this.autofocus();
-  }
+  ngOnInit() { }
 
   ngOnDestroy() {
     this._spinnerSubscription.unsubscribe();
@@ -59,7 +47,7 @@ export class LoginComponent implements OnInit {
    * Devuelve el nombre de usuario introducido en el login form
    */
   get usuario() {
-    return this.loginForm.get('usuario'); 
+    return this.loginForm.get('usuario');
   }
   
   /**
@@ -73,6 +61,7 @@ export class LoginComponent implements OnInit {
    * Verifica las credenciales introducidas
    */
   login(): void {
+    this._changeDetectionRef.detectChanges();
     this.authService.postLogin(this.usuario.value, this.clave.value).subscribe(
       usuario => {
         if (usuario && usuario.JWT) {

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { RadSideDrawer } from 'nativescript-ui-sidedrawer';
 import { RadSideDrawerComponent } from "nativescript-ui-sidedrawer/angular";
@@ -21,9 +21,10 @@ export class DashboardComponent implements AfterViewInit, OnInit {
   
   constructor(
     private authService: AuthService,
-    private _changeDetectionRef: ChangeDetectorRef,
     private router: Router,
-    private page: Page
+    private page: Page,
+    private _changeDetectionRef: ChangeDetectorRef
+
   ) {
     this.authService.usuarioLogueadoObservable.subscribe(
       usuario => this.usuarioLogueado = usuario
