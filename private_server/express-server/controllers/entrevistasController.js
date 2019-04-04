@@ -29,8 +29,8 @@ function extraerEntrevistas(idUsuario) {
  * Devuelve la entrevista asociada a un ID determinado
  */
 exports.getEntrevista = function (req, res, next) {
-    var id = req.params['id'];
-    extraerEntrevista(id)
+    var idEntrevista = req.params['id'];
+    extraerEntrevista(req.idUsuario, idEntrevista)
     .then(function(entrevista) {
         if(entrevista) {
             res.status(200).json(entrevista);
@@ -44,6 +44,6 @@ exports.getEntrevista = function (req, res, next) {
     });
 };
 
-function extraerEntrevista(id) {
-    return entrevistasData.getEntrevista(id);
+function extraerEntrevista(idUsuario, idEntrevista) {
+    return entrevistasData.getEntrevista(idUsuario, idEntrevista);
 }
