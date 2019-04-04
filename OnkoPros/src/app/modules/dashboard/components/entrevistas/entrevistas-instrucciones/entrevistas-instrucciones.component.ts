@@ -49,7 +49,7 @@ export class EntrevistasInstruccionesComponent implements OnInit {
       entrevista => {
         if(entrevista) {
           //TODO: Fichero de logs
-          console.log('SERVIDOR - Entrevista seleccionada: ' + entrevista.id);
+          console.log('SERVIDOR - Entrevista seleccionada: ' + entrevista.IdEntrevista);
           this.entrevista = entrevista;
         } else {
           console.log(`LOG getEntrevista(${id}) (no existe la entrevista solicitada)`);

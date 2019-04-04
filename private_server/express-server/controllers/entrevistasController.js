@@ -4,7 +4,7 @@ const entrevistasData = require('../models/entrevistasDB');
  * Devuelve las entrevistas disponibles actualmente
  */
 exports.getEntrevistas = function (req, res, next) {
-    extraerEntrevistas()
+    extraerEntrevistas(req.idUsuario)
     .then(function(entrevistas) {
         if(entrevistas[0]) { // Hay al menos 1 entrevista
             res.status(200).json(entrevistas);
@@ -21,8 +21,8 @@ exports.getEntrevistas = function (req, res, next) {
 /**
  * Extrae las entrevistas disponibles
  */
-function extraerEntrevistas() {
-    return entrevistasData.getEntrevistas();
+function extraerEntrevistas(idUsuario) {
+    return entrevistasData.getEntrevistas(idUsuario);
 }
 
 /**

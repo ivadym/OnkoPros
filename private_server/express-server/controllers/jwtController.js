@@ -29,14 +29,15 @@ exports.generarJWT = function (req, res, next) {
  */
 exports.verificarJWT = function (req, res, next) {
   try {
-    var id = req.headers['id'];
+    var idUsuario = req.headers['id'];
     var token = req.headers['authorization'].split(' ')[1];
     jwt.verify(token, publicKey, function(err, decoded) {
       if (err) {
         // TODO: Mejor manejo errores
         res.sendStatus(403); // HTTP 403 Forbidden
       } else if(decoded) {
-        if(decoded.id == id) {
+        if(decoded.id == idUsuario) {
+          req.idUsuario = decoded.id;
           next();
         } else {
           // TODO: Mejor manejo errores

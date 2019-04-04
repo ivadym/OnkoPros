@@ -8,11 +8,15 @@ const config = require('./config');
 /**
  * Devuelve las entrevistas disponibles
  */
-exports.getEntrevistas = function () {
+exports.getEntrevistas = function (idUsuario) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
-        var fecha_actual = new Date();
-        var query = `SELECT * FROM GEOP_ENTREVISTA WHERE activo='true' AND fecha_limite>=@fecha_actual ORDER BY fecha_limite ASC;`;
+        var fechaActual = new Date();
+        var query = `SELECT e.IdEntrevista, eg.Titulo, eg.Tooltip, ei.InstruccionPrincipal, ei.InstruccionSecundaria, e.FechaLimite
+                    FROM OP_ENTREVISTA e INNER JOIN GEOP_ENTREVISTA eg
+                    ON IdUsuario=@idUsuario AND e.IdEntrevista=eg.IdEntrevista AND eg.Estado=1 AND (e.Estado BETWEEN 0 AND 19) AND (@fechaActual BETWEEN e.FechaInicio AND e.FechaLimite)
+                    INNER JOIN GEOP_ENTREVISTA_INSTRUCCIONES ei
+                    ON e.IdEntrevista=ei.IdEntrevista ORDER BY e.FechaLimite ASC;`
         var result = [];
 
         connection.on('connect', function(err) {
@@ -26,7 +30,8 @@ exports.getEntrevistas = function () {
                     connection.close();
                 });
 
-                request.addParameter('fecha_actual', TYPES.Date, fecha_actual);
+                request.addParameter('idUsuario', TYPES.Int, idUsuario);
+                request.addParameter('fechaActual', TYPES.Date, fechaActual);
 
                 request.on('row', function(columns) {
                     var rowObject = {};
