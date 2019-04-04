@@ -1,3 +1,0 @@
-# OnkoPros
-
-## NGINX Reverse Proxy

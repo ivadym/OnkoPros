@@ -4,6 +4,7 @@
 /dist
 /tmp
 /out-tsc
+/iisnode
 
 # dependencies
 /node_modules
