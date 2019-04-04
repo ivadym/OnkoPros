@@ -18,7 +18,8 @@ export class CuadroDialogoService {
       title: mensaje_1,
       message: mensaje_2,
       okButtonText: "Aceptar",
-      cancelButtonText: "Cancelar"
+      cancelButtonText: "Cancelar",
+      cancelable: false // Solo Android
     });
   }
   
@@ -29,7 +30,8 @@ export class CuadroDialogoService {
     return alert({
       title: mensaje_1,
       message: mensaje_2,
-      okButtonText: "Aceptar"
+      okButtonText: "Aceptar",
+      cancelable: false // Solo Android
     });
   }
 
@@ -40,7 +42,8 @@ export class CuadroDialogoService {
     return action({
       message: "Elija el perfil con el que desee iniciar sesión",
       cancelButtonText: "Cancelar",
-      actions: usuario.Perfil
+      actions: usuario.Perfil,
+      cancelable: false // Solo Android
     }).then(
       res => {
         switch(res) {
