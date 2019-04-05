@@ -13,10 +13,10 @@ exports.getEntrevistas = function (idUsuario) {
         var connection = new Connection(config.auth);
         var fechaActual = new Date();
         var query = `SELECT e.IdEntrevista, eg.Titulo, eg.Tooltip, ei.InstruccionPrincipal, ei.InstruccionSecundaria, e.FechaLimite
-                    FROM OP_ENTREVISTA e INNER JOIN GEOP_ENTREVISTA eg
-                    ON e.IdUsuario=@idUsuario AND e.IdEntrevista=eg.IdEntrevista AND eg.Estado=1 AND (e.Estado BETWEEN 0 AND 19) AND (@fechaActual BETWEEN e.FechaInicio AND e.FechaLimite)
-                    INNER JOIN GEOP_ENTREVISTA_INSTRUCCIONES ei
-                    ON e.IdEntrevista=ei.IdEntrevista ORDER BY e.FechaLimite ASC;`
+                    FROM OP_ENTREVISTA e INNER JOIN GEOP_ENTREVISTA eg ON e.IdEntrevista=eg.IdEntrevista
+                    INNER JOIN GEOP_ENTREVISTA_INSTRUCCIONES ei ON e.IdEntrevista=ei.IdEntrevista
+                    WHERE IdUsuario=@idUsuario AND (e.Estado BETWEEN 0 AND 19) AND eg.Estado=1 AND (@fechaActual BETWEEN e.FechaInicio AND e.FechaLimite)
+                    ORDER BY e.FechaLimite ASC;`;
         var result = [];
 
         connection.on('connect', function(err) {
@@ -58,11 +58,10 @@ exports.getEntrevista = function (idUsuario, idEntrevista) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var fechaActual = new Date();
-        var query = `SELECT e.idEntrevista, eg.Titulo, eg.Tooltip, ei.InstruccionPrincipal, ei.InstruccionSecundaria, e.FechaLimite
-                    FROM OP_ENTREVISTA e INNER JOIN GEOP_ENTREVISTA eg
-                    ON e.IdUsuario=@idUsuario AND e.IdEntrevista=@idEntrevista AND e.IdEntrevista=eg.IdEntrevista AND eg.Estado=1 AND (e.Estado BETWEEN 0 AND 19) AND (@fechaActual BETWEEN e.FechaInicio AND e.FechaLimite)
-                    INNER JOIN GEOP_ENTREVISTA_INSTRUCCIONES ei
-                    ON e.IdEntrevista=ei.IdEntrevista;`
+        var query = `SELECT e.IdEntrevista, eg.Titulo, eg.Tooltip, ei.InstruccionPrincipal, ei.InstruccionSecundaria, e.FechaLimite
+                    FROM OP_ENTREVISTA e INNER JOIN GEOP_ENTREVISTA eg ON e.IdEntrevista=eg.IdEntrevista
+                    INNER JOIN GEOP_ENTREVISTA_INSTRUCCIONES ei ON e.IdEntrevista=ei.IdEntrevista
+                    WHERE e.IdUsuario=@idUsuario AND e.IdEntrevista=@idEntrevista AND (e.Estado BETWEEN 0 AND 19) AND eg.Estado=1 AND (@fechaActual BETWEEN e.FechaInicio AND e.FechaLimite);`;
         var result = [];
 
         connection.on('connect', function(err) {

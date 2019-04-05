@@ -38,7 +38,7 @@ exports.setValor = function(valor) {
                         if(res) {
                             resolve(valor);
                         } else {
-                            reject(valor);
+                            reject();
                         }
                     })
                     .catch(function(error) {
