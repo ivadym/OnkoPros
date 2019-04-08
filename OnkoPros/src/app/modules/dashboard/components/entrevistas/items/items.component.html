@@ -1,29 +1,27 @@
 <div class="row row-item">
   <div *ngIf="item" class="col-sm-12 col-md-6 col-item">
     <div class="titulo-item text-center">
-      {{item.titulo}}
+      {{item.Titulo}}
     </div>
     <form (ngSubmit)="responder()">
       <!-- RADIO BUTTON & CHECKBOX -->
-      <div *ngIf="item.tipo === 'radio' || item.tipo === 'checkbox'" class="opciones-item">
-        <div *ngFor="let valor of item.valores; let i = index" class="row">
-          <div *ngIf="valor" class="col-12 p-1 custom-control custom-{{item.tipo}}">
-            <input type="{{item.tipo}}" name="valor" id="{{item.tipo}}_{{i}}"
-              class="custom-control-input" (click)="setValor(item.id, item.valores[i])">
-            <label class="custom-control-label" for="{{item.tipo}}_{{i}}">
-              {{item.valores[i]}}
+      <div *ngIf="item.TipoItem === 'RB' || item.TipoItem === 'CB'" class="opciones-item">
+        <div *ngFor="let val of item.Valores" class="row">
+          <div class="col-12 p-1 custom-control custom-{{item.TipoItem === 'RB' ? 'radio' : 'checkbox'}}">
+            <input type="{{item.TipoItem === 'RB' ? 'radio' : 'checkbox'}}" name="valor" id="{{val.IdItemValor}}"
+              class="custom-control-input" (click)="setValor(val)">
+            <label class="custom-control-label" for="{{val.IdItemValor}}">
+              {{val.Titulo}}
             </label>
           </div>
-        </div>
-        <div *ngIf="valor" class="row">
-          <div *ngIf="valor.valores.indexOf('Otro') > -1" class="col-12">
-            <input #otroField class="opcion-otro" [(ngModel)]="valor_personal" name="valor_personal"
-              placeholder="Elabore su propia respuesta" autocomplete="off">
+          <div *ngIf="val.TipoValor === 'OTRO' && valoresSeleccionados?.includes(val)" class="col-12">
+            <input #otroField class="opcion-otro" [(ngModel)]="valoresSeleccionados[valoresSeleccionados.indexOf(val)].Valor"
+              name="valorPersonalizado" placeholder="Elabore su propia respuesta" autocomplete="off">
           </div>
         </div>
       </div>
       <div class="row">
-        <button type="submit" class="btn btn-responder col-12" [disabled]="!valor?.valores.length">
+        <button type="submit" class="btn btn-responder col-12" [disabled]="!valoresSeleccionados?.length">
           Responder
         </button>
       </div>

@@ -5,7 +5,6 @@ import { finalize } from 'rxjs/operators';
 
 import { Entrevista } from '../../classes/entrevista';
 import { Item } from '../../classes/item';
-import { Valor } from '../../classes/valor';
 
 import { SpinnerService } from '../spinner/spinner.service';
 
@@ -87,10 +86,10 @@ export class EntrevistasService {
   /**
    * Envío de la respuesta del usuario al servidor
    */
-  postValor(id_entrevista: number, valor: Valor): Observable<any> {
+  postItem(item: Item): Observable<any> {
     this.spinnerService.show();
-    const url = `${this.entrevistasURL}/${id_entrevista}/items`;
-    return this.http.post<any>(url, valor, httpOptions)
+    const url = `${this.entrevistasURL}/${item.IdEntrevista}/items`;
+    return this.http.post<any>(url, item, httpOptions)
       .pipe(
         finalize(() => {
           this.spinnerService.hide();

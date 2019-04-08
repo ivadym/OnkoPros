@@ -53,7 +53,7 @@
 }
 
 .custom-control-label {
-    margin-left: 50%;
+    margin-left: 10%;
 }
 
 input[type="radio"] + label:before, input[type="checkbox"] + label:before {

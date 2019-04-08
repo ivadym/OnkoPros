@@ -11,7 +11,6 @@ const config = require('./config');
 exports.getEntrevistas = function (idUsuario) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
-        var fechaActual = new Date();
         var query = `SELECT e.IdEntrevista, eg.Titulo, eg.Tooltip, ei.InstruccionPrincipal, ei.InstruccionSecundaria, e.FechaLimite
                     FROM OP_ENTREVISTA e INNER JOIN GEOP_ENTREVISTA eg ON e.IdEntrevista=eg.IdEntrevista
                     INNER JOIN GEOP_ENTREVISTA_INSTRUCCIONES ei ON e.IdEntrevista=ei.IdEntrevista
@@ -31,7 +30,7 @@ exports.getEntrevistas = function (idUsuario) {
                 });
 
                 request.addParameter('idUsuario', TYPES.Int, idUsuario);
-                request.addParameter('fechaActual', TYPES.Date, fechaActual);
+                request.addParameter('fechaActual', TYPES.Date, new Date());
 
                 request.on('row', function(columns) {
                     var rowObject = {};
@@ -57,7 +56,6 @@ exports.getEntrevistas = function (idUsuario) {
 exports.getEntrevista = function (idUsuario, idEntrevista) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
-        var fechaActual = new Date();
         var query = `SELECT e.IdEntrevista, eg.Titulo, eg.Tooltip, ei.InstruccionPrincipal, ei.InstruccionSecundaria, e.FechaLimite
                     FROM OP_ENTREVISTA e INNER JOIN GEOP_ENTREVISTA eg ON e.IdEntrevista=eg.IdEntrevista
                     INNER JOIN GEOP_ENTREVISTA_INSTRUCCIONES ei ON e.IdEntrevista=ei.IdEntrevista
@@ -77,7 +75,7 @@ exports.getEntrevista = function (idUsuario, idEntrevista) {
 
                 request.addParameter('idUsuario', TYPES.Int, idUsuario);
                 request.addParameter('idEntrevista', TYPES.Int, idEntrevista);
-                request.addParameter('fechaActual', TYPES.Date, fechaActual);
+                request.addParameter('fechaActual', TYPES.Date, new Date());
 
                 request.on('row', function(columns) {
                     var rowObject = {};

@@ -23,8 +23,8 @@ export class ItemsComponent implements OnInit {
   /**
    * Centra el cursor en el campo de "Respuesta personalizada" cuando se seleciona la opción "Otro"
    */
-  autofocus(valor: string): void {
-    if (valor == 'Otro' && this.valores_seleccionados.indexOf(valor) >= 0) {
+  autofocus(valor: Valor): void {
+    if (valor.TipoValor === 'OTRO' && this.valoresSeleccionados.includes(valor)) {
       setTimeout(() => {
         this.otroField.nativeElement.focus();
       }, 100);
@@ -35,12 +35,10 @@ export class ItemsComponent implements OnInit {
   private _spinnerSubscription: Subscription;
 
   item: Item;
-  valor: Valor;
-  valor_personal: string;
-  private valores_seleccionados: string[];
+  valoresSeleccionados: Valor[];
 
-  checked$: string;
-  private _checkedSubject: BehaviorSubject<string>;
+  checkedValor$: Valor;
+  private _checkedValorSubject: BehaviorSubject<Valor>;
 
   constructor(
     private route: ActivatedRoute,
@@ -52,9 +50,9 @@ export class ItemsComponent implements OnInit {
     private _changeDetectionRef: ChangeDetectorRef
 
   ) {
-    this._checkedSubject = new BehaviorSubject("");
-    this._checkedSubject.asObservable().subscribe(
-      opcion => this.checked$ = opcion
+    this._checkedValorSubject = new BehaviorSubject(null);
+    this._checkedValorSubject.asObservable().subscribe(
+      opcion => this.checkedValor$ = opcion
     );
   }
 
@@ -106,7 +104,7 @@ export class ItemsComponent implements OnInit {
       item => {
         if(item) {
           //TODO: Fichero de logs
-          console.log('SERVIDOR - Item extraído: ' + item.titulo);
+          console.log('SERVIDOR - Item extraído: ' + item.IdItem);
           this.item = item;
         } else {
           console.log('LOG getItem() (no hay más items)');
@@ -122,8 +120,8 @@ export class ItemsComponent implements OnInit {
   /**
    * Envía la respuesta del usuario y actualiza el contexto (limpia los campos obsoletos y extrae nuevo item)
    */
-  enviarValor(id_entrevista: number, valor: Valor): void {
-    this.entrevistasService.postValor(id_entrevista, valor).subscribe(
+  enviarValor(item: Item): void {
+    this.entrevistasService.postItem(item).subscribe(
       datos => {
         if(datos.alerta) {
           this.cuadroDialogoService.alerta(
@@ -134,14 +132,14 @@ export class ItemsComponent implements OnInit {
               console.log('SERVIDOR - Confirmación respuesta usuario: ');
               console.log(datos.valor.id); console.log(datos.valor.valores);
               this.limpiarContexto();
-              this.extraerItem(id_entrevista);
+              this.extraerItem(item.IdEntrevista);
             }
           );
         } else if(datos.valor) {
           console.log('SERVIDOR - Confirmación respuesta usuario: ');
           console.log(datos.valor.id); console.log(datos.valor.valores);
           this.limpiarContexto();
-          this.extraerItem(id_entrevista);
+          this.extraerItem(item.IdEntrevista);
         } else {
           // TODO: Tratamiento del error/Mensaje de error al usuario (footer popup)
           console.error('ERROR enviarValor()');
@@ -149,7 +147,7 @@ export class ItemsComponent implements OnInit {
       },
       error => {
         //TODO: Fichero de logs
-        this.errorHandler.handleError(error, `enviarValor(${id_entrevista}, ${valor.id})`);
+        this.errorHandler.handleError(error, `enviarValor(${item.IdItem})`);
       }
     )
   }
@@ -157,39 +155,30 @@ export class ItemsComponent implements OnInit {
   /**
    * Actualiza los valores de la respuesta del usuario
    */
-  setValor(id: number, valor: string): void {
-    if(this.item.tipo === 'radio') { // RADIO BUTTON
-      this.valores_seleccionados = [valor];
-      this._checkedSubject.next(valor);
-    } else if(this.item.tipo === 'checkbox') { // CHECKBOX
-      if(!this.valores_seleccionados) {
-        this.valores_seleccionados = [valor];
-      } else if(this.valores_seleccionados.indexOf(valor) >= 0) {
-        this.valores_seleccionados.splice(this.valores_seleccionados.indexOf(valor), 1);
+  setValor(valor: Valor): void {
+    if(this.item.TipoItem === 'RB') { // RADIO BUTTON
+      this.valoresSeleccionados = [valor];
+      this._checkedValorSubject.next(valor);
+    } else if(this.item.TipoItem === 'CB') { // CHECKBOX
+      if(!this.valoresSeleccionados) {
+        this.valoresSeleccionados = [valor];
+      } else if(this.valoresSeleccionados.includes(valor)) {
+        this.valoresSeleccionados.splice(this.valoresSeleccionados.indexOf(valor), 1);
       } else {
-        this.valores_seleccionados.push(valor);
+        this.valoresSeleccionados.push(valor);
       }
     }
 
     this.autofocus(valor);
-
-    this.valor = {
-      id: id,
-      titulo: this.item.titulo,
-      tipo: this.item.tipo,
-      valores: this.valores_seleccionados
-    }
   }
 
   /**
    * Registra la respuesta de usuario
    */
   responder(): void {
-    const id = +this.route.snapshot.paramMap.get('id');
-    if(this.valores_seleccionados.indexOf('Otro') >= 0 && this.valor_personal != null  && this.valor_personal != '') {
-        this.valor.valores[this.valores_seleccionados.indexOf('Otro')] = this.valor_personal;
-    }
-    this.enviarValor(id, this.valor);
+    var itemRespondido: Item = this.item;
+    itemRespondido.Valores = this.valoresSeleccionados;
+    this.enviarValor(itemRespondido);
   }
 
   /**
@@ -197,10 +186,8 @@ export class ItemsComponent implements OnInit {
    */
   limpiarContexto(): void {
     this.item = null;
-    this.valor = null;
-    this.valores_seleccionados = null;
-    this.valor_personal = null;
-    this.checked$ = null;
+    this.valoresSeleccionados = null;
+    this.checkedValor$ = null;
   }
 
 }

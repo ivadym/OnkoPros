@@ -1,7 +1,7 @@
 <div class="row row-ent">
   <div class="col-12 col-ent">
     <div *ngFor="let entrevista of entrevistas" class="row justify-content-center">    
-      <button class="btn col-6 btn-entrevista p-2 m-1" popoverClass="popover" ngbPopover="{{entrevista.Tooltip}}"
+      <button class="btn col-12 col-md-6 btn-entrevista p-2 m-1" popoverClass="popover" ngbPopover="{{entrevista.Tooltip}}"
         triggers="mouseenter:mouseleave" [placement]="['left', 'auto']" routerLink="/dashboard/entrevistas/{{entrevista.IdEntrevista}}">
           <a class="ent-nombre">
             {{entrevista.Titulo}}

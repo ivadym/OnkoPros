@@ -1,8 +1,8 @@
 export class Item {
-    id:             number;
-    id_entrevista:  number;
-    titulo:         string;
-    tipo:           string;
-    valores:        object;
-    activo:         boolean;
+    IdItem:         number;
+    IdEntrevista:   number;
+    Titulo:         string;
+    Tooltip:        string;
+    TipoItem:       string;
+    Valores:        object;
 }

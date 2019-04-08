@@ -1,6 +1,10 @@
 export class Valor {
-    id:             number;
-    titulo:         string;
-    tipo:           string;
-    valores:        object;
+    IdItemValor:    number;
+    Titulo:         string;
+    Tooltip:        string;
+    Valor:          string;
+    TipoValor:      string;
+    VisibleValor:   boolean;
+    Alerta:         boolean;
+    AlertaTexto:    string;
 }

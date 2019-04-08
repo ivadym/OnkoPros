@@ -1,29 +1,29 @@
 <GridLayout rows="auto, auto, auto" class="container-item" verticalAlignment="center">
   <GridLayout row="0" class="item-header">
-    <Label [text]="item?.titulo" textWrap="true"></Label>
+    <Label [text]="item?.Titulo" textWrap="true"></Label>
   </GridLayout>
-  <RadListView row="1" [items]="item?.valores" class="item-lista">
-    <ng-template tkListItemTemplate let-val="item" let-i="index">
+  <RadListView row="1" [items]="item?.Valores" class="item-lista">
+    <ng-template tkListItemTemplate let-val="item">
       <StackLayout orientation="vertical">
-        <GridLayout class="item-opcion" rows="auto, auto, auto" *ngIf="item.tipo === 'radio' || item.tipo === 'checkbox'">
-          <CheckBox class="item-opcion-cb" row="0" *ngIf="item.tipo ==='radio' && val != null"
+        <GridLayout class="item-opcion" rows="auto, auto, auto" *ngIf="item.TipoItem === 'RB' || item.TipoItem === 'CB'">
+          <CheckBox class="item-opcion-cb" row="0" *ngIf="item.TipoItem === 'RB' && val != null"
             [isEnabled]="!spinner"
-            [checked]="val === checked$"
-            [text]="val" textWrap="true"
+            [checked]="val.IdItemValor === checkedValor$?.IdItemValor"
+            [text]="val.Titulo" textWrap="true"
             boxType="circle"
             fillColor="#2A367B"
-            (tap)="setValor(item.id, item.valores[i])">
+            (tap)="setValor(val)">
           </CheckBox>
-          <CheckBox class="item-opcion-cb" row="1" *ngIf="item.tipo ==='checkbox' && val != null"
+          <CheckBox class="item-opcion-cb" row="1" *ngIf="item.TipoItem ==='CB' && val != null"
             [isEnabled]="!spinner"
-            [text]="val" textWrap="true"
+            [text]="val.Titulo" textWrap="true"
             boxType="square"
             fillColor="#2A367B"
-            (tap)="setValor(item.id, item.valores[i])">
+            (tap)="setValor(val)">
           </CheckBox>
-          <TextField #otroField row="2" *ngIf="val === 'Otro' && valor ? valor.valores.indexOf('Otro') > -1 : false"
+          <TextField #otroField row="2" *ngIf="val.TipoValor === 'OTRO' && valoresSeleccionados?.includes(val)"
             [isEnabled]="!spinner"
-            [(ngModel)]="valor_personal"
+            [(ngModel)]="valoresSeleccionados[valoresSeleccionados.indexOf(val)].Valor"
             class="item-otro"
             hint="Elabore su propia respuesta"
             secure="false"
@@ -35,7 +35,7 @@
       </StackLayout>
     </ng-template>
   </RadListView>
-  <GridLayout row="2" class="item-btn" [isEnabled]="valor?.valores.length > 0 && !spinner" (tap)="responder()">
+  <GridLayout row="2" class="item-btn" [isEnabled]="valoresSeleccionados?.length > 0 && !spinner" (tap)="responder()">
     <Label text="Responder"></Label>
   </GridLayout>
   <ActivityIndicator
