@@ -120,8 +120,8 @@ export class ItemsComponent implements OnInit {
   /**
    * Envía la respuesta del usuario y actualiza el contexto (limpia los campos obsoletos y extrae nuevo item)
    */
-  enviarValor(item: Item): void {
-    this.entrevistasService.postItem(item).subscribe(
+  enviarItemValor(item: Item): void {
+    this.entrevistasService.postItemValor(item).subscribe(
       datos => {
         if(datos.alerta) {
           this.cuadroDialogoService.alerta(
@@ -129,25 +129,23 @@ export class ItemsComponent implements OnInit {
             datos.alerta
           ).then(
             res => {
-              console.log('SERVIDOR - Confirmación respuesta usuario: ');
-              console.log(datos.valor.id); console.log(datos.valor.valores);
+              console.log('SERVIDOR - Confirmación respuesta usuario (+ alerta): ' + datos.item.IdItem);
               this.limpiarContexto();
               this.extraerItem(item.IdEntrevista);
             }
           );
-        } else if(datos.valor) {
-          console.log('SERVIDOR - Confirmación respuesta usuario: ');
-          console.log(datos.valor.id); console.log(datos.valor.valores);
+        } else if(datos.item) {
+          console.log('SERVIDOR - Confirmación respuesta usuario: ' + datos.item.IdItem);
           this.limpiarContexto();
           this.extraerItem(item.IdEntrevista);
         } else {
           // TODO: Tratamiento del error/Mensaje de error al usuario (footer popup)
-          console.error('ERROR enviarValor()');
+          console.error('ERROR enviarItemValor()');
         }
       },
       error => {
         //TODO: Fichero de logs
-        this.errorHandler.handleError(error, `enviarValor(${item.IdItem})`);
+        this.errorHandler.handleError(error, `enviarItemValor(${item.IdItem})`);
       }
     )
   }
@@ -178,7 +176,7 @@ export class ItemsComponent implements OnInit {
   responder(): void {
     var itemRespondido: Item = this.item;
     itemRespondido.Valores = this.valoresSeleccionados;
-    this.enviarValor(itemRespondido);
+    this.enviarItemValor(itemRespondido);
   }
 
   /**

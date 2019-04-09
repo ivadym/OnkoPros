@@ -10,11 +10,11 @@ const config = require('./config');
 exports.getItem = function(idUsuario, idEntrevista) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
-        var query = `SELECT TOP 1 i.IdItem, e.IdEntrevista, i.Titulo, i.Tooltip, i.TipoItem
+        var query = `SELECT TOP 1 e.IdEntrevistaUsuario, i.IdItem, e.IdEntrevista, i.Titulo, i.Tooltip, i.TipoItem
                     FROM OP_ENTREVISTA e INNER JOIN GEOP_ENTREVISTA eg ON e.IdEntrevista=eg.IdEntrevista
                     INNER JOIN GEOP_ENTREVISTA_ITEM ei ON e.IdEntrevista=ei.IdEntrevista
                     INNER JOIN GEOP_ITEM i ON ei.IdItem=i.IdItem
-                    WHERE e.IdUsuario=@idUsuario AND e.IdEntrevista=@idEntrevista AND (e.Estado BETWEEN 0 AND 19) AND eg.Estado=1 AND ei.Estado=1 AND i.Estado=1 AND (@fechaActual BETWEEN e.FechaInicio AND e.FechaLimite)
+                    WHERE e.IdUsuario=@idUsuario AND e.IdEntrevista=@idEntrevista AND i.IdItem NOT IN (SELECT IdItem FROM OP_ENTREVISTA_ITEM) AND (e.Estado BETWEEN 0 AND 19) AND eg.Estado=1 AND ei.Estado=1 AND i.Estado=1 AND (@fechaActual BETWEEN e.FechaInicio AND e.FechaLimite)
                     ORDER BY len(ei.Orden), ei.Orden ASC;`;
         var result = [];
 

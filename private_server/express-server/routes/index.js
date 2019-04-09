@@ -12,6 +12,6 @@ router.post('/api/auth', authController.autenticarse, jwtController.generarJWT);
 router.get('/api/entrevistas', jwtController.verificarJWT, entrevistasController.getEntrevistas);
 router.get('/api/entrevistas/:id', jwtController.verificarJWT, entrevistasController.getEntrevista);
 router.get('/api/entrevistas/:id/items', jwtController.verificarJWT, itemController.getItem);
-router.post('/api/entrevistas/:id/items', jwtController.verificarJWT, valorController.setValor);
+router.post('/api/entrevistas/:id/items', jwtController.verificarJWT, valorController.setItemValor);
 
 module.exports = router;
