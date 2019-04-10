@@ -121,6 +121,7 @@ export class ItemsComponent implements OnInit {
    * Envía la respuesta del usuario y actualiza el contexto (limpia los campos obsoletos y extrae nuevo item)
    */
   enviarItemValor(item: Item): void {
+    this.limpiarContexto();
     var idEntrevista = +this.route.snapshot.paramMap.get('id');
     this.entrevistasService.postItemValor(idEntrevista, item).subscribe(
       datos => {
@@ -131,13 +132,11 @@ export class ItemsComponent implements OnInit {
           ).then(
             res => {
               console.log('SERVIDOR - Confirmación respuesta usuario (+ alerta): ' + datos.item.IdItem);
-              this.limpiarContexto();
               this.extraerItem(idEntrevista);
             }
           );
         } else if(datos.item) {
           console.log('SERVIDOR - Confirmación respuesta usuario: ' + datos.item.IdItem);
-          this.limpiarContexto();
           this.extraerItem(idEntrevista);
         } else {
           // TODO: Tratamiento del error/Mensaje de error al usuario (footer popup)

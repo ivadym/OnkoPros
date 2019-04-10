@@ -1,4 +1,4 @@
-<GridLayout rows="auto, auto, auto" class="container-item" verticalAlignment="center">
+<GridLayout *ngIf="item" rows="auto, auto, auto" class="container-item" verticalAlignment="center">
   <GridLayout row="0" class="item-header">
     <Label [text]="item?.Titulo" textWrap="true"></Label>
   </GridLayout>
@@ -38,11 +38,11 @@
   <GridLayout row="2" class="item-btn" [isEnabled]="valoresSeleccionados?.length > 0 && !spinner" (tap)="responder()">
     <Label text="Responder"></Label>
   </GridLayout>
-  <ActivityIndicator
-    [busy]="spinner"
-    color="#2A367B"
-    width="100"
-    height="100"
-    rowspan="3">
-  </ActivityIndicator>
 </GridLayout>
+<ActivityIndicator
+  [busy]="spinner"
+  color="#2A367B"
+  width="100"
+  height="100"
+  rowspan="3">
+</ActivityIndicator>
