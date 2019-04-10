@@ -23,5 +23,5 @@ exports.getItem = function (req, res, next) {
  * Extrae las entrevistas disponibles
  */
 function extraerItem(idUsuario, idEntrevista) {
-    return itemData.getItem(idUsuario, idEntrevista);
+    return itemData.getItem(idUsuario, idEntrevista, null);
 }

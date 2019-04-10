@@ -86,9 +86,9 @@ export class EntrevistasService {
   /**
    * Envío de la respuesta del usuario al servidor
    */
-  postItemValor(item: Item): Observable<any> {
+  postItemValor(idEntrevista: number, item: Item): Observable<any> {
     this.spinnerService.show();
-    const url = `${this.entrevistasURL}/${item.IdEntrevista}/items`;
+    const url = `${this.entrevistasURL}/${idEntrevista}/items`;
     return this.http.post<any>(url, item, httpOptions)
       .pipe(
         finalize(() => {
