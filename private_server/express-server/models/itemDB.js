@@ -108,7 +108,7 @@ exports.getItem = function(idUsuario, idEntrevista, itemPadre) {
 function getValor(idUsuario, item) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
-        var query = `SELECT v.IdItemValor, v.Titulo, v.Tooltip, v.Valor, v.TipoValor, v.VisibleValor, v.Alerta, v.AlertaTexto
+        var query = `SELECT v.IdItemValor, v.Titulo, v.Tooltip, v.Valor, v.TipoValor, v.VisibleValor, v.CajaTexto, v.Alerta, v.AlertaTexto
                     FROM OP_ENTREVISTA e INNER JOIN GEOP_ENTREVISTA eg ON e.IdEntrevista=eg.IdEntrevista
                     INNER JOIN GEOP_ENTREVISTA_ITEM ei ON e.IdEntrevista=ei.IdEntrevista
                     INNER JOIN GEOP_ITEM i ON ei.IdItem=i.IdItem

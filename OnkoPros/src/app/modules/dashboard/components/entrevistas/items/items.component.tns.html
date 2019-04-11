@@ -21,10 +21,10 @@
             fillColor="#2A367B"
             (tap)="setValor(val)">
           </CheckBox>
-          <TextField #otroField row="2" *ngIf="val.TipoValor === 'OTRO' && valoresSeleccionados?.includes(val)"
+          <TextField #cajaTexto row="2" *ngIf="val.CajaTexto && valoresSeleccionados?.includes(val)"
             [isEnabled]="!spinner"
             [(ngModel)]="valoresSeleccionados[valoresSeleccionados.indexOf(val)].Valor"
-            class="item-otro"
+            class="item-caja-texto"
             hint="Elabore su propia respuesta"
             secure="false"
             autocorrect="false"

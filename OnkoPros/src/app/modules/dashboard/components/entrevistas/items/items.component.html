@@ -14,8 +14,8 @@
               {{val.Titulo}}
             </label>
           </div>
-          <div *ngIf="val.TipoValor === 'OTRO' && valoresSeleccionados?.includes(val)" class="col-12">
-            <input #otroField class="opcion-otro" [(ngModel)]="valoresSeleccionados[valoresSeleccionados.indexOf(val)].Valor"
+          <div *ngIf="val.CajaTexto && valoresSeleccionados?.includes(val)" class="col-12">
+            <input #cajaTexto class="opcion-caja-texto" [(ngModel)]="valoresSeleccionados[valoresSeleccionados.indexOf(val)].Valor"
               name="valorPersonalizado" placeholder="Elabore su propia respuesta" autocomplete="off">
           </div>
         </div>

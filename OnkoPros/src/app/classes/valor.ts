@@ -5,6 +5,7 @@ export class Valor {
     Valor:          string;
     TipoValor:      string;
     VisibleValor:   boolean;
+    CajaTexto:     boolean;
     Alerta:         boolean;
     AlertaTexto:    string;
 }

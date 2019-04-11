@@ -18,17 +18,15 @@ import { SpinnerService } from '../../../../../services/spinner/spinner.service'
 })
 export class ItemsComponent implements OnInit {
   
-  @ViewChild("otroField") otroField: ElementRef;
+  @ViewChild("cajaTexto") cajaTexto: ElementRef;
 
   /**
-   * Centra el cursor en el campo de "Respuesta personalizada" cuando se seleciona la opción "Otro"
+   * Centra el cursor en el campo de "Respuesta personalizada" cuando se seleciona la opción con la caja de texto
    */
-  autofocus(valor: Valor): void {
-    if (valor.TipoValor === 'OTRO' && this.valoresSeleccionados.includes(valor)) {
-      setTimeout(() => {
-        this.otroField.nativeElement.focus();
-      }, 100);
-    }
+  autofocus(): void {
+    setTimeout(() => {
+      this.cajaTexto.nativeElement.focus();
+    }, 100);
   }
 
   spinner: boolean = false;
@@ -166,8 +164,9 @@ export class ItemsComponent implements OnInit {
         this.valoresSeleccionados.push(valor);
       }
     }
-
-    this.autofocus(valor);
+    if (valor.CajaTexto && this.valoresSeleccionados.includes(valor)) {
+      this.autofocus();
+    }
   }
 
   /**
