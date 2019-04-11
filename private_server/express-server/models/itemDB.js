@@ -46,8 +46,9 @@ exports.getItem = function(idUsuario, idEntrevista, itemPadre) {
                     if(siguienteItem) { // Quedan items
                         if(siguienteItem.EsPadre) { // El item extraído es padre
                             exports.getItem(idUsuario, siguienteItem.IdEntrevistaPadre, siguienteItem) // Búsquedad de hijos
-                            .then(function(res) {                                    
+                            .then(function(res) {
                                 if(res) { // Quedan items
+                                    res.IdEntrevista = siguienteItem.IdEntrevista; // Item hijo hereda el ID del item padre
                                     resolve(res); // Se envía el item al usuario
                                 } else { // NO hay más items asignados al item padre
                                     exports.getItem(idUsuario, idEntrevista, null) // Búsqueda de hijos (entrevista principal)
