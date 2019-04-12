@@ -3,10 +3,10 @@ const authData = require('../models/authDB');
 /**
  * Lleva a cabo la autenticación del usuario
  */
-exports.autenticarse = function (req, res, next) {
+exports.autenticacion = function (req, res, next) {
     const usuario = req.body.usuario;
     const clave = req.body.clave;
-    checkCredenciales(usuario, clave)
+    comprobarCredenciales(usuario, clave)
     .then(function(usuario) {
         if(usuario) {
             req.usuario = usuario;
@@ -25,6 +25,6 @@ exports.autenticarse = function (req, res, next) {
 /**
  * Comprueba las credenciales de usuario recibidas
  */
-function checkCredenciales(usuario, clave) {
-    return authData.checkCredenciales(usuario, clave);
+function comprobarCredenciales(usuario, clave) {
+    return authData.comprobarCredenciales(usuario, clave);
 }

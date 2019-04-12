@@ -6,9 +6,9 @@ const config = require('./config');
 
 
 /**
- * Devuelve las entrevistas disponibles
+ * Extrae las entrevistas asociadas a un usuario determinado
  */
-exports.getEntrevistas = function (idUsuario) {
+exports.extraerEntrevistas = function (idUsuario) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `SELECT e.IdEntrevista, eg.Titulo, eg.Tooltip, ei.InstruccionPrincipal, ei.InstruccionSecundaria, e.FechaLimite
@@ -51,9 +51,9 @@ exports.getEntrevistas = function (idUsuario) {
 }
 
 /**
- * Devuelve la entrevista asociada al ID: id
+ * Estrae la entrevista asociada a un usuario e identificador determinados
  */
-exports.getEntrevista = function (idUsuario, idEntrevista) {
+exports.extraerEntrevista = function (idUsuario, idEntrevista) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `SELECT e.IdEntrevista, eg.Titulo, eg.Tooltip, ei.InstruccionPrincipal, ei.InstruccionSecundaria, e.FechaLimite

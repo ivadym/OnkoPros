@@ -22,11 +22,11 @@ exports.getEntrevistas = function (req, res, next) {
  * Extrae las entrevistas disponibles
  */
 function extraerEntrevistas(idUsuario) {
-    return entrevistasData.getEntrevistas(idUsuario);
+    return entrevistasData.extraerEntrevistas(idUsuario);
 }
 
 /**
- * Devuelve la entrevista asociada a un ID determinado
+ * Devuelve la entrevista asociada a un usuario e identificador determinados
  */
 exports.getEntrevista = function (req, res, next) {
     var idEntrevista = req.params['id'];
@@ -44,6 +44,9 @@ exports.getEntrevista = function (req, res, next) {
     });
 };
 
+/**
+ * Extrae una única entrevista
+ */
 function extraerEntrevista(idUsuario, idEntrevista) {
-    return entrevistasData.getEntrevista(idUsuario, idEntrevista);
+    return entrevistasData.extraerEntrevista(idUsuario, idEntrevista);
 }

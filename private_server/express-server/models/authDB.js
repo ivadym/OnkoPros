@@ -7,7 +7,7 @@ const config = require('./config');
 /**
  * Comprueba las credenciales de usuario
  */
-exports.checkCredenciales = function (usuario, clave) {
+exports.comprobarCredenciales = function (usuario, clave) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `SELECT u.IdUsuario, up.Perfil, u.Usuario, u.Nombre, u.PrimerApellido, u.SegundoApellido, u.Sexo,  u.FechaNacimiento, u.Telefono, u.Email
@@ -55,7 +55,7 @@ exports.checkCredenciales = function (usuario, clave) {
 }
 
 /**
- * Adapta los perfiles extraídos de la BBDD para su presentación
+ * Adapta los perfiles de usuario extraídos de la BBDD para su presentación
  */
 function adaptarPerfiles(usuarios) {
     var perfiles = [];

@@ -20,8 +20,8 @@ exports.getItem = function (req, res, next) {
 };
 
 /**
- * Extrae las entrevistas disponibles
+ * Extrae el siguiente item disponible
  */
 function extraerItem(idUsuario, idEntrevista) {
-    return itemData.getItem(idUsuario, idEntrevista, null);
+    return itemData.extraerItem(idUsuario, idEntrevista, null);
 }

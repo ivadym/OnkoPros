@@ -1,7 +1,7 @@
 const valorData = require('../models/valorDB');
 
 /**
- * Guarda la respuesta del usuario
+ * Guarda la respuesta del usuario en la base de datos
  */
 exports.setItemValor = function (req, res, next) {
     almacenarItemValor(req.idUsuario, req.body)
@@ -27,9 +27,9 @@ exports.setItemValor = function (req, res, next) {
 };
 
 /**
- * Almacena la respuesta del usuario en la base de datos
+ * Almacena la respuesta del usuario
  */
 function almacenarItemValor(idUsuario, item) {
-    return valorData.setItemValor(idUsuario, item);
+    return valorData.almacenarItemValor(idUsuario, item);
 }
   

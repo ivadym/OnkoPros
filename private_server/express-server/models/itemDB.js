@@ -5,9 +5,9 @@ const TYPES = require('tedious').TYPES;
 const config = require('./config');
 
 /**
- * Devuvelve la siguiente pregunta asociada a la entrevista con ID: id
+ * Devuelve la siguiente pregunta disponible asociada a un usuario y a una entrevista determinados
  */
-exports.getItem = function(idUsuario, idEntrevista, itemPadre) {
+exports.extraerItem = function(idUsuario, idEntrevista, itemPadre) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `SELECT TOP 1 i.IdItem, e.IdEntrevista, i.Titulo, i.Tooltip, i.TipoItem, i.EsPadre, i.IdEntrevistaPadre
@@ -55,13 +55,13 @@ exports.getItem = function(idUsuario, idEntrevista, itemPadre) {
                     var siguienteItem = result[0];
                     if(siguienteItem) { // Quedan items
                         if(siguienteItem.EsPadre) { // El item extraído es padre
-                            exports.getItem(idUsuario, idEntrevista, siguienteItem) // Búsquedad de hijos
+                            exports.extraerItem(idUsuario, idEntrevista, siguienteItem) // Búsquedad de hijos
                             .then(function(res) {
                                 if(res) { // Quedan items
                                     res.IdEntrevista = siguienteItem.IdEntrevista; // Item hijo hereda el ID del item padre
                                     resolve(res); // Se envía el item al usuario
                                 } else { // NO hay más items asignados al item padre
-                                    exports.getItem(idUsuario, idEntrevista, null) // Búsqueda de hijos (entrevista principal)
+                                    exports.extraerItem(idUsuario, idEntrevista, null) // Búsqueda de hijos (entrevista principal)
                                     .then(function(res) {
                                         resolve(res);
                                     })
@@ -74,7 +74,7 @@ exports.getItem = function(idUsuario, idEntrevista, itemPadre) {
                                 resolve(error);
                             });
                         } else { // El item extraído NO es padre
-                            getValor(idUsuario, idEntrevista, siguienteItem) // Se obtienen los valores del item correspondiente
+                            extraerValor(idUsuario, idEntrevista, siguienteItem) // Se obtienen los valores del item correspondiente
                             .then(function(res) {
                                 siguienteItem.Valores = res;
                                 delete siguienteItem['EsPadre'];
@@ -113,9 +113,9 @@ exports.getItem = function(idUsuario, idEntrevista, itemPadre) {
 }
 
 /**
- * Devuelve los valores asociados a un item determinado
+ * Extrae los valores asociados a un item determinado
  */
-function getValor(idUsuario, idEntrevistaPrincipal, item) {
+function extraerValor(idUsuario, idEntrevistaPrincipal, item) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `SELECT v.IdItemValor, v.Titulo, v.Tooltip, v.Valor, v.TipoValor, v.VisibleValor, v.CajaTexto, v.Alerta, v.AlertaTexto
@@ -167,7 +167,7 @@ function getValor(idUsuario, idEntrevistaPrincipal, item) {
 }
 
 /**
- * Finaliza la entrevista correspondiente al ID: id (entrevista finalizada)
+ * Finaliza el item padre correspondiente a un usuario determinado
  */
 function finalizarItemPadre(idUsuario, itemPadre) {
     return new Promise(function(resolve, reject) {
@@ -201,7 +201,7 @@ function finalizarItemPadre(idUsuario, itemPadre) {
 }
 
 /**
- * Finaliza la entrevista al no quedar más items
+ * Finaliza la entrevista actual (no quedan más items por responder)
  */
 function finalizarEntrevista(idUsuario, idEntrevista) {
     return new Promise(function(resolve, reject) {
