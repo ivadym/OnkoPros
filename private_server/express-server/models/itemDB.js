@@ -14,7 +14,12 @@ exports.getItem = function(idUsuario, idEntrevista, itemPadre) {
                     FROM OP_ENTREVISTA e INNER JOIN GEOP_ENTREVISTA eg ON e.IdEntrevista=eg.IdEntrevista
                     INNER JOIN GEOP_ENTREVISTA_ITEM ei ON e.IdEntrevista=ei.IdEntrevista
                     INNER JOIN GEOP_ITEM i ON ei.IdItem=i.IdItem
-                    WHERE e.IdUsuario=@idUsuario AND e.IdEntrevista=@idEntrevista AND i.IdItem NOT IN (SELECT IdItem FROM OP_ENTREVISTA_ITEM) AND (e.Estado BETWEEN 0 AND 19) AND eg.Estado=1 AND ei.Estado=1 AND i.Estado=1 AND (@fechaActual BETWEEN e.FechaInicio AND e.FechaLimite)
+                    WHERE e.IdUsuario=@idUsuario AND e.IdEntrevista=@idEntrevista
+                    AND (i.IdItem NOT IN (SELECT op_ei.IdItem FROM OP_ENTREVISTA_ITEM op_ei WHERE op_ei.Estado=1 AND op_ei.IdEntrevistaUsuario=(SELECT op_e.IdEntrevistaUsuario FROM OP_ENTREVISTA op_e WHERE op_e.IdUsuario=@idUsuario AND op_e.IdEntrevista=@idEntrevistaPrincipal AND op_e.Estado BETWEEN 0 AND 19)))
+                    AND ((SELECT Estado FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdEntrevista=@idEntrevistaPrincipal) BETWEEN 0 AND 19)
+                    AND (SELECT Estado FROM GEOP_ENTREVISTA WHERE IdEntrevista=@idEntrevistaPrincipal)=1
+                    AND ei.Estado=1 AND i.Estado=1
+                    AND (@fechaActual BETWEEN (SELECT op_ef.FechaInicio FROM OP_ENTREVISTA op_ef WHERE  op_ef.IdUsuario=@idUsuario AND  op_ef.IdEntrevista=@idEntrevistaPrincipal AND op_ef.Estado BETWEEN 0 AND 19) AND (SELECT op_ef.FechaLimite FROM OP_ENTREVISTA op_ef WHERE op_ef.IdUsuario=@idUsuario AND op_ef.IdEntrevista=@idEntrevistaPrincipal AND op_ef.Estado BETWEEN 0 AND 19))
                     ORDER BY len(ei.Orden), ei.Orden ASC;`;
         var result = [];
 
@@ -30,7 +35,12 @@ exports.getItem = function(idUsuario, idEntrevista, itemPadre) {
                 });
 
                 request.addParameter('idUsuario', TYPES.Int, idUsuario);
-                request.addParameter('idEntrevista', TYPES.Int, idEntrevista);
+                if(itemPadre) {
+                    request.addParameter('idEntrevista', TYPES.Int, itemPadre.IdEntrevistaPadre);
+                } else {
+                    request.addParameter('idEntrevista', TYPES.Int, idEntrevista);
+                }
+                request.addParameter('idEntrevistaPrincipal', TYPES.Int, idEntrevista)
                 request.addParameter('fechaActual', TYPES.Date, new Date());
 
                 request.on('row', function(columns) {
@@ -45,7 +55,7 @@ exports.getItem = function(idUsuario, idEntrevista, itemPadre) {
                     var siguienteItem = result[0];
                     if(siguienteItem) { // Quedan items
                         if(siguienteItem.EsPadre) { // El item extraído es padre
-                            exports.getItem(idUsuario, siguienteItem.IdEntrevistaPadre, siguienteItem) // Búsquedad de hijos
+                            exports.getItem(idUsuario, idEntrevista, siguienteItem) // Búsquedad de hijos
                             .then(function(res) {
                                 if(res) { // Quedan items
                                     res.IdEntrevista = siguienteItem.IdEntrevista; // Item hijo hereda el ID del item padre
@@ -64,7 +74,7 @@ exports.getItem = function(idUsuario, idEntrevista, itemPadre) {
                                 resolve(error);
                             });
                         } else { // El item extraído NO es padre
-                            getValor(idUsuario, siguienteItem) // Se obtienen los valores del item correspondiente
+                            getValor(idUsuario, idEntrevista, siguienteItem) // Se obtienen los valores del item correspondiente
                             .then(function(res) {
                                 siguienteItem.Valores = res;
                                 delete siguienteItem['EsPadre'];
@@ -105,7 +115,7 @@ exports.getItem = function(idUsuario, idEntrevista, itemPadre) {
 /**
  * Devuelve los valores asociados a un item determinado
  */
-function getValor(idUsuario, item) {
+function getValor(idUsuario, idEntrevistaPrincipal, item) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `SELECT v.IdItemValor, v.Titulo, v.Tooltip, v.Valor, v.TipoValor, v.VisibleValor, v.CajaTexto, v.Alerta, v.AlertaTexto
@@ -113,7 +123,11 @@ function getValor(idUsuario, item) {
                     INNER JOIN GEOP_ENTREVISTA_ITEM ei ON e.IdEntrevista=ei.IdEntrevista
                     INNER JOIN GEOP_ITEM i ON ei.IdItem=i.IdItem
                     INNER JOIN GEOP_ITEM_VALOR v ON i.IdItem=v.IdItem
-                    WHERE e.IdUsuario=@idUsuario AND e.IdEntrevista=@idEntrevista AND i.IdItem=@idItem AND (e.Estado BETWEEN 0 AND 19) AND eg.Estado=1 AND ei.Estado=1 AND i.Estado=1 AND v.Estado=1 AND (@fechaActual BETWEEN e.FechaInicio AND e.FechaLimite)
+                    WHERE e.IdUsuario=@idUsuario AND e.IdEntrevista=@idEntrevista AND i.IdItem=@idItem
+                    AND ((SELECT Estado FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdEntrevista=@idEntrevistaPrincipal) BETWEEN 0 AND 19)
+                    AND (SELECT Estado FROM GEOP_ENTREVISTA WHERE IdEntrevista=@idEntrevistaPrincipal)=1 
+                    AND ei.Estado=1 AND i.Estado=1 AND v.Estado=1
+                    AND (@fechaActual BETWEEN (SELECT op_ef.FechaInicio FROM OP_ENTREVISTA op_ef WHERE  op_ef.IdUsuario=@idUsuario AND  op_ef.IdEntrevista=@idEntrevistaPrincipal AND op_ef.Estado BETWEEN 0 AND 19) AND (SELECT op_ef.FechaLimite FROM OP_ENTREVISTA op_ef WHERE op_ef.IdUsuario=@idUsuario AND op_ef.IdEntrevista=@idEntrevistaPrincipal AND op_ef.Estado BETWEEN 0 AND 19))
                     ORDER BY len(v.Orden), v.Orden ASC;`;
         var result = [];
 
@@ -130,6 +144,7 @@ function getValor(idUsuario, item) {
 
                 request.addParameter('idUsuario', TYPES.Int, idUsuario);
                 request.addParameter('idEntrevista', TYPES.Int, item.IdEntrevista);
+                request.addParameter('idEntrevistaPrincipal', TYPES.Int, idEntrevistaPrincipal);
                 request.addParameter('idItem', TYPES.Int, item.IdItem);
                 request.addParameter('fechaActual', TYPES.Date, new Date());
                 
