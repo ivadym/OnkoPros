@@ -15,7 +15,7 @@
             </label>
           </div>
           <div *ngIf="val.CajaTexto && valoresSeleccionados?.includes(val)" class="col-12">
-            <input #cajaTexto class="opcion-caja-texto" [(ngModel)]="valoresSeleccionados[valoresSeleccionados.indexOf(val)].Valor"
+            <input #cajaTexto class="opcion-caja-texto" [(ngModel)]="valoresSeleccionados[valoresSeleccionados.indexOf(val)].ValorTexto"
               name="valorPersonalizado" placeholder="Elabore su propia respuesta" autocomplete="off">
           </div>
         </div>

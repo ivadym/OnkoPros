@@ -23,7 +23,7 @@
           </CheckBox>
           <TextField #cajaTexto row="2" *ngIf="val.CajaTexto && valoresSeleccionados?.includes(val)"
             [isEnabled]="!spinner"
-            [(ngModel)]="valoresSeleccionados[valoresSeleccionados.indexOf(val)].Valor"
+            [(ngModel)]="valoresSeleccionados[valoresSeleccionados.indexOf(val)].ValorTexto"
             class="item-caja-texto"
             hint="Elabore su propia respuesta"
             secure="false"
