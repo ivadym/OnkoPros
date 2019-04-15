@@ -4,7 +4,7 @@ const entrevistasData = require('../models/entrevistasDB');
  * Devuelve las entrevistas disponibles actualmente
  */
 exports.getEntrevistas = function (req, res, next) {
-    extraerEntrevistas(req.idUsuario)
+    extraerEntrevistas(req.idUsuario, req.idPerfil)
     .then(function(entrevistas) {
         if(entrevistas[0]) { // Hay al menos 1 entrevista
             res.status(200).json(entrevistas);
@@ -21,16 +21,15 @@ exports.getEntrevistas = function (req, res, next) {
 /**
  * Extrae las entrevistas disponibles
  */
-function extraerEntrevistas(idUsuario) {
-    return entrevistasData.extraerEntrevistas(idUsuario);
+function extraerEntrevistas(idUsuario, idPerfil) {
+    return entrevistasData.extraerEntrevistas(idUsuario, idPerfil);
 }
 
 /**
  * Devuelve la entrevista asociada a un usuario e identificador determinados
  */
 exports.getEntrevista = function (req, res, next) {
-    var idEntrevista = req.params['id'];
-    extraerEntrevista(req.idUsuario, idEntrevista)
+    extraerEntrevista(req.idUsuario, req.idPerfil, req.params['id'])
     .then(function(entrevista) {
         if(entrevista) {
             res.status(200).json(entrevista);
@@ -47,6 +46,6 @@ exports.getEntrevista = function (req, res, next) {
 /**
  * Extrae una única entrevista
  */
-function extraerEntrevista(idUsuario, idEntrevista) {
-    return entrevistasData.extraerEntrevista(idUsuario, idEntrevista);
+function extraerEntrevista(idUsuario, idPerfil, idEntrevista) {
+    return entrevistasData.extraerEntrevista(idUsuario, idPerfil, idEntrevista);
 }

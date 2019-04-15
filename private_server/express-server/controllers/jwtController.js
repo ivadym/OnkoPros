@@ -30,6 +30,7 @@ exports.generarJWT = function (req, res, next) {
 exports.verificarJWT = function (req, res, next) {
   try {
     var idUsuario = req.headers['id'];
+    var idPerfil = req.headers['perfil'];
     var token = req.headers['authorization'].split(' ')[1];
     jwt.verify(token, publicKey, function(err, decoded) {
       if (err) {
@@ -38,6 +39,7 @@ exports.verificarJWT = function (req, res, next) {
       } else if(decoded) {
         if(decoded.id == idUsuario) {
           req.idUsuario = decoded.id;
+          req.idPerfil = idPerfil;
           next();
         } else {
           // TODO: Mejor manejo errores

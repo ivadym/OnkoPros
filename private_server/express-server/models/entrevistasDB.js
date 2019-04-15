@@ -2,19 +2,18 @@ const Connection = require('tedious').Connection;
 const Request = require('tedious').Request;
 const TYPES = require('tedious').TYPES;
 
-const config = require('./config');
-
-
+const config = require('../helpers/config');
+const helpers = require('../helpers/helpers');
 /**
  * Extrae las entrevistas asociadas a un usuario determinado
  */
-exports.extraerEntrevistas = function (idUsuario) {
+exports.extraerEntrevistas = function (idUsuario, idPerfil) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `SELECT e.IdEntrevista, eg.Titulo, eg.Tooltip, ei.InstruccionPrincipal, ei.InstruccionSecundaria, e.FechaLimite
                     FROM OP_ENTREVISTA e INNER JOIN GEOP_ENTREVISTA eg ON e.IdEntrevista=eg.IdEntrevista
                     INNER JOIN GEOP_ENTREVISTA_INSTRUCCIONES ei ON e.IdEntrevista=ei.IdEntrevista
-                    WHERE IdUsuario=@idUsuario AND (e.Estado BETWEEN 0 AND 19) AND eg.Estado=1 AND (@fechaActual BETWEEN e.FechaInicio AND e.FechaLimite)
+                    WHERE e.IdUsuario=@idUsuario AND e.IdPerfil=@idPerfil AND (e.Estado BETWEEN 0 AND 19) AND eg.Estado=1 AND (@fechaActual BETWEEN e.FechaInicio AND e.FechaLimite)
                     ORDER BY e.FechaLimite ASC;`;
         var result = [];
 
@@ -30,6 +29,7 @@ exports.extraerEntrevistas = function (idUsuario) {
                 });
 
                 request.addParameter('idUsuario', TYPES.Int, idUsuario);
+                request.addParameter('idPerfil', TYPES.Int, helpers.adaptarPerfilSql(idPerfil));
                 request.addParameter('fechaActual', TYPES.Date, new Date());
 
                 request.on('row', function(columns) {
@@ -53,13 +53,13 @@ exports.extraerEntrevistas = function (idUsuario) {
 /**
  * Estrae la entrevista asociada a un usuario e identificador determinados
  */
-exports.extraerEntrevista = function (idUsuario, idEntrevista) {
+exports.extraerEntrevista = function (idUsuario, idPerfil, idEntrevista) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `SELECT e.IdEntrevista, eg.Titulo, eg.Tooltip, ei.InstruccionPrincipal, ei.InstruccionSecundaria, e.FechaLimite
                     FROM OP_ENTREVISTA e INNER JOIN GEOP_ENTREVISTA eg ON e.IdEntrevista=eg.IdEntrevista
                     INNER JOIN GEOP_ENTREVISTA_INSTRUCCIONES ei ON e.IdEntrevista=ei.IdEntrevista
-                    WHERE e.IdUsuario=@idUsuario AND e.IdEntrevista=@idEntrevista AND (e.Estado BETWEEN 0 AND 19) AND eg.Estado=1 AND (@fechaActual BETWEEN e.FechaInicio AND e.FechaLimite);`;
+                    WHERE e.IdUsuario=@idUsuario AND e.IdPerfil=@idPerfil AND e.IdEntrevista=@idEntrevista AND eg.Estado=1 AND (e.Estado BETWEEN 0 AND 19) AND (@fechaActual BETWEEN e.FechaInicio AND e.FechaLimite);`;
         var result = [];
 
         connection.on('connect', function(err) {
@@ -74,6 +74,7 @@ exports.extraerEntrevista = function (idUsuario, idEntrevista) {
                 });
 
                 request.addParameter('idUsuario', TYPES.Int, idUsuario);
+                request.addParameter('idPerfil', TYPES.Int, helpers.adaptarPerfilSql(idPerfil));
                 request.addParameter('idEntrevista', TYPES.Int, idEntrevista);
                 request.addParameter('fechaActual', TYPES.Date, new Date());
 

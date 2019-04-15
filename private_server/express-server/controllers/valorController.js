@@ -4,7 +4,7 @@ const valorData = require('../models/valorDB');
  * Guarda la respuesta del usuario en la base de datos
  */
 exports.setItemValor = function (req, res, next) {
-    almacenarItemValor(req.idUsuario, req.body)
+    almacenarItemValor(req.idUsuario, req.idPerfil, req.body)
     .then(function(item) {
         if(item) {
             // TODO: Considerar más casos (múltiples alertas, alertas por ciertas reglas, etc.)
@@ -29,7 +29,7 @@ exports.setItemValor = function (req, res, next) {
 /**
  * Almacena la respuesta del usuario
  */
-function almacenarItemValor(idUsuario, item) {
-    return valorData.almacenarItemValor(idUsuario, item);
+function almacenarItemValor(idUsuario, idPerfil, item) {
+    return valorData.almacenarItemValor(idUsuario, idPerfil, item);
 }
   

@@ -2,12 +2,12 @@ const Connection = require('tedious').Connection;
 const Request = require('tedious').Request;
 const TYPES = require('tedious').TYPES;
 
-const config = require('./config');
+const config = require('../helpers/config');
 
 /**
  * Guarda la respuesta del usuario
  */
-exports.almacenarItemValor = function(idUsuario, item) {
+exports.almacenarItemValor = function(idUsuario, idPerfil, item) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdItem, Estado)

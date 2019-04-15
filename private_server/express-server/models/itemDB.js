@@ -2,12 +2,12 @@ const Connection = require('tedious').Connection;
 const Request = require('tedious').Request;
 const TYPES = require('tedious').TYPES;
 
-const config = require('./config');
+const config = require('../helpers/config');
 
 /**
  * Devuelve la siguiente pregunta disponible asociada a un usuario y a una entrevista determinados
  */
-exports.extraerItem = function(idUsuario, idEntrevista, itemPadre) {
+exports.extraerItem = function(idUsuario, idPerfil, idEntrevista, itemPadre) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `SELECT TOP 1 i.IdItem, e.IdEntrevista, i.Titulo, i.Tooltip, i.TipoItem, i.EsPadre, i.IdEntrevistaPadre
@@ -55,13 +55,13 @@ exports.extraerItem = function(idUsuario, idEntrevista, itemPadre) {
                     var siguienteItem = result[0];
                     if(siguienteItem) { // Quedan items
                         if(siguienteItem.EsPadre) { // El item extraído es padre
-                            exports.extraerItem(idUsuario, idEntrevista, siguienteItem) // Búsquedad de hijos
+                            exports.extraerItem(idUsuario, idPerfil, idEntrevista, siguienteItem) // Búsquedad de hijos
                             .then(function(res) {
                                 if(res) { // Quedan items
                                     res.IdEntrevista = siguienteItem.IdEntrevista; // Item hijo hereda el ID del item padre
                                     resolve(res); // Se envía el item al usuario
                                 } else { // NO hay más items asignados al item padre
-                                    exports.extraerItem(idUsuario, idEntrevista, null) // Búsqueda de hijos (entrevista principal)
+                                    exports.extraerItem(idUsuario, idPerfil, idEntrevista, null) // Búsqueda de hijos (entrevista principal)
                                     .then(function(res) {
                                         resolve(res);
                                     })
