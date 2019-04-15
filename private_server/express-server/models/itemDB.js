@@ -15,10 +15,10 @@ exports.extraerItem = function(idUsuario, idEntrevista, itemPadre) {
                     INNER JOIN GEOP_ENTREVISTA_ITEM ei ON e.IdEntrevista=ei.IdEntrevista
                     INNER JOIN GEOP_ITEM i ON ei.IdItem=i.IdItem
                     WHERE e.IdUsuario=@idUsuario AND e.IdEntrevista=@idEntrevista
-                    AND (i.IdItem NOT IN (SELECT op_ei.IdItem FROM OP_ENTREVISTA_ITEM op_ei WHERE op_ei.Estado=1 AND op_ei.IdEntrevistaUsuario=(SELECT op_e.IdEntrevistaUsuario FROM OP_ENTREVISTA op_e WHERE op_e.IdUsuario=@idUsuario AND op_e.IdEntrevista=@idEntrevistaPrincipal AND op_e.Estado BETWEEN 0 AND 19)))
+                    AND (i.IdItem NOT IN (SELECT op_ei.IdItem FROM OP_ENTREVISTA_ITEM op_ei WHERE op_ei.Estado>0 AND op_ei.IdEntrevistaUsuario=(SELECT op_e.IdEntrevistaUsuario FROM OP_ENTREVISTA op_e WHERE op_e.IdUsuario=@idUsuario AND op_e.IdEntrevista=@idEntrevistaPrincipal AND op_e.Estado BETWEEN 0 AND 19)))
                     AND ((SELECT Estado FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdEntrevista=@idEntrevistaPrincipal) BETWEEN 0 AND 19)
                     AND (SELECT Estado FROM GEOP_ENTREVISTA WHERE IdEntrevista=@idEntrevistaPrincipal)=1
-                    AND ei.Estado=1 AND i.Estado=1
+                    AND ei.Estado>0 AND i.Estado=1
                     AND (@fechaActual BETWEEN (SELECT op_ef.FechaInicio FROM OP_ENTREVISTA op_ef WHERE  op_ef.IdUsuario=@idUsuario AND  op_ef.IdEntrevista=@idEntrevistaPrincipal AND op_ef.Estado BETWEEN 0 AND 19) AND (SELECT op_ef.FechaLimite FROM OP_ENTREVISTA op_ef WHERE op_ef.IdUsuario=@idUsuario AND op_ef.IdEntrevista=@idEntrevistaPrincipal AND op_ef.Estado BETWEEN 0 AND 19))
                     ORDER BY len(ei.Orden), ei.Orden ASC;`;
         var result = [];
@@ -173,7 +173,7 @@ function finalizarItemPadre(idUsuario, itemPadre) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdItem, Estado)
-                    VALUES ((SELECT ISNULL(MAX(IdEntrevistaItem), 0)+1 FROM OP_ENTREVISTA_ITEM), (SELECT IdEntrevistaUsuario FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdEntrevista=@idEntrevista), @idItem, 1);`;
+                    VALUES ((SELECT ISNULL(MAX(IdEntrevistaItem), 0)+1 FROM OP_ENTREVISTA_ITEM), (SELECT IdEntrevistaUsuario FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdEntrevista=@idEntrevista), @idItem, 2);`;
 
         connection.on('connect', function(err) {
             if (err) {
