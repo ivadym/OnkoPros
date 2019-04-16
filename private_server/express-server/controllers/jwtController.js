@@ -1,6 +1,8 @@
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 
+const helpers = require('../helpers/helpers')
+
 var privateKey  = fs.readFileSync('./RSA/private.key');
 var publicKey  = fs.readFileSync('./RSA/public.key');
 
@@ -30,7 +32,7 @@ exports.generarJWT = function (req, res, next) {
 exports.verificarJWT = function (req, res, next) {
   try {
     var idUsuario = req.headers['id'];
-    var idPerfil = req.headers['perfil'];
+    var idPerfil = helpers.adaptarPerfilSql(req.headers['perfil']);
     var token = req.headers['authorization'].split(' ')[1];
     jwt.verify(token, publicKey, function(err, decoded) {
       if (err) {

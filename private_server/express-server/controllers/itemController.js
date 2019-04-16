@@ -22,5 +22,5 @@ exports.getItem = function (req, res, next) {
  * Extrae el siguiente item disponible
  */
 function extraerItem(idUsuario, idPerfil, idEntrevista) {
-    return itemData.extraerItem(idUsuario, idPerfil, idEntrevista, null);
+    return itemData.extraerItem(idUsuario, idPerfil, idEntrevista);
 }

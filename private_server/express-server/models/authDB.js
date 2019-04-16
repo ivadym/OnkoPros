@@ -6,7 +6,7 @@ const config = require('../helpers/config');
 const helpers = require('../helpers/helpers');
 
 /**
- * Comprueba las credenciales de usuario
+ * Comprueba las credenciales de usuario recibidas
  */
 exports.comprobarCredenciales = function (usuario, clave) {
     return new Promise(function(resolve, reject) {

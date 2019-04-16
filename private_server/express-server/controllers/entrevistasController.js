@@ -26,7 +26,7 @@ function extraerEntrevistas(idUsuario, idPerfil) {
 }
 
 /**
- * Devuelve la entrevista asociada a un usuario e identificador determinados
+ * Devuelve la entrevista asociada a un usuario y perfil determinados
  */
 exports.getEntrevista = function (req, res, next) {
     extraerEntrevista(req.idUsuario, req.idPerfil, req.params['id'])

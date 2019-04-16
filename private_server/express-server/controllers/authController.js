@@ -23,7 +23,7 @@ const usuario = req.body.usuario;
 };
 
 /**
- * Comprueba las credenciales de usuario recibidas
+ * Comprueba las credenciales recibidas
  */
 function comprobarCredenciales(usuario, clave) {
     return authData.comprobarCredenciales(usuario, clave);
