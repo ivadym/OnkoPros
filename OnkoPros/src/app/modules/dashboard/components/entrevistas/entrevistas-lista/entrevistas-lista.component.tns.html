@@ -3,13 +3,16 @@
     (pullToRefreshInitiated)="extraerEntrevistas($event)">
       <ng-template let-entrevista="item" let-i="index">
         <ScrollView scrollDirection="Vertical">
-          <GridLayout *ngIf="entrevistasDisponibles" rows="*, *" [isEnabled]="!spinner" class="entrevista-item"
+          <GridLayout *ngIf="entrevistasDisponibles" rows="*, *, *" [isEnabled]="!spinner" class="entrevista-item"
             [nsRouterLink]="['/dashboard/entrevistas/' + entrevista.IdEntrevista]" nsRouterLinkActive="active">
               <StackLayout row="0" class="entrevista-titulo">
                 <Label [text]="entrevista.Titulo" textWrap="true"></Label>
               </StackLayout>
               <StackLayout row="1" class="entrevista-descripcion">
                 <Label [text]="entrevista.Tooltip" textWrap="true"></Label>
+              </StackLayout>
+              <StackLayout row="2" class="entrevista-fecha-limite" horizontalAlignment="right">
+                <Label [text]="(entrevista.FechaLimite | date: 'dd/MM/yyy')" textWrap="true"></Label>
               </StackLayout>
           </GridLayout>
         </ScrollView>

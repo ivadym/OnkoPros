@@ -29,6 +29,11 @@
     font-size: 18;
 }
 
+.entrevista-fecha-limite {
+    color: red;
+    font-size: 16;
+}
+
 /* ENTREVISTAS FINALIZADAS */
 
 .entrevista-fin {
