@@ -52,7 +52,7 @@ exports.extraerItem = function(idUsuario, idPerfil, idEntrevista) {
                             extraerItemHijo(idUsuario, idPerfil, idEntrevista, siguienteItem)
                             .then(function(itemHijo) {
                                 if(itemHijo) { // Quedan más hijos
-                                    extraerValores(itemHijo) // Extracción de los valores del item hijo  
+                                    extraerValores(itemHijo) // Extracción de los valores del item hijo
                                     .then(function(res) {
                                         itemHijo.IdEntrevista = idEntrevista; // Hijo hereda el ID del padre
                                         itemHijo.Valores = res;

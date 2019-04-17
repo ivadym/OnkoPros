@@ -122,19 +122,23 @@ export class ItemsComponent implements OnInit {
     this.limpiarContexto();
     var idEntrevista = +this.route.snapshot.paramMap.get('id');
     this.entrevistasService.postItemValor(idEntrevista, item).subscribe(
-      datos => {
-        if(datos.alerta) {
-          this.cuadroDialogoService.alerta(
-            'Atención, es necesario que siga las siguientes intrucciones:',
-            datos.alerta
-          ).then(
-            res => {
-              console.log('SERVIDOR - Confirmación respuesta usuario (+ alerta): ' + datos.item.IdItem);
-              this.extraerItem(idEntrevista);
+      item => {
+        if(item) {
+          for (var i = 0; i < item.Valores.length; i++) {
+            if(item.Valores[i].Alerta) {
+              this.cuadroDialogoService.alerta(
+                'Atención, es necesario que siga las siguientes intrucciones:',
+                item.Valores[i].AlertaTexto
+              ).then(
+                res => {
+                  console.log('SERVIDOR - Confirmación respuesta usuario (+ alerta): ' + item.IdItem);
+                  this.extraerItem(idEntrevista);
+                  return;
+                }
+              );
             }
-          );
-        } else if(datos.item) {
-          console.log('SERVIDOR - Confirmación respuesta usuario: ' + datos.item.IdItem);
+          }
+          console.log('SERVIDOR - Confirmación respuesta usuario: ' + item.IdItem);
           this.extraerItem(idEntrevista);
         } else {
           // TODO: Tratamiento del error/Mensaje de error al usuario (footer popup)

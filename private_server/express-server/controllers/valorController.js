@@ -7,14 +7,7 @@ exports.setItemValor = function (req, res, next) {
     almacenarItemValor(req.idUsuario, req.idPerfil, req.body)
     .then(function(item) {
         if(item) {
-            // TODO: Considerar más casos (múltiples alertas, alertas por ciertas reglas, etc.)
-            var alerta = null;
-            for (var i = 0; i < item.Valores.length; i++) {
-                if(item.Valores[i].Alerta) {
-                    alerta = 'Acuda al centro médico más cercano.'
-                }
-            }
-            res.status(201).json({alerta: alerta, item: item});
+            res.status(201).json(item);
         } else {
             // TODO: Mejor manejo de errores
             res.sendStatus(500); // HTTP 500 Internal Server Error
