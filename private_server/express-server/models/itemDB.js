@@ -50,8 +50,7 @@ exports.extraerItem = function(idUsuario, idPerfil, idEntrevista) {
                     if(siguienteItem) { // Quedan items
                         if(siguienteItem.EsPadre) {
                             extraerItemHijo(idUsuario, idPerfil, idEntrevista, siguienteItem)
-                            .then(function(res) {
-                                var itemHijo = res[0];
+                            .then(function(itemHijo) {
                                 if(itemHijo) { // Quedan más hijos
                                     extraerValores(itemHijo) // Extracción de los valores del item hijo  
                                     .then(function(res) {
@@ -65,7 +64,7 @@ exports.extraerItem = function(idUsuario, idPerfil, idEntrevista) {
                                         resolve(error);
                                     });
                                 } else { // No hay más hijos
-                                    finalizarItemPadre(idUsuario, idPerfil, siguienteItem) // Item padre respondido
+                                    finalizarItemPadre(idUsuario, idPerfil, siguienteItem.IdEntrevista, siguienteItem) // Item padre respondido
                                     .then(function(res) {
                                         exports.extraerItem(idUsuario, idPerfil, idEntrevista) // Sigue con la extracción
                                         .then(function(res) {
@@ -116,7 +115,7 @@ exports.extraerItem = function(idUsuario, idPerfil, idEntrevista) {
 /**
  * Extrae los item hijos asociados a un item padre (entrevista padre)
  */
-function extraerItemHijo(idUsuario, idPerfil, idEntrevistaPrincipal, item) {
+function extraerItemHijo(idUsuario, idPerfil, idEntrevistaPrincipal, itemPadre) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `SELECT TOP 1 i.IdItem, eg.IdEntrevista, i.Titulo, i.Tooltip, i.TipoItem, i.EsPadre, i.IdEntrevistaPadre
@@ -140,7 +139,7 @@ function extraerItemHijo(idUsuario, idPerfil, idEntrevistaPrincipal, item) {
 
                 request.addParameter('idUsuario', TYPES.Int, idUsuario);
                 request.addParameter('idPerfil', TYPES.Int, idPerfil);
-                request.addParameter('idEntrevista', TYPES.Int, item.IdEntrevistaPadre);
+                request.addParameter('idEntrevista', TYPES.Int, itemPadre.IdEntrevistaPadre);
                 request.addParameter('idEntrevistaPrincipal', TYPES.Int, idEntrevistaPrincipal);
 
                 request.on('row', function(columns) {
@@ -152,7 +151,35 @@ function extraerItemHijo(idUsuario, idPerfil, idEntrevistaPrincipal, item) {
                 });
 
                 request.on('requestCompleted', function () {
-                    resolve(result);
+                    var itemHijo = result[0];
+                    if(itemHijo && itemHijo.EsPadre) { // Item hijo es a su vez padre
+                        extraerItemHijo(idUsuario, idPerfil, idEntrevistaPrincipal, itemHijo)
+                        .then(function(itemHijoSiguiente) {
+                            if(itemHijoSiguiente) { // Quedan items hijos
+                                resolve(itemHijoSiguiente);
+                            } else { // No hay más items hijos
+                                finalizarItemPadre(idUsuario, idPerfil, idEntrevistaPrincipal, itemHijo) // Item padre respondido
+                                    .then(function(res) {
+                                        extraerItemHijo(idUsuario, idPerfil, idEntrevistaPrincipal, itemPadre)
+                                        .then(function(res) {
+                                            resolve(res);
+                                        })
+                                        .catch(function(error) {
+                                            resolve(error);
+                                        });
+                                    })
+                                    .catch(function(error) {
+                                        resolve(error);
+                                    });
+                            }
+                            
+                        })
+                        .catch(function(error) {
+                            resolve(error);
+                        });
+                    } else {
+                        resolve(itemHijo);
+                    }
                 });
 
                 connection.execSql(request);
@@ -210,7 +237,7 @@ function extraerValores(item) {
 /**
  * Finaliza el item padre correspondiente a un usuario determinado
  */
-function finalizarItemPadre(idUsuario, idPerfil, itemPadre) {
+function finalizarItemPadre(idUsuario, idPerfil, idEntrevistaPrincipal, itemPadre) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdItem, Estado)
@@ -230,7 +257,7 @@ function finalizarItemPadre(idUsuario, idPerfil, itemPadre) {
 
                 request.addParameter('idUsuario', TYPES.Int, idUsuario);
                 request.addParameter('idPerfil', TYPES.Int, idPerfil);
-                request.addParameter('idEntrevista', TYPES.Int, itemPadre.IdEntrevista);
+                request.addParameter('idEntrevista', TYPES.Int, idEntrevistaPrincipal);
                 request.addParameter('idItem', TYPES.Int, itemPadre.IdItem);
 
                 request.on('requestCompleted', function () {
