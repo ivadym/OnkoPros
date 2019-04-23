@@ -6,22 +6,32 @@
     <ng-template tkListItemTemplate let-val="item">
       <StackLayout orientation="vertical">
         <GridLayout class="item-opcion" rows="auto, auto, auto" *ngIf="item.TipoItem === 'RB' || item.TipoItem === 'CB'">
-          <CheckBox class="item-opcion-cb" row="0" *ngIf="item.TipoItem === 'RB' && val != null"
-            [isEnabled]="!spinner"
-            [checked]="val.IdItemValor === checkedValor$?.IdItemValor"
-            [text]="val.Titulo" textWrap="true"
-            boxType="circle"
-            fillColor="#2A367B"
-            (tap)="setValor(val)">
-          </CheckBox>
-          <CheckBox class="item-opcion-cb" row="1" *ngIf="item.TipoItem ==='CB' && val != null"
-            [isEnabled]="!spinner"
-            [text]="val.Titulo" textWrap="true"
-            boxType="square"
-            fillColor="#2A367B"
-            (tap)="setValor(val)">
-          </CheckBox>
-          <TextField #cajaTexto row="2" *ngIf="val.CajaTexto && valoresSeleccionados?.includes(val)"
+          <GridLayout  *ngIf="item.TipoItem === 'RB' && val != null" row="0" columns="*, auto">
+            <CheckBox col="0" class="item-opcion-cb"
+              [isEnabled]="!spinner"
+              [checked]="val.IdItemValor === checkedValor$?.IdItemValor"
+              [text]="val.Titulo" textWrap="true"
+              boxType="circle"
+              fillColor="#2A367B"
+              (tap)="setValor(val)">
+            </CheckBox>
+            <GridLayout *ngIf="val.VisibleValor" col="1" class="item-opcion-cb-val" verticalAlignment="center" horizontalAlignment="right">
+              <Label [text]="val.Valor"></Label>
+            </GridLayout>
+          </GridLayout>
+          <GridLayout *ngIf="item.TipoItem ==='CB' && val != null" row="1" columns="*, auto">
+            <CheckBox col="0" class="item-opcion-cb"
+              [isEnabled]="!spinner"
+              [text]="val.Titulo" textWrap="true"
+              boxType="square"
+              fillColor="#2A367B"
+              (tap)="setValor(val)">
+            </CheckBox>
+            <GridLayout *ngIf="val.VisibleValor" col="1" class="item-opcion-cb-val" verticalAlignment="center" horizontalAlignment="right">
+              <Label [text]="val.Valor"></Label>
+            </GridLayout>
+          </GridLayout>
+          <TextField #cajaTexto *ngIf="val.CajaTexto && valoresSeleccionados?.includes(val)" row="2"
             [isEnabled]="!spinner"
             [(ngModel)]="valoresSeleccionados[valoresSeleccionados.indexOf(val)].ValorTexto"
             class="item-caja-texto"

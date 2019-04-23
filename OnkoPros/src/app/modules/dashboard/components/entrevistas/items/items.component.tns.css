@@ -27,6 +27,11 @@
     margin: 10;
 }
 
+.item-opcion-cb-val {
+    color: red;
+    margin-right: 10;
+}
+
 .item-caja-texto {
     color: #2A367B;
     font-style: normal;

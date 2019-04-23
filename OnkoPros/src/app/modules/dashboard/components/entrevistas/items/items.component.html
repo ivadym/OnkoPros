@@ -7,12 +7,15 @@
       <!-- RADIO BUTTON & CHECKBOX -->
       <div *ngIf="item.TipoItem === 'RB' || item.TipoItem === 'CB'" class="opciones-item">
         <div *ngFor="let val of item.Valores" class="row">
-          <div class="col-12 p-1 custom-control custom-{{item.TipoItem === 'RB' ? 'radio' : 'checkbox'}}">
+          <div class="col-10 p-1 custom-control custom-{{item.TipoItem === 'RB' ? 'radio' : 'checkbox'}}">
             <input type="{{item.TipoItem === 'RB' ? 'radio' : 'checkbox'}}" name="valor" id="{{val.IdItemValor}}"
               class="custom-control-input" (click)="setValor(val)">
             <label class="custom-control-label" for="{{val.IdItemValor}}">
               {{val.Titulo}}
             </label>
+          </div>
+          <div *ngIf="val.VisibleValor" class="col-2 p-1 custom-control-label-val">
+            <div class="custom-control-label-val-content">{{val.Valor}}</div>
           </div>
           <div *ngIf="val.CajaTexto && valoresSeleccionados?.includes(val)" class="col-12">
             <input #cajaTexto class="opcion-caja-texto" [(ngModel)]="valoresSeleccionados[valoresSeleccionados.indexOf(val)].ValorTexto"

@@ -28,7 +28,7 @@
     </div>
     <div *ngIf="perfiles">
       <div *ngFor="let perfil of perfiles" class="row justify-content-center">
-        <button type="button" class="btn btn-modal col-5 m-2" (click)="modal.close(perfil)">
+        <button type="button" class="btn btn-modal col-12 col-md-6 m-2" (click)="modal.close(perfil)">
           {{perfil}}
         </button>
       </div>
