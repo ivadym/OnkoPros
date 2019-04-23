@@ -10,7 +10,7 @@ const config = require('../helpers/config');
 exports.extraerItem = function(idUsuario, idPerfil, idEntrevista) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
-        var query = `SELECT TOP 1 i.IdItem, e.IdEntrevista, i.Titulo, i.Tooltip, i.TipoItem, i.EsPadre, i.IdEntrevistaPadre
+        var query = `SELECT TOP 1 i.IdItem, e.IdEntrevista, i.Titulo, i.Subtitulo, i.Tooltip, i.TipoItem, i.EsPadre, i.IdEntrevistaPadre
                     FROM OP_ENTREVISTA e INNER JOIN GEOP_ENTREVISTA eg ON e.IdEntrevista=eg.IdEntrevista
                     INNER JOIN GEOP_ENTREVISTA_ITEM ei ON e.IdEntrevista=ei.IdEntrevista
                     INNER JOIN GEOP_ITEM i ON ei.IdItem=i.IdItem
@@ -118,7 +118,7 @@ exports.extraerItem = function(idUsuario, idPerfil, idEntrevista) {
 function extraerItemHijo(idUsuario, idPerfil, idEntrevistaPrincipal, itemPadre) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
-        var query = `SELECT TOP 1 i.IdItem, eg.IdEntrevista, i.Titulo, i.Tooltip, i.TipoItem, i.EsPadre, i.IdEntrevistaPadre
+        var query = `SELECT TOP 1 i.IdItem, eg.IdEntrevista, i.Titulo, i.Subtitulo, i.Tooltip, i.TipoItem, i.EsPadre, i.IdEntrevistaPadre
                     FROM GEOP_ENTREVISTA eg INNER JOIN GEOP_ENTREVISTA_ITEM ei ON eg.IdEntrevista=ei.IdEntrevista
                     INNER JOIN GEOP_ITEM i ON ei.IdItem=i.IdItem
                     WHERE eg.IdEntrevista=@idEntrevista AND eg.Estado=1 AND ei.Estado=1 AND i.Estado=1
@@ -194,12 +194,13 @@ function extraerItemHijo(idUsuario, idPerfil, idEntrevistaPrincipal, itemPadre) 
 function extraerValores(item) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
-        var query = `SELECT v.IdItemValor, v.Titulo, v.Tooltip, v.Valor, v.TipoValor, v.VisibleValor, v.CajaTexto, v.ValorTexto, v.Alerta, v.AlertaTexto
+        var query = `SELECT v.IdValor, v.Titulo, v.Tooltip, v.Valor, v.TipoValor, v.VisibleValor, v.CajaTexto, v.ValorTexto, v.Alerta, v.AlertaTexto
                     FROM GEOP_ENTREVISTA eg INNER JOIN GEOP_ENTREVISTA_ITEM ei ON eg.IdEntrevista=ei.IdEntrevista
                     INNER JOIN GEOP_ITEM i ON ei.IdItem=i.IdItem
-                    INNER JOIN GEOP_ITEM_VALOR v ON i.IdItem=v.IdItem
-                    WHERE eg.IdEntrevista=@idEntrevista AND i.IdItem=@idItem AND eg.Estado=1 AND ei.Estado=1 AND i.Estado=1 AND v.Estado=1
-                    ORDER BY len(v.Orden), v.Orden ASC;`;
+                    INNER JOIN GEOP_ITEM_VALOR iv ON i.IdItem=iv.IdItem
+                    INNER JOIN GEOP_VALOR v ON iv.IdValor=v.IdValor
+                    WHERE eg.IdEntrevista=@idEntrevista AND i.IdItem=@idItem AND eg.Estado=1 AND ei.Estado=1 AND i.Estado=1 AND iv.Estado=1 AND v.Estado=1
+                    ORDER BY len(iv.Orden), iv.Orden ASC;`;
         var result = [];
 
         connection.on('connect', function(err) {

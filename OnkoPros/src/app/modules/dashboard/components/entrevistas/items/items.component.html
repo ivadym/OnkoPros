@@ -8,9 +8,9 @@
       <div *ngIf="item.TipoItem === 'RB' || item.TipoItem === 'CB'" class="opciones-item">
         <div *ngFor="let val of item.Valores" class="row">
           <div class="col-10 p-1 custom-control custom-{{item.TipoItem === 'RB' ? 'radio' : 'checkbox'}}">
-            <input type="{{item.TipoItem === 'RB' ? 'radio' : 'checkbox'}}" name="valor" id="{{val.IdItemValor}}"
+            <input type="{{item.TipoItem === 'RB' ? 'radio' : 'checkbox'}}" name="valor" id="{{val.IdValor}}"
               class="custom-control-input" (click)="setValor(val)">
-            <label class="custom-control-label" for="{{val.IdItemValor}}">
+            <label class="custom-control-label" for="{{val.IdValor}}">
               {{val.Titulo}}
             </label>
           </div>

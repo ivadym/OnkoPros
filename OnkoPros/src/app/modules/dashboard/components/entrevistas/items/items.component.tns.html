@@ -9,7 +9,7 @@
           <GridLayout  *ngIf="item.TipoItem === 'RB' && val != null" row="0" columns="*, auto">
             <CheckBox col="0" class="item-opcion-cb"
               [isEnabled]="!spinner"
-              [checked]="val.IdItemValor === checkedValor$?.IdItemValor"
+              [checked]="val.IdValor === checkedValor$?.IdValor"
               [text]="val.Titulo" textWrap="true"
               boxType="circle"
               fillColor="#2A367B"

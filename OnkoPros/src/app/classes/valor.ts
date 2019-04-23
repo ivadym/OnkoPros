@@ -1,5 +1,5 @@
 export class Valor {
-    IdItemValor:    number;
+    IdValor:        number;
     Titulo:         string;
     Tooltip:        string;
     Valor:          string;
