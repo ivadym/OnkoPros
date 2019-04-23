@@ -9,13 +9,21 @@
 }
 
 .titulo-item {
+    color: #2A367B;
+    font-size: 24px;
+    font-weight: 500;
+    padding-bottom: 5%;
+}
+
+.titulo-item-2 {
+    color: #2A7B6F;
     font-size: 22px;
-    padding-bottom: 10%;
+    padding-bottom: 5%;
 }
 
 .opciones-item {
     color: #2A367B;
-    font-size: 17px;
+    font-size: 20px;
     padding-bottom: 10%;
 }
 

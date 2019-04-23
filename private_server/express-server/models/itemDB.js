@@ -48,7 +48,7 @@ exports.extraerItem = function(idUsuario, idPerfil, idEntrevista) {
                 request.on('requestCompleted', function () {
                     var siguienteItem = result[0];
                     if(siguienteItem) { // Quedan items
-                        if(siguienteItem.EsPadre) {
+                        if(siguienteItem.EsPadre) { // Es padre
                             extraerItemHijo(idUsuario, idPerfil, idEntrevista, siguienteItem)
                             .then(function(itemHijo) {
                                 if(itemHijo) { // Quedan más hijos

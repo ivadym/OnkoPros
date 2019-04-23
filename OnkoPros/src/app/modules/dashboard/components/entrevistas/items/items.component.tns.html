@@ -1,8 +1,11 @@
-<GridLayout *ngIf="item" rows="auto, auto, auto" class="container-item" verticalAlignment="center">
+<GridLayout *ngIf="item" rows="auto, auto, auto, auto" class="container-item" verticalAlignment="center">
   <GridLayout row="0" class="item-header">
     <Label [text]="item?.Titulo" textWrap="true"></Label>
   </GridLayout>
-  <RadListView row="1" [items]="item?.Valores" class="item-lista">
+  <GridLayout *ngIf="item?.Subtitulo" row="1" class="item-header-2">
+    <Label [text]="item?.Subtitulo" textWrap="true"></Label>
+  </GridLayout>
+  <RadListView row="2" [items]="item?.Valores" class="item-lista">
     <ng-template tkListItemTemplate let-val="item">
       <StackLayout orientation="vertical">
         <GridLayout class="item-opcion" rows="auto, auto, auto" *ngIf="item.TipoItem === 'RB' || item.TipoItem === 'CB'">
@@ -45,7 +48,7 @@
       </StackLayout>
     </ng-template>
   </RadListView>
-  <GridLayout row="2" class="item-btn" [isEnabled]="valoresSeleccionados?.length > 0 && !spinner" (tap)="responder()">
+  <GridLayout row="3" class="item-btn" [isEnabled]="valoresSeleccionados?.length > 0 && !spinner" (tap)="responder()">
     <Label text="Responder"></Label>
   </GridLayout>
 </GridLayout>
