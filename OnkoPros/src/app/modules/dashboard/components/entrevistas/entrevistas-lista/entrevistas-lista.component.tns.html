@@ -8,7 +8,7 @@
               <StackLayout row="0" class="entrevista-titulo">
                 <Label [text]="entrevista.Titulo" textWrap="true"></Label>
               </StackLayout>
-              <StackLayout row="1" class="entrevista-descripcion">
+              <StackLayout *ngIf="entrevista.Tooltip" row="1" class="entrevista-descripcion">
                 <Label [text]="entrevista.Tooltip" textWrap="true"></Label>
               </StackLayout>
               <StackLayout row="2" class="entrevista-fecha-limite" horizontalAlignment="right">

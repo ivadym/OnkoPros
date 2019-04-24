@@ -60,7 +60,7 @@ export class CuadroDialogoService {
     modal.componentInstance.mensaje_1 = mensaje_1;
     modal.componentInstance.mensaje_2 = mensaje_2;
     modal.componentInstance.perfiles = null;
-    modal.componentInstance.alerta = false;
+    modal.componentInstance.alerta = true;
     return modal.result;
   }
 

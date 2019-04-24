@@ -2,7 +2,7 @@
   <div class="col-12 col-ent">
     <div *ngFor="let entrevista of entrevistas" class="row justify-content-center">
       <ng-template #popContent>
-        <div>{{entrevista.Tooltip}}</div>
+        <div *ngIf="entrevista.Tooltip">{{entrevista.Tooltip}}</div>
         <div class="popover-fecha-limite text-right">{{entrevista.FechaLimite | date: 'dd/MM/yyy'}}</div>
       </ng-template>
       <button class="btn col-12 col-md-6 btn-entrevista p-2 m-1" popoverClass="popover" [ngbPopover]="popContent"
