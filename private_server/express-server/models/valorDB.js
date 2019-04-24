@@ -53,7 +53,7 @@ exports.almacenarItemValor = function(idUsuario, idPerfil, item) {
 }
 
 /**
- * Actualiza el estado de la entrevista (en progreso)
+ * Almacenar los valores contestados por el usuario
  */
 function almacenarValor(idUsuario, idPerfil, item, index) {
     return new Promise(function(resolve, reject) {

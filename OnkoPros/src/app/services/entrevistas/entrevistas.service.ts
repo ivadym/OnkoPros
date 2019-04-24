@@ -72,10 +72,10 @@ export class EntrevistasService {
   /**
    * Extrae la siguiente pregunta
    */
-  getItem(id: number): Observable<Item> {
+  getItem(id: number): Observable<any> {
     this.spinnerService.show();
     const url = `${this.entrevistasURL}/${id}/items`;
-    return this.http.get<Item>(url)
+    return this.http.get<any>(url)
       .pipe(
         finalize(() => {
           this.spinnerService.hide();

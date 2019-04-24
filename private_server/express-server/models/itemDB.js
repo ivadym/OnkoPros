@@ -54,11 +54,12 @@ exports.extraerItem = function(idUsuario, idPerfil, idEntrevista) {
                                 if(itemHijo) { // Quedan más hijos
                                     extraerValores(itemHijo) // Extracción de los valores del item hijo
                                     .then(function(res) {
+                                        var idPadre = itemHijo.IdEntrevista;
                                         itemHijo.IdEntrevista = idEntrevista; // Hijo hereda el ID del padre
                                         itemHijo.Valores = res;
                                         delete itemHijo['EsPadre'];
                                         delete itemHijo['IdEntrevistaPadre'];
-                                        resolve(itemHijo); // Se envía al usuario el item hijo
+                                        resolve([idPadre, itemHijo]); // Se envía al usuario el item hijo
                                     })
                                     .catch(function(error) {
                                         resolve(error);

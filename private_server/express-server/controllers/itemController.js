@@ -1,4 +1,5 @@
 const itemData = require('../models/itemDB');
+const entrevistaData = require('../models/entrevistasDB');
 
 /**
  * Devuelve la siguiente pregunta disponible
@@ -6,8 +7,24 @@ const itemData = require('../models/itemDB');
 exports.getItem = function (req, res, next) {
     extraerItem(req.idUsuario, req.idPerfil, req.params['id'])
     .then(function(item) {
-        if(item) {
-            res.status(200).json(item);
+        if(item && item.length == 2) {
+            entrevistaData.extraerTituloEntrevista(item[0])
+            .then(function(tituloPadre) {
+                res.status(200).json({
+                    item: item[1],
+                    idPadre: item[0],
+                    tituloPadre: tituloPadre
+                });
+            })
+            .catch(function(error) {
+                res.status(200).json(null);
+            });
+        } else if(item) {
+            res.status(200).json({
+                item: item,
+                idPadre: null,
+                tituloPadre: null
+            });
         } else {
             res.status(200).json(null);
         }
