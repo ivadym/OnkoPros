@@ -13,7 +13,7 @@ export class DashboardComponent implements OnInit {
   usuarioLogueado: Usuario;
   
   constructor(
-    private authService: AuthService,
+    private authService: AuthService
   ) {
     this.authService.usuarioLogueadoObservable.subscribe(
       usuario => this.usuarioLogueado = usuario

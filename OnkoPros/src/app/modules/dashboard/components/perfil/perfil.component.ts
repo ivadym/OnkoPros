@@ -15,8 +15,10 @@ export class PerfilComponent implements OnInit {
 
   constructor(
     private authService: AuthService
-  ) {
-    this.usuarioLogueado = this.authService.usuarioLogueado;
+    ) {
+      this.authService.usuarioLogueadoObservable.subscribe(
+        usuario => this.usuarioLogueado = usuario
+      );
   }
 
   ngOnInit() { }

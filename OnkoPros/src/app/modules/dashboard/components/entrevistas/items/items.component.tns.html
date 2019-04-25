@@ -9,7 +9,7 @@
     <ng-template tkListItemTemplate let-val="item">
       <StackLayout orientation="vertical">
         <GridLayout class="item-opcion" rows="auto, auto, auto" *ngIf="item.TipoItem === 'RB' || item.TipoItem === 'CB'">
-          <GridLayout  *ngIf="item.TipoItem === 'RB' && val != null" row="0" columns="*, auto">
+          <GridLayout *ngIf="item.TipoItem === 'RB' && val != null" row="0" columns="*, auto">
             <CheckBox col="0" class="item-opcion-cb"
               [isEnabled]="!spinner"
               [checked]="val.IdValor === checkedValor$?.IdValor"
