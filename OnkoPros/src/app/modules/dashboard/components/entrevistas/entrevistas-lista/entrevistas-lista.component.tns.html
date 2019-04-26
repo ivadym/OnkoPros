@@ -18,17 +18,22 @@
         </ScrollView>
       </ng-template>
   </RadListView>
-  <GridLayout *ngIf="!entrevistasDisponibles" rows="auto, *, auto" verticalAlignment="center">
-    <StackLayout row="0" class="entrevista-fin">
-      <Label text="¡Enhorabuena, está al día con las entrevistas!" textWrap="true"></Label>
-    </StackLayout>
-    <StackLayout row="1">
-      <Label class="fas-entrevista" text="&#xf46c;"></Label>
-    </StackLayout>
-    <StackLayout row="2" class="entrevista-fin-btn" [nsRouterLink]="['/dashboard']" nsRouterLinkActive="active"
-      [nsRouterLinkActiveOptions]="{exact: true}">
-        <Label text="Volver a la pantalla de inicio" textWrap="true"></Label>
-    </StackLayout>
+  <GridLayout *ngIf="!entrevistasDisponibles" rows="auto, *">
+    <GridLayout row="0" verticalAlignment="top">
+      <Label class="fas-refrescar" text="&#xf0d7;"></Label>
+    </GridLayout>
+    <GridLayout row="1" rows="auto, auto, auto" verticalAlignment="center">
+      <GridLayout row="0" class="entrevista-fin">
+        <Label text="¡Enhorabuena, está al día con las entrevistas!" textWrap="true"></Label>
+      </GridLayout>
+      <GridLayout row="1">
+        <Label class="fas-entrevista" text="&#xf46c;"></Label>
+      </GridLayout>
+      <GridLayout row="2" class="entrevista-fin-btn" [nsRouterLink]="['/dashboard']" nsRouterLinkActive="active"
+        [nsRouterLinkActiveOptions]="{exact: true}">
+          <Label text="Volver a la pantalla de inicio" textWrap="true"></Label>
+      </GridLayout>
+    </GridLayout>
   </GridLayout>
   <ActivityIndicator
     [busy]="spinner"
