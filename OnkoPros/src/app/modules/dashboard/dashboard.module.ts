@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { ChartsModule } from 'ng2-charts';
 
 import { DashboardComponent } from './components/dashboard/dashboard.component';
@@ -32,6 +33,7 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
     CommonModule,
     FormsModule,
     NgbModule,
+    NgSelectModule,
     ChartsModule,
     DashboardRoutingModule
   ]

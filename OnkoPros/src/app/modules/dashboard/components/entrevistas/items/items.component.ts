@@ -57,6 +57,7 @@ export class ItemsComponent implements OnInit {
 
   ngOnInit() {
     this.idPadre = null;
+    this.valoresSeleccionados = [null];
     this.extraerItem(+this.route.snapshot.paramMap.get('id'));
     this._spinnerSubscription = this.spinnerService.estadoSpinnerObservable.subscribe(
       estado => {
@@ -177,12 +178,12 @@ export class ItemsComponent implements OnInit {
    */
   setValor(valor: Valor): void {
     if(this.item.TipoItem === 'RB') { // RADIO BUTTON
-      this.valoresSeleccionados = [valor];
+      this.valoresSeleccionados[0] = valor;
       this._checkedValorSubject.next(valor);
     } else if(this.item.TipoItem === 'CB') { // CHECKBOX
-      if(!this.valoresSeleccionados) {
-        this.valoresSeleccionados = [valor];
-      } else if(this.valoresSeleccionados.includes(valor)) {
+      if(!this.valoresSeleccionados[0]) { // Primer elemento
+        this.valoresSeleccionados[0] = valor;
+      } else if(this.valoresSeleccionados.includes(valor)) { // Elemento ya seleccionado > Deseleccionar
         this.valoresSeleccionados.splice(this.valoresSeleccionados.indexOf(valor), 1);
       } else {
         this.valoresSeleccionados.push(valor);
@@ -207,7 +208,7 @@ export class ItemsComponent implements OnInit {
    */
   limpiarContexto(): void {
     this.item = null;
-    this.valoresSeleccionados = null;
+    this.valoresSeleccionados = [null];
     this.checkedValor$ = null;
   }
 

@@ -22,8 +22,18 @@
           </div>
         </div>
       </div>
+      <!-- SELECT BUTTON -->
+      <div *ngIf="item.TipoItem === 'SB'" class="opciones-item">
+        <ng-select [items]="item.Valores" class="custom"
+          placeholder="Seleccione una de las opciones..."
+          bindLabel="Titulo"
+          [(ngModel)]="valoresSeleccionados[0]"
+          name="valorSeleccionado"
+          autofocus>
+        </ng-select>
+      </div>
       <div class="row">
-        <button type="submit" class="btn btn-responder col-12" [disabled]="!valoresSeleccionados?.length">
+        <button type="submit" class="btn btn-responder col-12" [disabled]="!valoresSeleccionados[0]">
           Responder
         </button>
       </div>

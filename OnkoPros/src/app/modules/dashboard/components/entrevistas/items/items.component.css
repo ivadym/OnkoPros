@@ -27,6 +27,8 @@
     padding-bottom: 10%;
 }
 
+/* Caja de texto */
+
 .opcion-caja-texto {
     color: #2A367B;
     font-style: normal;
@@ -42,6 +44,40 @@
     font-style: italic;
 }
 
+/* SB: Botón seleccionar */
+
+.ng-select.custom ::ng-deep .ng-select-container  {
+    color: #2A367B;
+    font-size: 20px;
+    box-shadow: none;
+    border-color: #2A367B;
+    border-width: 1px;
+    border-radius: 5px;
+}
+
+.ng-select.custom ::ng-deep .ng-option {
+    color: #2A367B;
+}
+
+.ng-select.custom ::ng-deep .ng-option.ng-option-selected{ /* Color de fonde de la pción marcada */
+    color: #2A367B;
+    background-color: rgba(0, 128, 0, 0.1);
+}
+
+.ng-select.custom ::ng-deep .ng-option.ng-option-marked { /* Color de fondo hoover */
+    background-color: rgba(77, 42, 123, 0.1);
+}
+
+.ng-select.custom ::ng-deep .ng-dropdown-panel {
+    margin-top: 1px;
+    border-color: #2A367B;
+    border: solid;
+    border-width: 1px;
+    border-radius: 5px;
+}
+
+/* Botón responder */
+
 .btn-responder {
     color: white;
     background-color: #4D2A7B;
@@ -53,6 +89,8 @@
     color: white;
     background-color: rgba(77, 42, 123, 0.95);
 }
+
+/* RB: Radio button & CB: Checkbox */
 
 /* Estilos de los valores por defecto */
 
