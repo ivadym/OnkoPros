@@ -1,14 +1,14 @@
-<GridLayout *ngIf="item" rows="auto, auto, auto, auto" class="container-item" verticalAlignment="center">
+<GridLayout *ngIf="item" rows="auto, auto, auto, auto, auto" class="container-item" verticalAlignment="center">
   <GridLayout row="0" class="item-header">
     <Label [text]="item?.Titulo" textWrap="true"></Label>
   </GridLayout>
   <GridLayout *ngIf="item?.Subtitulo" row="1" class="item-header-2">
     <Label [text]="item?.Subtitulo" textWrap="true"></Label>
   </GridLayout>
-  <RadListView row="2" [items]="item?.Valores" class="item-lista">
+  <RadListView row="2" [items]="item?.Valores" class="item-lista" *ngIf="item.TipoItem === 'RB' || item.TipoItem === 'CB'">
     <ng-template tkListItemTemplate let-val="item">
       <StackLayout orientation="vertical">
-        <GridLayout class="item-opcion" rows="auto, auto, auto" *ngIf="item.TipoItem === 'RB' || item.TipoItem === 'CB'">
+        <GridLayout class="item-opcion" rows="auto, auto, auto">
           <GridLayout *ngIf="item.TipoItem === 'RB' && val != null" row="0" columns="*, auto">
             <CheckBox col="0" class="item-opcion-cb"
               [isEnabled]="!spinner"
@@ -48,8 +48,16 @@
       </StackLayout>
     </ng-template>
   </RadListView>
-  <GridLayout row="3" class="item-btn" [isEnabled]="valoresSeleccionados?.length > 0 && !spinner" (tap)="responder()">
-    <Label text="Responder"></Label>
+  <GridLayout row="3" rows="auto" *ngIf="item.TipoItem === 'SB'" class="item-lista dropdown-container">
+    <DropDown row="0" class="dropdown item-opcion"
+      hint="Seleccione una de las opciones..."
+      [items]="tituloValores"
+      [(ngModel)]="indiceSeleccionado"
+      (selectedIndexChanged)="setValor(null)">
+    </DropDown>
+  </GridLayout>
+  <GridLayout row="4" class="item-btn" (tap)="responder()" [isEnabled]="(valoresSeleccionados[0] && !spinner)">
+      <Label text="Responder"></Label>
   </GridLayout>
 </GridLayout>
 <ActivityIndicator

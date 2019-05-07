@@ -42,7 +42,17 @@
     color: #2A367B;
     font-style: normal;
     background-color: rgba(77, 42, 123, 0.1);
-    border-radius: 5px;
+    border-radius: 5;
+}
+
+.dropdown-container {
+    border-color: #2A367B;
+    border-width: 1;
+    border-radius: 5;
+}
+
+.dropdown {
+    padding: 5;
 }
 
 .item-btn {

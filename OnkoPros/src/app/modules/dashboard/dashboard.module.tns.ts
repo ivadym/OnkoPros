@@ -4,6 +4,7 @@ import { NativeScriptFormsModule } from "nativescript-angular/forms"
 import { NativeScriptUISideDrawerModule } from "nativescript-ui-sidedrawer/angular";
 import { NativeScriptUIListViewModule } from "nativescript-ui-listview/angular";
 import { TNSCheckBoxModule } from 'nativescript-checkbox/angular';
+import { DropDownModule } from "nativescript-drop-down/angular";
 
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { InicioComponent } from './components/inicio/inicio.component';
@@ -35,6 +36,7 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
     NativeScriptUISideDrawerModule,
     NativeScriptUIListViewModule,
     TNSCheckBoxModule,
+    DropDownModule,
     DashboardRoutingModule
   ],
   schemas: [

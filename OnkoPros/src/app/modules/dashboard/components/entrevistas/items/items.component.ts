@@ -33,7 +33,9 @@ export class ItemsComponent implements OnInit {
   private _spinnerSubscription: Subscription;
 
   item: Item;
-  valoresSeleccionados: Valor[];
+  tituloValores: string[] = [];
+  valoresSeleccionados: Valor[] = [];
+  indiceSeleccionado: number = null;
   private idPadre: number;
 
   checkedValor$: Valor;
@@ -57,7 +59,6 @@ export class ItemsComponent implements OnInit {
 
   ngOnInit() {
     this.idPadre = null;
-    this.valoresSeleccionados = [null];
     this.extraerItem(+this.route.snapshot.paramMap.get('id'));
     this._spinnerSubscription = this.spinnerService.estadoSpinnerObservable.subscribe(
       estado => {
@@ -119,7 +120,6 @@ export class ItemsComponent implements OnInit {
           } else {
             this.item = datos.item;
           }
-         
         } else if(datos && datos.item) {
           this.idPadre = null;
           // TODO: Fichero de logs
@@ -129,6 +129,13 @@ export class ItemsComponent implements OnInit {
           console.log('LOG getItem() (no hay más items)');
           this.navegacionService.navegar(`/dashboard/entrevistas/${id}/fin`, true);
         }
+
+        if (this.item && this.item.TipoItem === 'SB') {
+          for (const key in this.item.Valores) {
+            this.tituloValores.push(this.item.Valores[key].Titulo);
+          }
+        }
+
       },
       error => {
         this.errorHandler.handleError(error, `getItem(${id})`);
@@ -178,18 +185,23 @@ export class ItemsComponent implements OnInit {
    */
   setValor(valor: Valor): void {
     if(this.item.TipoItem === 'RB') { // RADIO BUTTON
-      this.valoresSeleccionados[0] = valor;
+      this.valoresSeleccionados = [valor];
       this._checkedValorSubject.next(valor);
     } else if(this.item.TipoItem === 'CB') { // CHECKBOX
       if(!this.valoresSeleccionados[0]) { // Primer elemento
-        this.valoresSeleccionados[0] = valor;
+        this.valoresSeleccionados = [valor];
       } else if(this.valoresSeleccionados.includes(valor)) { // Elemento ya seleccionado > Deseleccionar
         this.valoresSeleccionados.splice(this.valoresSeleccionados.indexOf(valor), 1);
       } else {
         this.valoresSeleccionados.push(valor);
       }
+    } else if(this.item.TipoItem === 'SB') { // SELECT BUTTON (Implementación exclusiva para Nativescript)
+      setTimeout(() => { // Workaround al bug de data binding del DropDown ({N} plugin)
+        this.valoresSeleccionados[0] = this.item.Valores[this.indiceSeleccionado];
+      }, 50);
     }
-    if (valor.CajaTexto && this.valoresSeleccionados.includes(valor)) {
+
+    if (valor && valor.CajaTexto && this.valoresSeleccionados.includes(valor)) {
       this.autofocus();
     }
   }
@@ -208,7 +220,9 @@ export class ItemsComponent implements OnInit {
    */
   limpiarContexto(): void {
     this.item = null;
-    this.valoresSeleccionados = [null];
+    this.tituloValores = [];
+    this.valoresSeleccionados = [];
+    this.indiceSeleccionado = null;
     this.checkedValor$ = null;
   }
 
