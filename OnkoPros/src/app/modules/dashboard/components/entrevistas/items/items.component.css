@@ -76,6 +76,10 @@
     border-radius: 5px;
 }
 
+.ng-select-val {
+    color: red !important;
+}
+
 /* Botón responder */
 
 .btn-responder {

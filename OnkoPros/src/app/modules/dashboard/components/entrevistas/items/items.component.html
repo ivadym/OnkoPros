@@ -30,6 +30,9 @@
           [(ngModel)]="valoresSeleccionados[0]"
           name="valorSeleccionado"
           autofocus>
+          <ng-template ng-label-tmp ng-option-tmp let-val="item">
+            {{val.Titulo}} <a *ngIf="val.VisibleValor" class="ng-select-val">({{val.Valor}})</a>
+          </ng-template>
         </ng-select>
       </div>
       <div class="row">

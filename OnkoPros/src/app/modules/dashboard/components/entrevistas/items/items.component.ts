@@ -33,7 +33,7 @@ export class ItemsComponent implements OnInit {
   private _spinnerSubscription: Subscription;
 
   item: Item;
-  tituloValores: string[] = [];
+  tituloValores: string[] = []; // Uso exclusivo Select Button {N}
   valoresSeleccionados: Valor[] = [];
   indiceSeleccionado: number = null;
   private idPadre: number;
@@ -132,7 +132,11 @@ export class ItemsComponent implements OnInit {
 
         if (this.item && this.item.TipoItem === 'SB') {
           for (const key in this.item.Valores) {
-            this.tituloValores.push(this.item.Valores[key].Titulo);
+            if(this.item.Valores[key].VisibleValor) {
+              this.tituloValores.push(this.item.Valores[key].Titulo + " (" + this.item.Valores[key].Valor + ")")
+            } else {
+              this.tituloValores.push(this.item.Valores[key].Titulo);
+            }
           }
         }
 
