@@ -45,6 +45,16 @@
     border-radius: 5;
 }
 
+.item-caja-texto-sb {
+    color: #2A367B;
+    font-size: 22;
+    font-style: normal;
+    background-color: rgba(77, 42, 123, 0.1);
+    border-radius: 5;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
 .dropdown-container {
     border-color: #2A367B;
     border-width: 1;

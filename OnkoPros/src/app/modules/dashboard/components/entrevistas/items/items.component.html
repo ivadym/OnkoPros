@@ -17,8 +17,8 @@
             <div class="custom-control-label-val-content">{{val.Valor}}</div>
           </div>
           <div *ngIf="val.CajaTexto && valoresSeleccionados?.includes(val)" class="col-12">
-            <input #cajaTexto class="opcion-caja-texto" [(ngModel)]="valoresSeleccionados[valoresSeleccionados.indexOf(val)].ValorTexto"
-              name="valorPersonalizado" placeholder="Elabore su propia respuesta" autocomplete="off">
+            <input #cajaTexto class="opcion-caja-texto" name="valorPersonalizado" placeholder="Elabore su propia respuesta"
+              [(ngModel)]="valoresSeleccionados[valoresSeleccionados.indexOf(val)].ValorTexto" autocomplete="off">
           </div>
         </div>
       </div>
@@ -26,7 +26,9 @@
       <div *ngIf="item.TipoItem === 'SB'" class="opciones-item">
         <ng-select [items]="item.Valores" class="custom"
           placeholder="Seleccione una de las opciones..."
+          notFoundText="Respuesta no encontrada"
           bindLabel="Titulo"
+          (change)="autofocus()"
           [(ngModel)]="valoresSeleccionados[0]"
           name="valorSeleccionado"
           autofocus>
@@ -34,6 +36,10 @@
             {{val.Titulo}} <a *ngIf="val.VisibleValor" class="ng-select-val">({{val.Valor}})</a>
           </ng-template>
         </ng-select>
+        <div *ngIf="valoresSeleccionados[0]?.CajaTexto" class="opcion-caja-texto-sb">
+          <input #cajaTexto class="opcion-caja-texto" name="valorPersonalizado" placeholder="Elabore su propia respuesta"
+            [(ngModel)]="valoresSeleccionados[0].ValorTexto" autocomplete="off">
+        </div>
       </div>
       <div class="row">
         <button type="submit" class="btn btn-responder col-12" [disabled]="!valoresSeleccionados[0]">

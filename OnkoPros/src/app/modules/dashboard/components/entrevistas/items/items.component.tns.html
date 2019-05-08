@@ -5,6 +5,7 @@
   <GridLayout *ngIf="item?.Subtitulo" row="1" class="item-header-2">
     <Label [text]="item?.Subtitulo" textWrap="true"></Label>
   </GridLayout>
+  <!-- RADIO BUTTON & CHECKBOX -->
   <RadListView row="2" [items]="item?.Valores" class="item-lista" *ngIf="item.TipoItem === 'RB' || item.TipoItem === 'CB'">
     <ng-template tkListItemTemplate let-val="item">
       <StackLayout orientation="vertical">
@@ -48,13 +49,24 @@
       </StackLayout>
     </ng-template>
   </RadListView>
-  <GridLayout row="3" rows="auto" *ngIf="item.TipoItem === 'SB'" class="item-lista dropdown-container">
+  <!-- SELECT BUTTON -->
+  <GridLayout row="3" rows="auto, auto" *ngIf="item.TipoItem === 'SB'" class="item-lista dropdown-container">
     <DropDown row="0" class="dropdown item-opcion"
       hint="Seleccione una de las opciones..."
       [items]="tituloValores"
       [(ngModel)]="indiceSeleccionado"
       (selectedIndexChanged)="setValor(null)">
     </DropDown>
+    <TextField #cajaTexto *ngIf="item.Valores[indiceSeleccionado]?.CajaTexto" row="1"
+      [isEnabled]="!spinner"
+      [(ngModel)]="item.Valores[indiceSeleccionado].ValorTexto"
+      class="item-caja-texto-sb"
+      hint="Elabore su propia respuesta"
+      secure="false"
+      autocorrect="false"
+      autocapitalizationType="none"
+      style.placeholderColor="rgba(42, 54, 123, 0.6)">
+    </TextField>
   </GridLayout>
   <GridLayout row="4" class="item-btn" (tap)="responder()" [isEnabled]="(valoresSeleccionados[0] && !spinner)">
       <Label text="Responder"></Label>

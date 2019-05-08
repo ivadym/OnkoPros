@@ -37,6 +37,11 @@
     border: none;
     border-radius: 5px;
     outline: none;
+    padding: 1%;
+}
+
+.opcion-caja-texto-sb {
+    padding-top: 1%;
 }
 
 .opcion-caja-texto::placeholder {

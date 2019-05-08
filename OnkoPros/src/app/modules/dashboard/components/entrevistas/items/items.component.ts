@@ -25,7 +25,9 @@ export class ItemsComponent implements OnInit {
    */
   autofocus(): void {
     setTimeout(() => {
-      this.cajaTexto.nativeElement.focus();
+      if (this.cajaTexto) {
+        this.cajaTexto.nativeElement.focus();
+      }
     }, 100);
   }
 
@@ -199,10 +201,13 @@ export class ItemsComponent implements OnInit {
       } else {
         this.valoresSeleccionados.push(valor);
       }
-    } else if(this.item.TipoItem === 'SB') { // SELECT BUTTON (Implementación exclusiva para Nativescript)
+    } else if(this.item.TipoItem === 'SB') { // SELECT BUTTON
       setTimeout(() => { // Workaround al bug de data binding del DropDown ({N} plugin)
-        this.valoresSeleccionados[0] = this.item.Valores[this.indiceSeleccionado];
-      }, 50);
+        this.valoresSeleccionados = [this.item.Valores[this.indiceSeleccionado]];
+        if (this.valoresSeleccionados[0].CajaTexto) {
+          this.autofocus();
+        }
+      }, 100);  
     }
 
     if (valor && valor.CajaTexto && this.valoresSeleccionados.includes(valor)) {
