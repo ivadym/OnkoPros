@@ -75,6 +75,7 @@ export class HttpErrorHandlerService {
       'Se ha producido un error en el servidor.',
       'Vuelva a intentar la operación más adelante.'
     );
+    this.navegacionService.navegar('/dashboard', true)
   }
   
 }
