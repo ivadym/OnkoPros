@@ -10,14 +10,13 @@ const config = require('../helpers/config');
 exports.extraerItem = function(idUsuario, idPerfil, idEntrevista) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
-        var query = `SELECT TOP 1 i.IdItem, e.IdEntrevista, i.Titulo, i.Subtitulo, i.Tooltip, i.TipoItem, i.EsPadre, i.IdEntrevistaPadre
+        var query = `SELECT TOP 1 i.IdItem, e.IdEntrevista, i.Titulo, i.Subtitulo, i.Tooltip, i.TipoItem, i.EsAgrupacion
                     FROM OP_ENTREVISTA e INNER JOIN GEOP_ENTREVISTA eg ON e.IdEntrevista=eg.IdEntrevista
                     INNER JOIN GEOP_ENTREVISTA_ITEM ei ON e.IdEntrevista=ei.IdEntrevista
                     INNER JOIN GEOP_ITEM i ON ei.IdItem=i.IdItem
                     WHERE e.IdUsuario=@idUsuario AND e.IdPerfil=@idPerfil AND e.IdEntrevista=@idEntrevista AND (e.Estado BETWEEN 0 AND 19) AND eg.Estado=1
                     AND (i.IdItem NOT IN (SELECT op_ei.IdItem FROM OP_ENTREVISTA_ITEM op_ei WHERE op_ei.Estado>0 AND op_ei.IdEntrevistaUsuario=(SELECT op_e.IdEntrevistaUsuario FROM OP_ENTREVISTA op_e WHERE op_e.IdUsuario=@idUsuario AND op_e.IdPerfil=@idPerfil AND op_e.IdEntrevista=@idEntrevista AND op_e.Estado BETWEEN 0 AND 19)))
                     AND ei.Estado=1 AND i.Estado=1
-                    AND (@fechaActual BETWEEN e.FechaInicio AND e.FechaLimite)
                     ORDER BY len(ei.Orden), ei.Orden ASC;`;
         var result = [];
 
@@ -48,24 +47,21 @@ exports.extraerItem = function(idUsuario, idPerfil, idEntrevista) {
                 request.on('requestCompleted', function () {
                     var siguienteItem = result[0];
                     if(siguienteItem) { // Quedan items
-                        if(siguienteItem.EsPadre) { // Es padre
+                        if(siguienteItem.EsAgrupacion) { // Es agrupación
                             extraerItemHijo(idUsuario, idPerfil, idEntrevista, siguienteItem)
                             .then(function(itemHijo) {
-                                if(itemHijo) { // Quedan más hijos
+                                if(itemHijo) { // Quedan hijos
                                     extraerValores(itemHijo) // Extracción de los valores del item hijo
                                     .then(function(res) {
-                                        var idPadre = itemHijo.IdEntrevista;
-                                        itemHijo.IdEntrevista = idEntrevista; // Hijo hereda el ID del padre
                                         itemHijo.Valores = res;
-                                        delete itemHijo['EsPadre'];
-                                        delete itemHijo['IdEntrevistaPadre'];
-                                        resolve([idPadre, itemHijo]); // Se envía al usuario el item hijo
+                                        delete itemHijo['EsAgrupacion'];
+                                        resolve(itemHijo); // Se envía al usuario el item hijo
                                     })
                                     .catch(function(error) {
                                         resolve(error);
                                     });
                                 } else { // No hay más hijos
-                                    finalizarItemPadre(idUsuario, idPerfil, siguienteItem.IdEntrevista, siguienteItem) // Item padre respondido
+                                    finalizarItemAgrupacion(idUsuario, idPerfil, idEntrevista, siguienteItem) // Agrupación respondida
                                     .then(function(res) {
                                         exports.extraerItem(idUsuario, idPerfil, idEntrevista) // Sigue con la extracción
                                         .then(function(res) {
@@ -83,13 +79,11 @@ exports.extraerItem = function(idUsuario, idPerfil, idEntrevista) {
                             .catch(function(error) {
                                 resolve(error);
                             });
-
-                        } else { // El item extraído no es padre
+                        } else { // El item extraído no es agrupación
                             extraerValores(siguienteItem) // Devuelve los valores del item correspondiente
                             .then(function(res) {
                                 siguienteItem.Valores = res;
-                                delete siguienteItem['EsPadre'];
-                                delete siguienteItem['IdEntrevistaPadre'];
+                                delete siguienteItem['EsAgrupacion'];
                                 resolve(siguienteItem); // Se envía al usuario el item
                             })
                             .catch(function(error) {
@@ -114,17 +108,16 @@ exports.extraerItem = function(idUsuario, idPerfil, idEntrevista) {
 }
 
 /**
- * Extrae los item hijos asociados a un item padre (entrevista padre)
+ * Extrae los item hijos asociados a una agrupación
  */
-function extraerItemHijo(idUsuario, idPerfil, idEntrevistaPrincipal, itemPadre) {
+function extraerItemHijo(idUsuario, idPerfil, idEntrevista, itemAgrupacion) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
-        var query = `SELECT TOP 1 i.IdItem, eg.IdEntrevista, i.Titulo, i.Subtitulo, i.Tooltip, i.TipoItem, i.EsPadre, i.IdEntrevistaPadre
-                    FROM GEOP_ENTREVISTA eg INNER JOIN GEOP_ENTREVISTA_ITEM ei ON eg.IdEntrevista=ei.IdEntrevista
-                    INNER JOIN GEOP_ITEM i ON ei.IdItem=i.IdItem
-                    WHERE eg.IdEntrevista=@idEntrevista AND eg.Estado=1 AND ei.Estado=1 AND i.Estado=1
-                    AND (i.IdItem NOT IN (SELECT op_ei.IdItem FROM OP_ENTREVISTA_ITEM op_ei WHERE op_ei.Estado>0 AND op_ei.IdEntrevistaUsuario=(SELECT op_e.IdEntrevistaUsuario FROM OP_ENTREVISTA op_e WHERE op_e.IdUsuario=@idUsuario AND op_e.IdPerfil=@idPerfil AND op_e.IdEntrevista=@idEntrevistaPrincipal AND op_e.Estado BETWEEN 0 AND 19)))
-                    ORDER BY len(ei.Orden), ei.Orden ASC;`;
+        var query = `SELECT TOP 1 i.IdItem, @idEntrevista IdEntrevista, i.Titulo, i.Subtitulo, i.Tooltip, i.TipoItem, i.EsAgrupacion
+                    FROM GEOP_ITEM i INNER JOIN GEOP_ITEM_AGRUPACION ia ON i.IdItem=ia.IdItemHijo
+                    WHERE ia.IdItem=@idItemAgrupacion AND ia.Estado=1 AND i.Estado=1
+                    AND (i.IdItem NOT IN (SELECT op_ei.IdItem FROM OP_ENTREVISTA_ITEM op_ei WHERE op_ei.Estado>0 AND op_ei.IdEntrevistaUsuario=(SELECT op_e.IdEntrevistaUsuario FROM OP_ENTREVISTA op_e WHERE op_e.IdUsuario=@idUsuario AND op_e.IdPerfil=@idPerfil AND op_e.IdEntrevista=@idEntrevista AND (op_e.Estado BETWEEN 0 AND 19))))
+                    ORDER BY len(ia.Orden), ia.Orden ASC;`;
         var result = [];
 
         connection.on('connect', function(err) {
@@ -140,8 +133,8 @@ function extraerItemHijo(idUsuario, idPerfil, idEntrevistaPrincipal, itemPadre) 
 
                 request.addParameter('idUsuario', TYPES.Int, idUsuario);
                 request.addParameter('idPerfil', TYPES.Int, idPerfil);
-                request.addParameter('idEntrevista', TYPES.Int, itemPadre.IdEntrevistaPadre);
-                request.addParameter('idEntrevistaPrincipal', TYPES.Int, idEntrevistaPrincipal);
+                request.addParameter('idEntrevista', TYPES.Int, idEntrevista);
+                request.addParameter('idItemAgrupacion', TYPES.Int, itemAgrupacion.IdItem);
 
                 request.on('row', function(columns) {
                     var rowObject = {};
@@ -153,15 +146,15 @@ function extraerItemHijo(idUsuario, idPerfil, idEntrevistaPrincipal, itemPadre) 
 
                 request.on('requestCompleted', function () {
                     var itemHijo = result[0];
-                    if(itemHijo && itemHijo.EsPadre) { // Item hijo es a su vez padre
-                        extraerItemHijo(idUsuario, idPerfil, idEntrevistaPrincipal, itemHijo)
+                    if(itemHijo && itemHijo.EsAgrupacion) { // Item hijo es a su vez agrupación
+                        extraerItemHijo(idUsuario, idPerfil, idEntrevista, itemHijo)
                         .then(function(itemHijoSiguiente) {
                             if(itemHijoSiguiente) { // Quedan items hijos
                                 resolve(itemHijoSiguiente);
                             } else { // No hay más items hijos
-                                finalizarItemPadre(idUsuario, idPerfil, idEntrevistaPrincipal, itemHijo) // Item padre respondido
+                                finalizarItemAgrupacion(idUsuario, idPerfil, idEntrevista, itemHijo) // Item agrupación respondido
                                     .then(function(res) {
-                                        extraerItemHijo(idUsuario, idPerfil, idEntrevistaPrincipal, itemPadre)
+                                        extraerItemHijo(idUsuario, idPerfil, idEntrevista, itemAgrupacion) // Sigue el flujo
                                         .then(function(res) {
                                             resolve(res);
                                         })
@@ -196,11 +189,9 @@ function extraerValores(item) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `SELECT v.IdValor, v.Titulo, v.Tooltip, v.Valor, v.TipoValor, v.VisibleValor, v.CajaTexto, v.ValorTexto, v.Alerta, v.AlertaTexto
-                    FROM GEOP_ENTREVISTA eg INNER JOIN GEOP_ENTREVISTA_ITEM ei ON eg.IdEntrevista=ei.IdEntrevista
-                    INNER JOIN GEOP_ITEM i ON ei.IdItem=i.IdItem
-                    INNER JOIN GEOP_ITEM_VALOR iv ON i.IdItem=iv.IdItem
+                    FROM GEOP_ITEM i INNER JOIN GEOP_ITEM_VALOR iv ON i.IdItem=iv.IdItem
                     INNER JOIN GEOP_VALOR v ON iv.IdValor=v.IdValor
-                    WHERE eg.IdEntrevista=@idEntrevista AND i.IdItem=@idItem AND eg.Estado=1 AND ei.Estado=1 AND i.Estado=1 AND iv.Estado=1 AND v.Estado=1
+                    WHERE i.IdItem=@idItem AND i.Estado=1 AND i.EsAgrupacion=0 AND iv.Estado=1 AND v.Estado=1
                     ORDER BY len(iv.Orden), iv.Orden ASC;`;
         var result = [];
 
@@ -215,7 +206,6 @@ function extraerValores(item) {
                     connection.close();
                 });
 
-                request.addParameter('idEntrevista', TYPES.Int, item.IdEntrevista);
                 request.addParameter('idItem', TYPES.Int, item.IdItem);
 
                 request.on('row', function(columns) {
@@ -237,15 +227,15 @@ function extraerValores(item) {
 }
 
 /**
- * Finaliza el item padre correspondiente a un usuario determinado
+ * Finaliza el item agrupación correspondiente a un usuario determinado
  */
-function finalizarItemPadre(idUsuario, idPerfil, idEntrevistaPrincipal, itemPadre) {
+function finalizarItemAgrupacion(idUsuario, idPerfil, idEntrevista, itemAgrupacion) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdItem, Estado)
                     VALUES ((SELECT ISNULL(MAX(IdEntrevistaItem), 0)+1 FROM OP_ENTREVISTA_ITEM),
                     (SELECT IdEntrevistaUsuario FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 0 AND 19)), @idItem, 2);`
-
+        
         connection.on('connect', function(err) {
             if (err) {
                 reject(err);
@@ -259,8 +249,8 @@ function finalizarItemPadre(idUsuario, idPerfil, idEntrevistaPrincipal, itemPadr
 
                 request.addParameter('idUsuario', TYPES.Int, idUsuario);
                 request.addParameter('idPerfil', TYPES.Int, idPerfil);
-                request.addParameter('idEntrevista', TYPES.Int, idEntrevistaPrincipal);
-                request.addParameter('idItem', TYPES.Int, itemPadre.IdItem);
+                request.addParameter('idEntrevista', TYPES.Int, idEntrevista);
+                request.addParameter('idItem', TYPES.Int, itemAgrupacion.IdItem);
 
                 request.on('requestCompleted', function () {
                     resolve(null);

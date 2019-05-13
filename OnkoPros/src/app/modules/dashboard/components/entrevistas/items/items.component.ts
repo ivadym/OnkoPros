@@ -105,28 +105,11 @@ export class ItemsComponent implements OnInit {
    */
   extraerItem(id: number): void {
     this.entrevistasService.getItem(id).subscribe(
-      datos => {
-        if(datos && datos.item && datos.idPadre && datos.tituloPadre) {
-          if(datos.idPadre != this.idPadre) {
-            this.idPadre = datos.idPadre;
-            // TODO: Fichero de logs
-            console.log('SERVIDOR - Item extraído (+ alerta): ' + datos.item.IdItem);
-            this.cuadroDialogoService.alerta(
-              'El siguiente bloque de preguntas corresponde a la entrevista: ',
-              datos.tituloPadre
-            ).then(
-              res => {
-                this.item = datos.item;
-              }
-            );
-          } else {
-            this.item = datos.item;
-          }
-        } else if(datos && datos.item) {
-          this.idPadre = null;
-          // TODO: Fichero de logs
-          console.log('SERVIDOR - Item extraído: ' + datos.item.IdItem);
-          this.item = datos.item;
+      item => {
+        if(item) {
+          //TODO: Fichero de logs
+          console.log('SERVIDOR - Item extraído: ' + item.IdItem);
+          this.item = item;
         } else {
           console.log('LOG getItem() (no hay más items)');
           this.navegacionService.navegar(`/dashboard/entrevistas/${id}/fin`, true);

@@ -60,7 +60,7 @@ function almacenarValor(idUsuario, idPerfil, item, index) {
         var connection = new Connection(config.auth);
         var query = `INSERT INTO OP_ENTREVISTA_ITEM_VALOR (IdEntrevistaItemValor, IdEntrevistaItem, IdValor, Estado, ValorTexto)
                     VALUES ((SELECT ISNULL(MAX(IdEntrevistaItemValor), 0)+1 FROM OP_ENTREVISTA_ITEM_VALOR),
-                    (SELECT IdEntrevistaItem FROM OP_ENTREVISTA_ITEM WHERE IdItem=@idItem AND Estado=1 AND IdEntrevistaUsuario=(SELECT IdEntrevistaUsuario FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 0 AND 19))), @idValor, 1, @valorTexto);`;
+                    (SELECT IdEntrevistaItem FROM OP_ENTREVISTA_ITEM op_ei WHERE op_ei.IdItem=@idItem AND op_ei.Estado=1 AND op_ei.IdEntrevistaUsuario=(SELECT IdEntrevistaUsuario FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 0 AND 19))), @idValor, 1, @valorTexto);`;
 
         connection.on('connect', function(err) {
             if (err) {
