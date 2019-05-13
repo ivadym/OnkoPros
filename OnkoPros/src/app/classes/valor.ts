@@ -1,7 +1,6 @@
 export class Valor {
     IdValor:        number;
     Titulo:         string;
-    Tooltip:        string;
     Valor:          string;
     TipoValor:      string;
     VisibleValor:   boolean;
