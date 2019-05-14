@@ -17,8 +17,9 @@
 }
 
 .btn-entrevista:hover {
-    color: white;
-    background-color: #4D2A7B;
+    color: #4D2A7B;
+    background-color: white;
+    box-shadow: none;
 }
 
 .popover {
@@ -33,6 +34,21 @@
 
 .ent-nombre {
     font-size: 20px;
+}
+
+.ent-nombre-sm {
+    color: #2A367B;
+    font-size: 18px;
+}
+
+.ent-tooltip-sm {
+    color: #4D2A7B;
+    font-size: 14px;
+}
+
+.lim-tooltip-sm {
+    color: red;
+    font-size: 12px;
 }
 
 /* Entervista finaliza CSS */
@@ -66,6 +82,7 @@
 }
 
 .btn-ent-ini:hover {
-    color: white;
-    background-color: rgba(77, 42, 123, 1);
+    color: #4D2A7B;
+    background-color: white;
+    box-shadow: none;
 }

@@ -35,6 +35,7 @@
 }
 
 .btn-ent-fin:hover {
-    color: white;
-    background-color: rgba(77, 42, 123, 1);
+    color: #4D2A7B;
+    background-color: white;
+    box-shadow: none;
 }

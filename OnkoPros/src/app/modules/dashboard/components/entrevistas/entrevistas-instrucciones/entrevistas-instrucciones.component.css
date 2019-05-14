@@ -33,6 +33,7 @@
 }
 
 .btn-instr:hover {
-    color: white;
-    background-color: #4D2A7B;
+    color: #4D2A7B;
+    background-color: white;
+    box-shadow: none;
 }
