@@ -8,17 +8,33 @@
     padding: 5%;
 }
 
+.row-header {
+    padding-bottom: 5%;
+}
+
 .titulo-item {
     color: #2A367B;
     font-size: 24px;
     font-weight: 500;
-    padding-bottom: 5%;
 }
 
 .titulo-item-2 {
     color: #2A7B6F;
     font-size: 22px;
-    padding-bottom: 5%;
+}
+
+.info-circle {
+    position: relative;
+    color: blue;
+    font-size: 28px;
+}
+
+.fa-info-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50%;
+    margin: -15% 0 0 -35%;
 }
 
 .opciones-item {

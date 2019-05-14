@@ -1,7 +1,18 @@
 <div class="row row-item">
-  <div *ngIf="item" class="col-sm-12 col-md-6 col-item">
-    <div class="titulo-item">{{item.Titulo}}</div>
-    <div *ngIf="item?.Subtitulo" class="titulo-item-2">{{item.Subtitulo}}</div>
+  <div *ngIf="item" class="col-sm-12 col-md-8 col-item">
+    <div class="row row-header">
+      <div class="col-md-12 col-lg-11">
+        <div class="titulo-item">{{item.Titulo}}</div>
+        <div *ngIf="item?.Subtitulo" class="titulo-item-2">{{item.Subtitulo}}</div>        
+      </div>
+      <ng-template #popContent>
+        {{item.Tooltip}}
+      </ng-template>
+      <div *ngIf="item.Tooltip" class="d-none d-lg-block col-lg-1 info-circle" [ngbPopover]="popContent" triggers="mouseenter:mouseleave"
+        [placement]="['right', 'auto']">
+          <i class="fas fa-info-circle"></i>
+      </div>
+    </div>
     <form (ngSubmit)="responder()">
       <!-- RADIO BUTTON & CHECKBOX -->
       <div *ngIf="item.TipoItem === 'RB' || item.TipoItem === 'CB'" class="opciones-item">
