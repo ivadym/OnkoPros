@@ -2,6 +2,13 @@
     margin: 0 5 0 5;
 }
 
+.fas {
+    color: blue;
+    font-family: Font Awesome 5 Free, fa-solid-900;
+    font-size: 32;
+    margin: 5;
+}
+
 .item-header {
     color: #2A367B;
     font-size: 24;

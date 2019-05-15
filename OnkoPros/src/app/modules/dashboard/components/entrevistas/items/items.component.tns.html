@@ -1,12 +1,15 @@
-<GridLayout *ngIf="item" rows="auto, auto, auto, auto, auto" class="container-item" verticalAlignment="center">
-  <GridLayout row="0" class="item-header">
+<GridLayout *ngIf="item" rows="auto, auto, auto, auto, auto, auto" class="container-item" verticalAlignment="center">
+  <GridLayout *ngIf="item.Tooltip" row="0" class="tooltip" horizontalAlignment="right" (tap)="mostrarTooltip()">
+    <Label class="fas" text="&#xf05a;"></Label>
+  </GridLayout>
+  <GridLayout row="1" class="item-header">
     <Label [text]="item?.Titulo" textWrap="true"></Label>
   </GridLayout>
-  <GridLayout *ngIf="item?.Subtitulo" row="1" class="item-header-2">
+  <GridLayout *ngIf="item?.Subtitulo" row="2" class="item-header-2">
     <Label [text]="item?.Subtitulo" textWrap="true"></Label>
   </GridLayout>
   <!-- RADIO BUTTON & CHECKBOX -->
-  <RadListView row="2" [items]="item?.Valores" class="item-lista" *ngIf="item.TipoItem === 'RB' || item.TipoItem === 'CB'">
+  <RadListView row="3" [items]="item?.Valores" class="item-lista" *ngIf="item.TipoItem === 'RB' || item.TipoItem === 'CB'">
     <ng-template tkListItemTemplate let-val="item">
       <StackLayout orientation="vertical">
         <GridLayout class="item-opcion" rows="auto, auto, auto">
@@ -50,7 +53,7 @@
     </ng-template>
   </RadListView>
   <!-- SELECT BUTTON -->
-  <GridLayout row="3" rows="auto, auto" *ngIf="item.TipoItem === 'SB'" class="item-lista dropdown-container">
+  <GridLayout row="4" rows="auto, auto" *ngIf="item.TipoItem === 'SB'" class="item-lista dropdown-container">
     <DropDown row="0" class="dropdown item-opcion"
       hint="Seleccione una de las opciones..."
       [items]="tituloValores"
@@ -68,7 +71,7 @@
       style.placeholderColor="rgba(42, 54, 123, 0.6)">
     </TextField>
   </GridLayout>
-  <GridLayout row="4" class="item-btn" (tap)="responder()" [isEnabled]="(valoresSeleccionados[0] && !spinner)">
+  <GridLayout row="5" class="item-btn" (tap)="responder()" [isEnabled]="(valoresSeleccionados[0] && !spinner)">
       <Label text="Responder"></Label>
   </GridLayout>
 </GridLayout>

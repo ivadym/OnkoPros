@@ -199,6 +199,20 @@ export class ItemsComponent implements OnInit {
   }
 
   /**
+   * Despliega el tooltip asociado al item mostrado
+   */
+  mostrarTooltip(): void {
+    this.cuadroDialogoService.alerta(
+      null,
+      this.item.Tooltip
+    ).then(
+      res => {
+        return;
+      }
+    );
+  }
+
+  /**
    * Registra la respuesta de usuario
    */
   responder(): void {

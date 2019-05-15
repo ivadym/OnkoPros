@@ -18,7 +18,7 @@
 
 .btn-entrevista:hover {
     color: #4D2A7B;
-    background-color: white;
+    background-color: transparent;
     box-shadow: none;
 }
 
@@ -83,6 +83,6 @@
 
 .btn-ent-ini:hover {
     color: #4D2A7B;
-    background-color: white;
+    background-color: transparent;
     box-shadow: none;
 }
