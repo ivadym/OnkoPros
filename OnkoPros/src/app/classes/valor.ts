@@ -6,6 +6,5 @@ export class Valor {
     VisibleValor:   boolean;
     CajaTexto:      boolean;
     ValorTexto:     string;
-    Alerta:         boolean;
-    AlertaTexto:    string;
+    Alerta:         string;
 }

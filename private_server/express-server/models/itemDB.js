@@ -188,7 +188,7 @@ function extraerItemHijo(idUsuario, idPerfil, idEntrevista, itemAgrupacion) {
 function extraerValores(item) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
-        var query = `SELECT v.IdValor, v.Titulo, v.Valor, v.TipoValor, v.VisibleValor, v.CajaTexto, v.ValorTexto, v.Alerta, v.AlertaTexto
+        var query = `SELECT v.IdValor, v.Titulo, v.Valor, v.TipoValor, v.VisibleValor, v.CajaTexto, v.ValorTexto, v.Alerta
                     FROM GEOP_ITEM i INNER JOIN GEOP_ITEM_VALOR iv ON i.IdItem=iv.IdItem
                     INNER JOIN GEOP_VALOR v ON iv.IdValor=v.IdValor
                     WHERE i.IdItem=@idItem AND i.Estado=1 AND i.EsAgrupacion=0 AND iv.Estado=1 AND v.Estado=1

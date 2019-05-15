@@ -145,7 +145,7 @@ export class ItemsComponent implements OnInit {
             if(item.Valores[i].Alerta) {
               this.cuadroDialogoService.alerta(
                 'Atención, es necesario que siga las siguientes intrucciones:',
-                item.Valores[i].AlertaTexto
+                item.Valores[i].Alerta
               ).then(
                 res => {
                   console.log('SERVIDOR - Confirmación respuesta usuario (+ alerta): ' + item.IdItem);
