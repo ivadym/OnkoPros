@@ -38,7 +38,6 @@ export class ItemsComponent implements OnInit {
   tituloValores: string[] = []; // Uso exclusivo Select Button {N}
   valoresSeleccionados: Valor[] = [];
   indiceSeleccionado: number = null;
-  private idPadre: number;
 
   checkedValor$: Valor;
   private _checkedValorSubject: BehaviorSubject<Valor>;
@@ -60,7 +59,6 @@ export class ItemsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.idPadre = null;
     this.extraerItem(+this.route.snapshot.paramMap.get('id'));
     this._spinnerSubscription = this.spinnerService.estadoSpinnerObservable.subscribe(
       estado => {

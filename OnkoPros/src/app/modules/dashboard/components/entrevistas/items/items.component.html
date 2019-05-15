@@ -2,6 +2,9 @@
   <div *ngIf="item" class="col-sm-12 col-md-8 col-item">
     <div class="row row-header">
       <div class="col-md-12 col-lg-11">
+        <button *ngIf="item.Tooltip" class="d-sm-block d-lg-none btn info-circle-sm" (click)="mostrarTooltip()">
+          <i class="fas fa-info-circle"></i>
+        </button>
         <div class="titulo-item">{{item.Titulo}}</div>
         <div *ngIf="item?.Subtitulo" class="titulo-item-2">{{item.Subtitulo}}</div>        
       </div>
@@ -10,7 +13,7 @@
       </ng-template>
       <div *ngIf="item.Tooltip" class="d-none d-lg-block col-lg-1 info-circle" [ngbPopover]="popContent" triggers="mouseenter:mouseleave"
         [placement]="['right', 'auto']">
-          <i class="fas fa-info-circle"></i>
+          <i class="fas fa-info-circle info-circle-child"></i>
       </div>
     </div>
     <form (ngSubmit)="responder()">

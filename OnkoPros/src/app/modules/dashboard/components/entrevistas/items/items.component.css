@@ -29,12 +29,21 @@
     font-size: 28px;
 }
 
-.fa-info-circle {
+.info-circle-child {
     position: absolute;
     top: 50%;
     left: 50%;
     width: 50%;
     margin: -15% 0 0 -35%;
+}
+
+.info-circle-sm {
+    color: blue;
+    font-size: 28px;
+    box-shadow: none;
+    margin: 0 0 0 5%;
+    width: 100%;
+    text-align: right;
 }
 
 .opciones-item {
