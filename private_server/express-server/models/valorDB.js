@@ -5,6 +5,50 @@ const TYPES = require('tedious').TYPES;
 const config = require('../helpers/config');
 
 /**
+ * Extrae los valores asociados a un item determinado
+ */
+exports.extraerValores = function(item) {
+    return new Promise(function(resolve, reject) {
+        var connection = new Connection(config.auth);
+        var query = `SELECT v.IdValor, v.Titulo, v.Valor, v.TipoValor, v.VisibleValor, v.CajaTexto, v.ValorTexto, v.Alerta
+                    FROM GEOP_ITEM i INNER JOIN GEOP_ITEM_VALOR iv ON i.IdItem=iv.IdItem
+                    INNER JOIN GEOP_VALOR v ON iv.IdValor=v.IdValor
+                    WHERE i.IdItem=@idItem AND i.Estado=1 AND i.EsAgrupacion=0 AND iv.Estado=1 AND v.Estado=1
+                    ORDER BY len(iv.Orden), iv.Orden ASC;`;
+        var result = [];
+
+        connection.on('connect', function(err) {
+            if (err) {
+                reject(err);
+            } else {
+                request = new Request(query, function(err, rowCount, rows) {
+                    if (err) {
+                        reject(err);
+                    }
+                    connection.close();
+                });
+
+                request.addParameter('idItem', TYPES.Int, item.IdItem);
+
+                request.on('row', function(columns) {
+                    var rowObject = {};
+                    columns.forEach(function(column) {
+                        rowObject[column.metadata.colName] = column.value;
+                    });
+                    result.push(rowObject);
+                });
+
+                request.on('requestCompleted', function () {
+                    resolve(result);
+                });
+
+                connection.execSql(request);
+            }
+        });
+    });
+}
+
+/**
  * Guarda la respuesta del usuario en la BBDD
  */
 exports.almacenarItemValor = function(idUsuario, idPerfil, item) {
@@ -38,11 +82,11 @@ exports.almacenarItemValor = function(idUsuario, idPerfil, item) {
                             resolve(res);
                         })
                         .catch(function(error) {
-                            resolve(error);
+                            reject(error);
                         });
                     })
                     .catch(function(error) {
-                        resolve(error);
+                        reject(error);
                     });
                 });
 
@@ -87,7 +131,7 @@ function almacenarValor(idUsuario, idPerfil, item, index) {
                             resolve(res);
                         })
                         .catch(function(error) {
-                            resolve(error);
+                            reject(error);
                         });
                     } else {
                         resolve(item);

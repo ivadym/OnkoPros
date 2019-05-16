@@ -10,8 +10,9 @@ const valorController = require('../controllers/valorController');
 router.post('/api/auth', authController.autenticacion, jwtController.generarJWT);
 
 router.get('/api/entrevistas', jwtController.verificarJWT, entrevistasController.getEntrevistas);
-router.get('/api/entrevistas/:id', jwtController.verificarJWT, entrevistasController.getEntrevista);
-router.get('/api/entrevistas/:id/items', jwtController.verificarJWT, itemController.getItem);
-router.post('/api/entrevistas/:id/items', jwtController.verificarJWT, valorController.setItemValor);
+router.get('/api/entrevistas/:idEntrevista', jwtController.verificarJWT, entrevistasController.getEntrevista);
+router.get('/api/entrevistas/:idEntrevista/items', jwtController.verificarJWT, itemController.getSiguienteItem);
+router.post('/api/entrevistas/:idEntrevista/items', jwtController.verificarJWT, valorController.setItemValor);
+router.get('/api/entrevistas/:idEntrevista/items/:idItem', jwtController.verificarJWT, itemController.getItemRespondido);
 
 module.exports = router;

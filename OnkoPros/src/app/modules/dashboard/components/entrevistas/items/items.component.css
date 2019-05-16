@@ -202,3 +202,23 @@ input[type="checkbox"]:checked:hover + label:before {
     background-color: rgba(42, 54, 123, 0.8);
     border-color: rgba(42, 54, 123, 0.8);
 }
+
+/* Pagination */
+
+ngb-pagination ::ng-deep .page-item .page-link {
+    font-size: 20px;
+    color: #2A367B;
+    border: none;
+    box-shadow: none;
+}
+
+ngb-pagination ::ng-deep .page-item.active .page-link {
+    color: white;
+    background-color: #2A367B;
+    border-color: #2A367B;
+    border-radius: 5px;
+}
+
+ngb-pagination ::ng-deep .page-item.disabled .page-link {
+    color: rgba(42, 54, 123, 0.25);
+}

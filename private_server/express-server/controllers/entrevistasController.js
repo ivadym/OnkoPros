@@ -4,7 +4,7 @@ const entrevistasData = require('../models/entrevistasDB');
  * Devuelve las entrevistas disponibles actualmente
  */
 exports.getEntrevistas = function (req, res, next) {
-    extraerEntrevistas(req.idUsuario, req.idPerfil)
+    entrevistasData.extraerEntrevistas(req.idUsuario, req.idPerfil)
     .then(function(entrevistas) {
         if(entrevistas[0]) { // Hay al menos 1 entrevista
             res.status(200).json(entrevistas);
@@ -19,17 +19,10 @@ exports.getEntrevistas = function (req, res, next) {
 };
 
 /**
- * Extrae las entrevistas disponibles
- */
-function extraerEntrevistas(idUsuario, idPerfil) {
-    return entrevistasData.extraerEntrevistas(idUsuario, idPerfil);
-}
-
-/**
  * Devuelve la entrevista asociada a un usuario y perfil determinados
  */
 exports.getEntrevista = function (req, res, next) {
-    extraerEntrevista(req.idUsuario, req.idPerfil, req.params['id'])
+    entrevistasData.extraerEntrevista(req.idUsuario, req.idPerfil, req.params['idEntrevista'])
     .then(function(entrevista) {
         if(entrevista) {
             res.status(200).json(entrevista);
@@ -42,10 +35,3 @@ exports.getEntrevista = function (req, res, next) {
         res.sendStatus(500); // HTTP 500 Internal Server Error
     });
 };
-
-/**
- * Extrae una única entrevista
- */
-function extraerEntrevista(idUsuario, idPerfil, idEntrevista) {
-    return entrevistasData.extraerEntrevista(idUsuario, idPerfil, idEntrevista);
-}

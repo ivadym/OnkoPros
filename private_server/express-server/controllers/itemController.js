@@ -1,14 +1,19 @@
 const itemData = require('../models/itemDB');
-const entrevistaData = require('../models/entrevistasDB');
 
 /**
  * Devuelve la siguiente pregunta disponible
  */
-exports.getItem = function (req, res, next) {
-    extraerItem(req.idUsuario, req.idPerfil, req.params['id'])
+exports.getSiguienteItem = function (req, res, next) {
+    itemData.extraerSiguienteItem(req.idUsuario, req.idPerfil, req.params['idEntrevista']) // Extrae el siguiente item disponible
     .then(function(item) {
         if(item) {
-            res.status(200).json(item);
+            itemData.extraerIdItemsRespondidos(req.idUsuario, req.idPerfil, req.params['idEntrevista'])
+            .then(function(idItemsRespondidos) {
+                res.status(200).json({
+                    item: item,
+                    idItemsRespondidos: idItemsRespondidos
+                });
+            })
         } else {
             res.status(200).json(null);
         }
@@ -20,8 +25,25 @@ exports.getItem = function (req, res, next) {
 };
 
 /**
- * Extrae el siguiente item disponible
+ * Devuelve el item respondido y asociado a un ID determinado
  */
-function extraerItem(idUsuario, idPerfil, idEntrevista) {
-    return itemData.extraerItem(idUsuario, idPerfil, idEntrevista);
-}
+exports.getItemRespondido = function (req, res, next) {
+    itemData.extraerItemRespondido(req.idUsuario, req.idPerfil, req.params['idEntrevista'], req.params['idItem'])
+    .then(function(item) {
+        if(item) {
+            itemData.extraerIdItemsRespondidos(req.idUsuario, req.idPerfil, req.params['idEntrevista'])
+            .then(function(idItemsRespondidos) {
+                res.status(200).json({
+                    item: item,
+                    idItemsRespondidos: idItemsRespondidos
+                });
+            })
+        } else {
+            res.status(200).json(null);
+        }
+    })
+    .catch(function(error) {
+        // TODO: Mejor manejo de errores
+        res.sendStatus(500); // HTTP 500 Internal Server Error
+    });
+};

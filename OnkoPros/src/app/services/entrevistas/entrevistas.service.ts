@@ -72,9 +72,23 @@ export class EntrevistasService {
   /**
    * Extrae la siguiente pregunta
    */
-  getItem(id: number): Observable<Item> {
+  getSiguienteItem(idEntrevista: number): Observable<any> {
     this.spinnerService.show();
-    const url = `${this.entrevistasURL}/${id}/items`;
+    const url = `${this.entrevistasURL}/${idEntrevista}/items`;
+    return this.http.get<any>(url)
+      .pipe(
+        finalize(() => {
+          this.spinnerService.hide();
+        })
+      );
+  }
+
+  /**
+   * Extrae una pregunta determinada
+   */
+  getItemRespondido(idEntrevista: number, idItem: number): Observable<any> {
+    this.spinnerService.show();
+    const url = `${this.entrevistasURL}/${idEntrevista}/items/${idItem}`;
     return this.http.get<any>(url)
       .pipe(
         finalize(() => {
@@ -86,9 +100,9 @@ export class EntrevistasService {
   /**
    * Envío de la respuesta del usuario al servidor
    */
-  postItemValor(idEntrevista: number, item: Item): Observable<any> {
+  postItemValor(item: Item): Observable<any> {
     this.spinnerService.show();
-    const url = `${this.entrevistasURL}/${idEntrevista}/items`;
+    const url = `${this.entrevistasURL}/${item.IdEntrevista}/items`;
     return this.http.post<any>(url, item, httpOptions)
       .pipe(
         finalize(() => {

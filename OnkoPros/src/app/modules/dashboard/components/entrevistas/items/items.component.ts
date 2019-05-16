@@ -35,6 +35,8 @@ export class ItemsComponent implements OnInit {
   private _spinnerSubscription: Subscription;
 
   item: Item;
+  idItemsRespondidos: number[] = [];
+  paginaSeleccionada: number = null;
   tituloValores: string[] = []; // Uso exclusivo Select Button {N}
   valoresSeleccionados: Valor[] = [];
   indiceSeleccionado: number = null;
@@ -59,7 +61,7 @@ export class ItemsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.extraerItem(+this.route.snapshot.paramMap.get('id'));
+    this.extraerSiguienteItem(+this.route.snapshot.paramMap.get('id'));
     this._spinnerSubscription = this.spinnerService.estadoSpinnerObservable.subscribe(
       estado => {
         this.spinner = estado,
@@ -101,33 +103,72 @@ export class ItemsComponent implements OnInit {
   /**
    * Lista la pregunta extraida por el servidor
    */
-  extraerItem(id: number): void {
-    this.entrevistasService.getItem(id).subscribe(
-      item => {
-        if(item) {
+  extraerSiguienteItem(idEntrevista: number): void {
+    this.entrevistasService.getSiguienteItem(idEntrevista).subscribe(
+      datos => {
+        if(datos && datos.item && datos.idItemsRespondidos) {
           //TODO: Fichero de logs
-          console.log('SERVIDOR - Item extraído: ' + item.IdItem);
-          this.item = item;
-        } else {
-          console.log('LOG getItem() (no hay más items)');
-          this.navegacionService.navegar(`/dashboard/entrevistas/${id}/fin`, true);
-        }
-
-        if (this.item && this.item.TipoItem === 'SB') {
-          for (const key in this.item.Valores) {
-            if(this.item.Valores[key].VisibleValor) {
-              this.tituloValores.push(this.item.Valores[key].Titulo + " (" + this.item.Valores[key].Valor + ")")
-            } else {
-              this.tituloValores.push(this.item.Valores[key].Titulo);
+          console.log('SERVIDOR - Item extraído: ' + datos.item.IdItem);
+          this.item = datos.item;
+          this.idItemsRespondidos = datos.idItemsRespondidos;
+          this.idItemsRespondidos.push(datos.item.IdItem);
+          this.paginaSeleccionada = this.idItemsRespondidos.indexOf(datos.item.IdItem) + 1;
+          if (datos.item.TipoItem === 'SB') {
+            for (const key in datos.item.Valores) {
+              if(datos.item.Valores[key].VisibleValor) {
+                this.tituloValores.push(datos.item.Valores[key].Titulo + " (" + datos.item.Valores[key].Valor + ")")
+              } else {
+                this.tituloValores.push(datos.item.Valores[key].Titulo);
+              }
             }
           }
+        } else {
+          console.log('LOG getSiguienteItem() (no hay más items)');
+          this.navegacionService.navegar(`/dashboard/entrevistas/${idEntrevista}/fin`, true);
         }
-
       },
       error => {
-        this.errorHandler.handleError(error, `getItem(${id})`);
+        this.errorHandler.handleError(error, `getSiguienteItem(${idEntrevista})`);
       }
     )
+  }
+  
+  /**
+   * Extrae el item asociado a un ID específico
+   */
+  extraerItemRespondido(): void {
+    if(this.paginaSeleccionada >= this.idItemsRespondidos.length ) { // Seleccionado el último ítem extraído (no contestado aún)
+      this.extraerSiguienteItem(this.item.IdEntrevista);
+    } else {
+      var idItemSoclicitado = this.idItemsRespondidos[this.paginaSeleccionada - 1];
+      this.entrevistasService.getItemRespondido(this.item.IdEntrevista, idItemSoclicitado).subscribe(
+        datos => {
+          if(datos && datos.item && datos.idItemsRespondidos) {
+            //TODO: Fichero de logs
+            console.log('SERVIDOR - Item extraído (getItem()): ' + datos.item.IdItem);
+            this.item = datos.item;
+            datos.idItemsRespondidos.push(this.idItemsRespondidos[this.idItemsRespondidos.length - 1]); // Mantener último contexto
+            this.idItemsRespondidos = datos.idItemsRespondidos;
+            this.paginaSeleccionada = this.idItemsRespondidos.indexOf(datos.item.IdItem) + 1;
+            if (datos.item.TipoItem === 'SB') {
+              for (const key in datos.item.Valores) {
+                if(datos.item.Valores[key].VisibleValor) {
+                  this.tituloValores.push(datos.item.Valores[key].Titulo + " (" + datos.item.Valores[key].Valor + ")")
+                } else {
+                  this.tituloValores.push(datos.item.Valores[key].Titulo);
+                }
+              }
+            }
+          } else {
+            // TODO: Tratamiento de errores
+            throw new Error("extraerItemRespondido() no ha devuelto ningún valor");
+          }
+        },
+        error => {
+          this.errorHandler.handleError(error, `extraerItemRespondido(${this.item.IdEntrevista}, ${idItemSoclicitado})`);
+        }
+      )
+    }
   }
 
   /**
@@ -135,8 +176,7 @@ export class ItemsComponent implements OnInit {
    */
   enviarItemValor(item: Item): void {
     this.limpiarContexto();
-    var idEntrevista = +this.route.snapshot.paramMap.get('id');
-    this.entrevistasService.postItemValor(idEntrevista, item).subscribe(
+    this.entrevistasService.postItemValor(item).subscribe(
       item => {
         if(item) {
           for (var i = 0; i < item.Valores.length; i++) {
@@ -147,14 +187,14 @@ export class ItemsComponent implements OnInit {
               ).then(
                 res => {
                   console.log('SERVIDOR - Confirmación respuesta usuario (+ alerta): ' + item.IdItem);
-                  this.extraerItem(idEntrevista);
+                  this.extraerSiguienteItem(item.IdEntrevista);
                   return;
                 }
               );
             }
           }
           console.log('SERVIDOR - Confirmación respuesta usuario: ' + item.IdItem);
-          this.extraerItem(idEntrevista);
+          this.extraerSiguienteItem(item.IdEntrevista);
         } else {
           // TODO: Tratamiento del error/Mensaje de error al usuario (footer popup)
           console.error('ERROR enviarItemValor()');

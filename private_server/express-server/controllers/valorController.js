@@ -4,7 +4,7 @@ const valorData = require('../models/valorDB');
  * Guarda la respuesta del usuario en la base de datos
  */
 exports.setItemValor = function (req, res, next) {
-    almacenarItemValor(req.idUsuario, req.idPerfil, req.body)
+    valorData.almacenarItemValor(req.idUsuario, req.idPerfil, req.body)
     .then(function(item) {
         if(item) {
             res.status(201).json(item);
@@ -18,11 +18,4 @@ exports.setItemValor = function (req, res, next) {
         res.sendStatus(500); // HTTP 500 Internal Server Error
     });
 };
-
-/**
- * Almacena la respuesta del usuario
- */
-function almacenarItemValor(idUsuario, idPerfil, item) {
-    return valorData.almacenarItemValor(idUsuario, idPerfil, item);
-}
   
