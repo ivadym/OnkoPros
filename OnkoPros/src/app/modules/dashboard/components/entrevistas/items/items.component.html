@@ -22,7 +22,7 @@
         <div *ngFor="let val of item.Valores" class="row">
           <div class="col-10 p-1 custom-control custom-{{item.TipoItem === 'RB' ? 'radio' : 'checkbox'}}">
             <input type="{{item.TipoItem === 'RB' ? 'radio' : 'checkbox'}}" name="valor" id="{{val.IdValor}}"
-              class="custom-control-input" (click)="setValor(val)">
+              class="custom-control-input" (click)="setValor(val)" [checked]="val.Seleccionado">
             <label class="custom-control-label" for="{{val.IdValor}}">
               {{val.Titulo}}
             </label>

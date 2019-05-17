@@ -148,12 +148,15 @@ exports.extraerItemRespondido = function(idUsuario, idPerfil, idEntrevista, idIt
                     if(result[0]) {
                         valorData.extraerValores(result[0]) // Devuelve los valores del item correspondiente
                         .then(function(valores) {
-                            extraerIdValoresRespondidos(idUsuario, idPerfil, idEntrevista, idItem)
-                            .then(function(idValoresRespondidos) {
+                            valorData.extraerIdValoresRespondidos(idUsuario, idPerfil, idEntrevista, idItem)
+                            .then(function(res) {
                                 for (var i = 0; i < valores.length; i++) {
-                                    if (idValoresRespondidos.includes(valores[i].IdValor)) {
-                                        valores[i].Estado = true; // Valor seleccionado previamente
-                                    } 
+                                    for (var j = 0; j < res.length; j++) {
+                                        if(valores[i].IdValor === res[j].IdValor) { // Valor seleccionado previamente
+                                            valores[i].Seleccionado = true;
+                                            valores[i].ValorTexto = res[j].ValorTexto;
+                                        }
+                                    }
                                 }
                                 result[0].Valores = valores;
                                 resolve(result[0]); // Envío del item
@@ -212,52 +215,6 @@ exports.extraerIdItemsRespondidos = function(idUsuario, idPerfil, idEntrevista) 
                 });
 
                 request.on('requestCompleted', function () {                
-                    resolve(result);
-                });
-
-                connection.execSql(request);
-            }
-        });
-    });
-}
-
-/**
- * Devuelve un array con los valores contestados anteriormente
- */
-function extraerIdValoresRespondidos(idUsuario, idPerfil, idEntrevista, idItem) {
-    return new Promise(function(resolve, reject) {
-        var connection = new Connection(config.auth);
-        var query = `SELECT eiv.IdValor
-                    FROM OP_ENTREVISTA e INNER JOIN OP_ENTREVISTA_ITEM ei ON e.IdEntrevistaUsuario=ei.IdEntrevistaUsuario
-                    INNER JOIN OP_ENTREVISTA_ITEM_VALOR eiv ON ei.IdEntrevistaItem=eiv.IdEntrevistaItem
-                    WHERE e.IdUsuario=@idUsuario AND e.IdPerfil=@idPerfil AND e.IdEntrevista=@idEntrevista AND ei.IdItem=@idItem AND (e.Estado BETWEEN 0 AND 19) AND ei.Estado=1 AND eiv.Estado=1;`;
-        var result = [];
-
-        connection.on('connect', function(err) {
-            if (err) {
-                reject(err);
-            } else {
-                request = new Request(query, function(err, rowCount, rows) {
-                    if (err) {
-                        reject(err);
-                    }
-                    connection.close();
-                });
-
-                request.addParameter('idUsuario', TYPES.Int, idUsuario);
-                request.addParameter('idPerfil', TYPES.Int, idPerfil);
-                request.addParameter('idEntrevista', TYPES.Int, idEntrevista);
-                request.addParameter('idItem', TYPES.Int, idItem);
-                
-                request.on('row', function(columns) {
-                    var rowObject = {};
-                    columns.forEach(function(column) {
-                        rowObject = column.value; // Solo guardo los IdValor en el array
-                    });
-                    result.push(rowObject);
-                });
-
-                request.on('requestCompleted', function () { 
                     resolve(result);
                 });
 

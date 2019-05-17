@@ -152,13 +152,20 @@ export class ItemsComponent implements OnInit {
             this.paginaSeleccionada = this.idItemsRespondidos.indexOf(datos.item.IdItem) + 1;
             if (datos.item.TipoItem === 'SB') {
               for (const key in datos.item.Valores) {
-                if(datos.item.Valores[key].VisibleValor) {
-                  this.tituloValores.push(datos.item.Valores[key].Titulo + " (" + datos.item.Valores[key].Valor + ")")
+                if (datos.item.Valores[key].VisibleValor) {
+                  this.tituloValores.push(datos.item.Valores[key].Titulo + " (" + datos.item.Valores[key].Valor + ")");
                 } else {
                   this.tituloValores.push(datos.item.Valores[key].Titulo);
                 }
               }
             }
+
+            for (let i = 0; i < (<any>this.item.Valores).length; i++) {
+              if (this.item.Valores[i].Seleccionado) {
+                this.setValor(this.item.Valores[i]);
+              }
+            }
+
           } else {
             // TODO: Tratamiento de errores
             throw new Error("extraerItemRespondido() no ha devuelto ningún valor");

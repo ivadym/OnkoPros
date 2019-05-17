@@ -10,7 +10,7 @@ const config = require('../helpers/config');
 exports.extraerValores = function(item) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
-        var query = `SELECT v.IdValor, v.Titulo, v.Valor, v.TipoValor, v.VisibleValor, v.CajaTexto, v.ValorTexto, v.Alerta
+        var query = `SELECT v.IdValor, v.Titulo, v.Seleccionado, v.Valor, v.TipoValor, v.VisibleValor, v.CajaTexto, v.ValorTexto, v.Alerta
                     FROM GEOP_ITEM i INNER JOIN GEOP_ITEM_VALOR iv ON i.IdItem=iv.IdItem
                     INNER JOIN GEOP_VALOR v ON iv.IdValor=v.IdValor
                     WHERE i.IdItem=@idItem AND i.Estado=1 AND i.EsAgrupacion=0 AND iv.Estado=1 AND v.Estado=1
@@ -38,6 +38,52 @@ exports.extraerValores = function(item) {
                     result.push(rowObject);
                 });
 
+                request.on('requestCompleted', function () {
+                    resolve(result);
+                });
+
+                connection.execSql(request);
+            }
+        });
+    });
+}
+
+/**
+ * Devuelve un array con los valores contestados anteriormente
+ */
+exports.extraerIdValoresRespondidos = function(idUsuario, idPerfil, idEntrevista, idItem) {
+    return new Promise(function(resolve, reject) {
+        var connection = new Connection(config.auth);
+        var query = `SELECT eiv.IdValor, eiv.ValorTexto
+                    FROM OP_ENTREVISTA e INNER JOIN OP_ENTREVISTA_ITEM ei ON e.IdEntrevistaUsuario=ei.IdEntrevistaUsuario
+                    INNER JOIN OP_ENTREVISTA_ITEM_VALOR eiv ON ei.IdEntrevistaItem=eiv.IdEntrevistaItem
+                    WHERE e.IdUsuario=@idUsuario AND e.IdPerfil=@idPerfil AND e.IdEntrevista=@idEntrevista AND ei.IdItem=@idItem AND (e.Estado BETWEEN 0 AND 19) AND ei.Estado=1 AND eiv.Estado=1;`;
+        var result = [];
+
+        connection.on('connect', function(err) {
+            if (err) {
+                reject(err);
+            } else {
+                request = new Request(query, function(err, rowCount, rows) {
+                    if (err) {
+                        reject(err);
+                    }
+                    connection.close();
+                });
+
+                request.addParameter('idUsuario', TYPES.Int, idUsuario);
+                request.addParameter('idPerfil', TYPES.Int, idPerfil);
+                request.addParameter('idEntrevista', TYPES.Int, idEntrevista);
+                request.addParameter('idItem', TYPES.Int, idItem);
+                
+                request.on('row', function(columns) {
+                    var rowObject = {};
+                    columns.forEach(function(column) {
+                        rowObject[column.metadata.colName] = column.value;
+                    });
+                    result.push(rowObject);
+                });
+                
                 request.on('requestCompleted', function () {
                     resolve(result);
                 });
