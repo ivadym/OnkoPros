@@ -47,11 +47,11 @@ exports.extraerSiguienteItem = function(idUsuario, idPerfil, idEntrevista) {
                 
                 request.on('requestCompleted', function () {
                     var siguienteItem = result[0];
-                    if(siguienteItem) { // Quedan items
-                        if(siguienteItem.EsAgrupacion) { // Es agrupación
+                    if (siguienteItem) { // Quedan items
+                        if (siguienteItem.EsAgrupacion) { // Es agrupación
                             extraerItemHijo(idUsuario, idPerfil, idEntrevista, siguienteItem)
                             .then(function(itemHijo) {
-                                if(itemHijo) { // Quedan hijos
+                                if (itemHijo) { // Quedan hijos
                                     valorData.extraerValores(itemHijo) // Extracción de los valores del item hijo
                                     .then(function(res) {
                                         itemHijo.Valores = res;
@@ -145,14 +145,14 @@ exports.extraerItemRespondido = function(idUsuario, idPerfil, idEntrevista, idIt
                 });
 
                 request.on('requestCompleted', function () {
-                    if(result[0]) {
+                    if (result[0]) {
                         valorData.extraerValores(result[0]) // Devuelve los valores del item correspondiente
                         .then(function(valores) {
                             valorData.extraerIdValoresRespondidos(idUsuario, idPerfil, idEntrevista, idItem)
                             .then(function(res) {
                                 for (var i = 0; i < valores.length; i++) {
                                     for (var j = 0; j < res.length; j++) {
-                                        if(valores[i].IdValor === res[j].IdValor) { // Valor seleccionado previamente
+                                        if (valores[i].IdValor === res[j].IdValor) { // Valor seleccionado previamente
                                             valores[i].Seleccionado = true;
                                             valores[i].ValorTexto = res[j].ValorTexto;
                                         }
@@ -263,10 +263,10 @@ function extraerItemHijo(idUsuario, idPerfil, idEntrevista, itemAgrupacion) {
 
                 request.on('requestCompleted', function () {
                     var itemHijo = result[0];
-                    if(itemHijo && itemHijo.EsAgrupacion) { // Item hijo es a su vez agrupación
+                    if (itemHijo && itemHijo.EsAgrupacion) { // Item hijo es a su vez agrupación
                         extraerItemHijo(idUsuario, idPerfil, idEntrevista, itemHijo)
                         .then(function(itemHijoSiguiente) {
-                            if(itemHijoSiguiente) { // Quedan items hijos
+                            if (itemHijoSiguiente) { // Quedan items hijos
                                 resolve(itemHijoSiguiente);
                             } else { // No hay más items hijos
                                 finalizarItemAgrupacion(idUsuario, idPerfil, idEntrevista, itemHijo) // Item agrupación respondido

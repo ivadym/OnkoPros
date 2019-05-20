@@ -20,13 +20,13 @@ export class HttpErrorHandlerService {
    * Trata las operaciones HTTP fallidas sin parar la ejecucción
    */
   handleError(error: HttpErrorResponse, operacion: string) {
-    if(error.status === 400) {
+    if (error.status === 400) {
       this.badRequest();
     } else if (error.status === 404) {
       this.notFound();
-    } else if(error.status === 403 && operacion != 'login()') {
+    } else if (error.status === 403 && operacion != 'login()') {
       this.forbidden();
-    } else if(error.status === 0 || error.status === 500 || error.status === 504) {
+    } else if (error.status === 0 || error.status === 500 || error.status === 504) {
       this.serverError();
     }
 

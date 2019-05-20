@@ -118,7 +118,7 @@ export class AuthService {
         'Se perderán los cambios no guardados.'
       ).then(
         res => {
-          if(res) {
+          if (res) {
             this.limpiarSesion();
           } else {
             return;

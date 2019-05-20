@@ -45,7 +45,7 @@ export class EntrevistasListaComponent implements OnInit {
   extraerEntrevistas(): void {
     this.entrevistasService.getEntrevistas().subscribe(
       entrevistas => {
-        if(entrevistas) {
+        if (entrevistas) {
         //TODO: Fichero de logs
         console.log('SERVIDOR - Entrevistas: ' + entrevistas.length);
         this.entrevistas = entrevistas;

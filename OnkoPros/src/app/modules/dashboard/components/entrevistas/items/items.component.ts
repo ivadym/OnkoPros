@@ -88,7 +88,7 @@ export class ItemsComponent implements OnInit {
         'Se perderán los cambios no guardados.'
       ).then(
         res => {
-          if(res) {
+          if (res) {
             return true;
           } else {
             return false;
@@ -106,21 +106,16 @@ export class ItemsComponent implements OnInit {
   extraerSiguienteItem(idEntrevista: number): void {
     this.entrevistasService.getSiguienteItem(idEntrevista).subscribe(
       datos => {
-        if(datos && datos.item && datos.idItemsRespondidos) {
+        if (datos && datos.item && datos.idItemsRespondidos) {
           //TODO: Fichero de logs
           console.log('SERVIDOR - Item extraído: ' + datos.item.IdItem);
           this.item = datos.item;
           this.idItemsRespondidos = datos.idItemsRespondidos;
           this.idItemsRespondidos.push(datos.item.IdItem);
           this.paginaSeleccionada = this.idItemsRespondidos.indexOf(datos.item.IdItem) + 1;
+
           if (datos.item.TipoItem === 'SB') {
-            for (const key in datos.item.Valores) {
-              if(datos.item.Valores[key].VisibleValor) {
-                this.tituloValores.push(datos.item.Valores[key].Titulo + " (" + datos.item.Valores[key].Valor + ")")
-              } else {
-                this.tituloValores.push(datos.item.Valores[key].Titulo);
-              }
-            }
+            this.actualizarTituloValores(datos.item.Valores);
           }
         } else {
           console.log('LOG getSiguienteItem() (no hay más items)');
@@ -137,42 +132,41 @@ export class ItemsComponent implements OnInit {
    * Extrae el item asociado a un ID específico
    */
   extraerItemRespondido(): void {
-    if(this.paginaSeleccionada >= this.idItemsRespondidos.length ) { // Seleccionado el último ítem extraído (no contestado aún)
-      this.extraerSiguienteItem(this.item.IdEntrevista);
+    var idEntrevista = this.item.IdEntrevista;
+    if (this.paginaSeleccionada >= this.idItemsRespondidos.length ) { // Seleccionado el último ítem extraído (no contestado aún)
+      this.limpiarContexto();
+      this.extraerSiguienteItem(idEntrevista);
     } else {
       var idItemSoclicitado = this.idItemsRespondidos[this.paginaSeleccionada - 1];
-      this.entrevistasService.getItemRespondido(this.item.IdEntrevista, idItemSoclicitado).subscribe(
+      var idUltimoItem = this.idItemsRespondidos[this.idItemsRespondidos.length - 1];
+      this.limpiarContexto();
+      this.entrevistasService.getItemRespondido(idEntrevista, idItemSoclicitado).subscribe(
         datos => {
-          if(datos && datos.item && datos.idItemsRespondidos) {
+          if (datos && datos.item && datos.idItemsRespondidos) {
             //TODO: Fichero de logs
             console.log('SERVIDOR - Item extraído (getItem()): ' + datos.item.IdItem);
             this.item = datos.item;
-            datos.idItemsRespondidos.push(this.idItemsRespondidos[this.idItemsRespondidos.length - 1]); // Mantener último contexto
+            datos.idItemsRespondidos.push(idUltimoItem); // Mantener último contexto
             this.idItemsRespondidos = datos.idItemsRespondidos;
             this.paginaSeleccionada = this.idItemsRespondidos.indexOf(datos.item.IdItem) + 1;
-            if (datos.item.TipoItem === 'SB') {
-              for (const key in datos.item.Valores) {
-                if (datos.item.Valores[key].VisibleValor) {
-                  this.tituloValores.push(datos.item.Valores[key].Titulo + " (" + datos.item.Valores[key].Valor + ")");
-                } else {
-                  this.tituloValores.push(datos.item.Valores[key].Titulo);
-                }
-              }
-            }
 
-            for (let i = 0; i < (<any>this.item.Valores).length; i++) {
+            for (let i = 0; i < (<any>this.item.Valores).length; i++) { // setValor() de valores respondidos anteriormente
               if (this.item.Valores[i].Seleccionado) {
+                this.indiceSeleccionado = i;
                 this.setValor(this.item.Valores[i]);
               }
             }
 
+            if (datos.item.TipoItem === 'SB') {
+              this.actualizarTituloValores(datos.item.Valores);
+            }
           } else {
             // TODO: Tratamiento de errores
             throw new Error("extraerItemRespondido() no ha devuelto ningún valor");
           }
         },
         error => {
-          this.errorHandler.handleError(error, `extraerItemRespondido(${this.item.IdEntrevista}, ${idItemSoclicitado})`);
+          this.errorHandler.handleError(error, `extraerItemRespondido(${idEntrevista}, ${idItemSoclicitado})`);
         }
       )
     }
@@ -185,9 +179,9 @@ export class ItemsComponent implements OnInit {
     this.limpiarContexto();
     this.entrevistasService.postItemValor(item).subscribe(
       item => {
-        if(item) {
+        if (item) {
           for (var i = 0; i < item.Valores.length; i++) {
-            if(item.Valores[i].Alerta) {
+            if (item.Valores[i].Alerta) {
               this.cuadroDialogoService.alerta(
                 'Atención, es necesario que siga las siguientes intrucciones:',
                 item.Valores[i].Alerta
@@ -218,18 +212,18 @@ export class ItemsComponent implements OnInit {
    * Actualiza los valores de la respuesta del usuario
    */
   setValor(valor: Valor): void {
-    if(this.item.TipoItem === 'RB') { // RADIO BUTTON
+    if (this.item.TipoItem === 'RB') { // RADIO BUTTON
       this.valoresSeleccionados = [valor];
       this._checkedValorSubject.next(valor);
-    } else if(this.item.TipoItem === 'CB') { // CHECKBOX
-      if(!this.valoresSeleccionados[0]) { // Primer elemento
+    } else if (this.item.TipoItem === 'CB') { // CHECKBOX
+      if (!this.valoresSeleccionados[0]) { // Primer elemento
         this.valoresSeleccionados = [valor];
-      } else if(this.valoresSeleccionados.includes(valor)) { // Elemento ya seleccionado > Deseleccionar
+      } else if (this.valoresSeleccionados.includes(valor)) { // Elemento ya seleccionado > Deseleccionar
         this.valoresSeleccionados.splice(this.valoresSeleccionados.indexOf(valor), 1);
       } else {
         this.valoresSeleccionados.push(valor);
       }
-    } else if(this.item.TipoItem === 'SB') { // SELECT BUTTON
+    } else if (this.item.TipoItem === 'SB') { // SELECT BUTTON
       setTimeout(() => { // Workaround al bug de data binding del DropDown ({N} plugin)
         this.valoresSeleccionados = [this.item.Valores[this.indiceSeleccionado]];
         if (this.valoresSeleccionados[0].CajaTexto) {
@@ -255,6 +249,19 @@ export class ItemsComponent implements OnInit {
         return;
       }
     );
+  }
+
+  /**
+   * Actualiza los títulos de los valores (implementación exclusiva {Nativescript})
+   */
+  actualizarTituloValores(valores: any): void {
+    for (const key in valores) {
+      if (valores[key].VisibleValor) {
+        this.tituloValores.push(valores[key].Titulo + " (" + valores[key].Valor + ")");
+      } else {
+        this.tituloValores.push(valores[key].Titulo);
+      }
+    }
   }
 
   /**

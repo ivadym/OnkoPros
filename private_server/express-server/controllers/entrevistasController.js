@@ -6,7 +6,7 @@ const entrevistasData = require('../models/entrevistasDB');
 exports.getEntrevistas = function (req, res, next) {
     entrevistasData.extraerEntrevistas(req.idUsuario, req.idPerfil)
     .then(function(entrevistas) {
-        if(entrevistas[0]) { // Hay al menos 1 entrevista
+        if (entrevistas[0]) { // Hay al menos 1 entrevista
             res.status(200).json(entrevistas);
         } else {
             res.status(200).json(null);
@@ -24,7 +24,7 @@ exports.getEntrevistas = function (req, res, next) {
 exports.getEntrevista = function (req, res, next) {
     entrevistasData.extraerEntrevista(req.idUsuario, req.idPerfil, req.params['idEntrevista'])
     .then(function(entrevista) {
-        if(entrevista) {
+        if (entrevista) {
             res.status(200).json(entrevista);
         } else {
             res.status(200).json(null);

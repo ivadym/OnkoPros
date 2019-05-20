@@ -8,7 +8,7 @@ const usuario = req.body.usuario;
     const clave = req.body.clave;
     comprobarCredenciales(usuario, clave)
     .then(function(usuario) {
-        if(usuario) {
+        if (usuario) {
             req.usuario = usuario;
             next();
         } else {

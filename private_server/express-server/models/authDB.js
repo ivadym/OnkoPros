@@ -39,7 +39,7 @@ exports.comprobarCredenciales = function (usuario, clave) {
                 });
                 
                 request.on('requestCompleted', function () {
-                    if(result[0]) {
+                    if (result[0]) {
                         result[0].Perfil = helpers.adaptarPerfilUsuario(result);
                         delete result[0]['IdPerfil'];
                         result[0].Sexo = helpers.adaptarSexo(result[0].Sexo);

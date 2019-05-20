@@ -40,7 +40,8 @@
       <div *ngIf="item.TipoItem === 'SB'" class="opciones-item">
         <ng-select [items]="item.Valores" class="custom"
           placeholder="Seleccione una de las opciones..."
-          notFoundText="Respuesta no encontrada"
+          notFoundText="Respuesta no encontrada..."
+          [clearable]="false"
           bindLabel="Titulo"
           (change)="autofocus()"
           [(ngModel)]="valoresSeleccionados[0]"

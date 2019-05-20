@@ -66,10 +66,10 @@ export class LoginComponent implements OnInit {
       usuario => {
         if (usuario && usuario.JWT) {
           // TODO: Fichero de logs
-          if(usuario.Perfil.length > 1) { // Usuario con múltiples perfiles
+          if (usuario.Perfil.length > 1) { // Usuario con múltiples perfiles
             this.cuadroDialogoService.seleccionPerfil(usuario).then(
               res => {
-                if(res) {
+                if (res) {
                   console.log('SERVIDOR - Autenticación: ' + res.Usuario + '/' + res.JWT);
                   this.authService.usuarioLogueado = res;
                   let redirect = this.authService.urlInicial ? this.authService.urlInicial : '';
@@ -94,7 +94,7 @@ export class LoginComponent implements OnInit {
       },
       error => {
         this._changeDetectionRef.detectChanges();
-        if(error.status === 403) {
+        if (error.status === 403) {
           this.cuadroDialogoService.alerta(
             'Las credenciales introducidas son incorrectas.',
             'Vuelva a intentarlo o contacte con su personal clínico.'

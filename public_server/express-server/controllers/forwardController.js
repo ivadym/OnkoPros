@@ -19,7 +19,7 @@ exports.reenviar = function (req, res, next) {
         agentOptions: { checkServerIdentity: function() {} }
     };
 
-    if(req.method === 'POST') {
+    if (req.method === 'POST') {
         request.post(options, function optionalCallback(error, response, body) {
             if (error) {
                 // TODO: Mejor manejo de errores
@@ -28,7 +28,7 @@ exports.reenviar = function (req, res, next) {
                 res.status(response.statusCode).json(body);
             }
         });
-    } else if(req.method === 'GET') {
+    } else if (req.method === 'GET') {
         request.get(options, function optionalCallback(error, response, body) {
             if (error) {
                 // TODO: Mejor manejo de errores

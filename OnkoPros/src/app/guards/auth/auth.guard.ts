@@ -23,7 +23,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     state: RouterStateSnapshot
   ): Observable<boolean> | Promise<boolean> | boolean {
     this.authService.urlInicial = state.url;
-    if(this.authService.usuarioLogueado) {
+    if (this.authService.usuarioLogueado) {
       return true;
     } else {
       this.navegacionService.navegar('/login', false);

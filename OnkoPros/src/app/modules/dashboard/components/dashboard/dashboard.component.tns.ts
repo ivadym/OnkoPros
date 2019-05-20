@@ -33,7 +33,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
 
   ngOnInit() {
     this.page.css = (`.nav-drawer { }`);
-    if(this.router.url.includes('perfil')) {
+    if (this.router.url.includes('perfil')) {
       this.page.css = (
         `.nav-drawer {
           color: #2A367B;

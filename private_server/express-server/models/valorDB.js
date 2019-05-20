@@ -171,7 +171,7 @@ function almacenarValor(idUsuario, idPerfil, item, index) {
                 request.addParameter('valorTexto', TYPES.NVarChar, item.Valores[index].ValorTexto);
                 
                 request.on('requestCompleted', function () {
-                    if(item.Valores[++index]) {
+                    if (item.Valores[++index]) {
                         almacenarValor(idUsuario, idPerfil, item, index)
                         .then(function(res) {
                             resolve(res);

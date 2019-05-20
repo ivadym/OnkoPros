@@ -22,7 +22,7 @@ export class LoginGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> | Promise<boolean> | boolean {
-    if(this.authService.usuarioLogueado) {
+    if (this.authService.usuarioLogueado) {
       this.navegacionService.navegar('', false);
       return false;
     } else {

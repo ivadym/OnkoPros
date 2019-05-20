@@ -6,7 +6,7 @@ const itemData = require('../models/itemDB');
 exports.getSiguienteItem = function (req, res, next) {
     itemData.extraerSiguienteItem(req.idUsuario, req.idPerfil, req.params['idEntrevista']) // Extrae el siguiente item disponible
     .then(function(item) {
-        if(item) {
+        if (item) {
             itemData.extraerIdItemsRespondidos(req.idUsuario, req.idPerfil, req.params['idEntrevista'])
             .then(function(idItemsRespondidos) {
                 res.status(200).json({
@@ -30,7 +30,7 @@ exports.getSiguienteItem = function (req, res, next) {
 exports.getItemRespondido = function (req, res, next) {
     itemData.extraerItemRespondido(req.idUsuario, req.idPerfil, req.params['idEntrevista'], req.params['idItem'])
     .then(function(item) {
-        if(item) {
+        if (item) {
             itemData.extraerIdItemsRespondidos(req.idUsuario, req.idPerfil, req.params['idEntrevista'])
             .then(function(idItemsRespondidos) {
                 res.status(200).json({

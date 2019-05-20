@@ -38,8 +38,8 @@ exports.verificarJWT = function (req, res, next) {
       if (err) {
         // TODO: Mejor manejo errores
         res.sendStatus(403); // HTTP 403 Forbidden
-      } else if(decoded) {
-        if(decoded.id == idUsuario) {
+      } else if (decoded) {
+        if (decoded.id == idUsuario) {
           req.idUsuario = decoded.id;
           req.idPerfil = idPerfil;
           next();

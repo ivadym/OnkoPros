@@ -6,7 +6,7 @@ const valorData = require('../models/valorDB');
 exports.setItemValor = function (req, res, next) {
     valorData.almacenarItemValor(req.idUsuario, req.idPerfil, req.body)
     .then(function(item) {
-        if(item) {
+        if (item) {
             res.status(201).json(item);
         } else {
             // TODO: Mejor manejo de errores
