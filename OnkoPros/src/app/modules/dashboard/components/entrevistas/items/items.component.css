@@ -222,3 +222,7 @@ ngb-pagination ::ng-deep .page-item.active .page-link {
 ngb-pagination ::ng-deep .page-item.disabled .page-link {
     color: rgba(42, 54, 123, 0.25);
 }
+
+ngb-pagination ::ng-deep .page-item:hover .page-link {
+    border-radius: 5px;
+}

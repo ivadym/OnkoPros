@@ -8,7 +8,7 @@ const helpers = require('../helpers/helpers');
 /**
  * Comprueba las credenciales de usuario recibidas
  */
-exports.comprobarCredenciales = function (usuario, clave) {
+exports.comprobarCredenciales = function(usuario, clave) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `SELECT u.IdUsuario, up.IdPerfil, u.Usuario, u.Nombre, u.PrimerApellido, u.SegundoApellido, u.Sexo,  u.FechaNacimiento, u.Telefono, u.Email
@@ -38,7 +38,7 @@ exports.comprobarCredenciales = function (usuario, clave) {
                     result.push(rowObject);
                 });
                 
-                request.on('requestCompleted', function () {
+                request.on('requestCompleted', function() {
                     if (result[0]) {
                         result[0].Perfil = helpers.adaptarPerfilUsuario(result);
                         delete result[0]['IdPerfil'];
@@ -47,7 +47,6 @@ exports.comprobarCredenciales = function (usuario, clave) {
                     } else {
                         resolve(null);
                     }
-                    
                 });
 
                 connection.execSql(request);

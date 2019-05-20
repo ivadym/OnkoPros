@@ -2,8 +2,9 @@ const Connection = require('tedious').Connection;
 const Request = require('tedious').Request;
 const TYPES = require('tedious').TYPES;
 
-const valorData = require('../models/valorDB');
 const config = require('../helpers/config');
+const entrevistaData = require('../models/entrevistasDB')
+const valorData = require('../models/valorDB');
 
 /**
  * Devuelve la siguiente pregunta disponible asociada a un usuario y a una entrevista determinados
@@ -44,7 +45,7 @@ exports.extraerSiguienteItem = function(idUsuario, idPerfil, idEntrevista) {
                     result.push(rowObject);
                 });
                 
-                request.on('requestCompleted', function () {
+                request.on('requestCompleted', function() {
                     var siguienteItem = result[0];
                     if (siguienteItem) { // Quedan items
                         if (siguienteItem.EsAgrupacion) { // Es agrupación
@@ -91,7 +92,7 @@ exports.extraerSiguienteItem = function(idUsuario, idPerfil, idEntrevista) {
                             });
                         }
                     } else { // No hay más items
-                        finalizarEntrevista(idUsuario, idPerfil, idEntrevista) // Estado de la entrevista: Realizada
+                        entrevistaData.finalizarEntrevista(idUsuario, idPerfil, idEntrevista) // Estado de la entrevista: Realizada
                         .then(function(res) {
                             resolve(res); // Se devuelve al usuario un null (no hay más items para esta entrevista)
                         })
@@ -143,7 +144,7 @@ exports.extraerItemRespondido = function(idUsuario, idPerfil, idEntrevista, idIt
                     result.push(rowObject);
                 });
 
-                request.on('requestCompleted', function () {
+                request.on('requestCompleted', function() {
                     if (result[0]) {
                         valorData.extraerValores(result[0]) // Devuelve los valores del item correspondiente
                         .then(function(valores) {
@@ -213,7 +214,7 @@ exports.extraerIdItemsRespondidos = function(idUsuario, idPerfil, idEntrevista) 
                     result.push(rowObject);
                 });
 
-                request.on('requestCompleted', function () {                
+                request.on('requestCompleted', function() {                
                     resolve(result);
                 });
 
@@ -260,7 +261,7 @@ function extraerItemHijo(idUsuario, idPerfil, idEntrevista, itemAgrupacion) {
                     result.push(rowObject);
                 });
 
-                request.on('requestCompleted', function () {
+                request.on('requestCompleted', function() {
                     var itemHijo = result[0];
                     if (itemHijo && itemHijo.EsAgrupacion) { // Item hijo es a su vez agrupación
                         extraerItemHijo(idUsuario, idPerfil, idEntrevista, itemHijo)
@@ -324,42 +325,7 @@ function finalizarItemAgrupacion(idUsuario, idPerfil, idEntrevista, itemAgrupaci
                 request.addParameter('idEntrevista', TYPES.Int, idEntrevista);
                 request.addParameter('idItem', TYPES.Int, itemAgrupacion.IdItem);
 
-                request.on('requestCompleted', function () {
-                    resolve(null);
-                });
-
-                connection.execSql(request);
-            }
-        });
-    });
-}
-
-/**
- * Finaliza la entrevista actual (no quedan más items por responder)
- */
-function finalizarEntrevista(idUsuario, idPerfil, idEntrevista) {
-    return new Promise(function(resolve, reject) {
-        var connection = new Connection(config.auth);
-        var query = `UPDATE OP_ENTREVISTA
-                    SET Estado=20
-                    WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 10 AND 19);`;
-
-        connection.on('connect', function(err) {
-            if (err) {
-                reject(err);
-            } else {
-                request = new Request(query, function(err, rowCount, rows) {
-                    if (err) {
-                        reject(err);
-                    }
-                    connection.close();
-                });
-
-                request.addParameter('idUsuario', TYPES.Int, idUsuario);
-                request.addParameter('idPerfil', TYPES.Int, idPerfil);
-                request.addParameter('idEntrevista', TYPES.Int, idEntrevista);
-                
-                request.on('requestCompleted', function () {
+                request.on('requestCompleted', function() {
                     resolve(null);
                 });
 

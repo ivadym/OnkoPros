@@ -3,10 +3,10 @@ const authData = require('../models/authDB');
 /**
  * Lleva a cabo la autenticación del usuario
  */
-exports.autenticacion = function (req, res, next) {
+exports.autenticacion = function(req, res, next) {
 const usuario = req.body.usuario;
     const clave = req.body.clave;
-    comprobarCredenciales(usuario, clave)
+    authData.comprobarCredenciales(usuario, clave)
     .then(function(usuario) {
         if (usuario) {
             req.usuario = usuario;
@@ -21,10 +21,3 @@ const usuario = req.body.usuario;
         res.sendStatus(500); // HTTP 500 Internal Server Error
     });
 };
-
-/**
- * Comprueba las credenciales recibidas
- */
-function comprobarCredenciales(usuario, clave) {
-    return authData.comprobarCredenciales(usuario, clave);
-}

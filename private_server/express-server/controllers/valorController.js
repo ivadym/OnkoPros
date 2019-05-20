@@ -3,7 +3,7 @@ const valorData = require('../models/valorDB');
 /**
  * Guarda la respuesta del usuario en la base de datos
  */
-exports.setItemValor = function (req, res, next) {
+exports.setItemValor = function(req, res, next) {
     valorData.almacenarItemValor(req.idUsuario, req.idPerfil, req.body)
     .then(function(item) {
         if (item) {

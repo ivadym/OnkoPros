@@ -6,7 +6,7 @@ const privateServerURL = 'https://localhost:8443';
 /**
  * Lleva a cabo el reenvío de la petición completa al servidor privado
  */
-exports.reenviar = function (req, res, next) {
+exports.reenviar = function(req, res, next) {
 
     const options = {
         url: privateServerURL + req.url,

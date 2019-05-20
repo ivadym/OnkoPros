@@ -3,7 +3,7 @@ const itemData = require('../models/itemDB');
 /**
  * Devuelve la siguiente pregunta disponible
  */
-exports.getSiguienteItem = function (req, res, next) {
+exports.getSiguienteItem = function(req, res, next) {
     itemData.extraerSiguienteItem(req.idUsuario, req.idPerfil, req.params['idEntrevista']) // Extrae el siguiente item disponible
     .then(function(item) {
         if (item) {
@@ -27,7 +27,7 @@ exports.getSiguienteItem = function (req, res, next) {
 /**
  * Devuelve el item respondido y asociado a un ID determinado
  */
-exports.getItemRespondido = function (req, res, next) {
+exports.getItemRespondido = function(req, res, next) {
     itemData.extraerItemRespondido(req.idUsuario, req.idPerfil, req.params['idEntrevista'], req.params['idItem'])
     .then(function(item) {
         if (item) {

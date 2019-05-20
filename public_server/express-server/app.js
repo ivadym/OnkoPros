@@ -17,7 +17,7 @@ app.use(cors());
 // Tratamiento de las rutas
 app.use('/', routes);
 
-const server = app.listen(8080, function () {
+const server = app.listen(8080, function() {
     var host = server.address().address;
     var port = server.address().port;
     console.log('Servidor iniciado en http://%s:%s', host, port);

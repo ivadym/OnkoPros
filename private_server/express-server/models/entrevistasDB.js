@@ -7,7 +7,7 @@ const config = require('../helpers/config');
 /**
  * Extrae las entrevistas asociadas a un usuario determinado
  */
-exports.extraerEntrevistas = function (idUsuario, idPerfil) {
+exports.extraerEntrevistas = function(idUsuario, idPerfil) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `SELECT e.IdEntrevista, e.IdSujeto, e.TipoSujeto, eg.Titulo, eg.Tooltip, ei.InstruccionPrincipal, ei.InstruccionSecundaria, e.FechaLimite
@@ -40,7 +40,7 @@ exports.extraerEntrevistas = function (idUsuario, idPerfil) {
                     result.push(rowObject);
                 });
                 
-                request.on('requestCompleted', function () {
+                request.on('requestCompleted', function() {
                     resolve(result);
                 });
 
@@ -53,7 +53,7 @@ exports.extraerEntrevistas = function (idUsuario, idPerfil) {
 /**
  * Estrae la entrevista asociada a un usuario e identificador determinados
  */
-exports.extraerEntrevista = function (idUsuario, idPerfil, idEntrevista) {
+exports.extraerEntrevista = function(idUsuario, idPerfil, idEntrevista) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `SELECT e.IdEntrevista, e.IdSujeto, e.TipoSujeto, eg.Titulo, eg.Tooltip, ei.InstruccionPrincipal, ei.InstruccionSecundaria, e.FechaLimite
@@ -86,8 +86,78 @@ exports.extraerEntrevista = function (idUsuario, idPerfil, idEntrevista) {
                     result.push(rowObject);
                 });
                 
-                request.on('requestCompleted', function () {
+                request.on('requestCompleted', function() {
                     resolve(result[0]);
+                });
+
+                connection.execSql(request);
+            }
+        });
+    });
+}
+
+/**
+ * Actualiza el estado de la entrevista (en progreso)
+ */
+exports.actualizarEstadoEntrevista = function(idUsuario, idPerfil, item) {
+    return new Promise(function(resolve, reject) {
+        var connection = new Connection(config.auth);
+        var query = `UPDATE OP_ENTREVISTA
+                    SET Estado=10
+                    WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 0 AND 1);`;
+
+        connection.on('connect', function(err) {
+            if (err) {
+                reject(err);
+            } else {
+                request = new Request(query, function(err, rowCount, rows) {
+                    if (err) {
+                        reject(err);
+                    }
+                    connection.close();
+                });
+
+                request.addParameter('idUsuario', TYPES.Int, idUsuario);
+                request.addParameter('idPerfil', TYPES.Int, idPerfil);
+                request.addParameter('idEntrevista', TYPES.Int, item.IdEntrevista);
+                
+                request.on('requestCompleted', function() {
+                    resolve(item);
+                });
+
+                connection.execSql(request);
+            }
+        });
+    });
+}
+
+/**
+ * Finaliza una entrevista deetrminada (no quedan más items por responder)
+ */
+exports.finalizarEntrevista = function(idUsuario, idPerfil, idEntrevista) {
+    return new Promise(function(resolve, reject) {
+        var connection = new Connection(config.auth);
+        var query = `UPDATE OP_ENTREVISTA
+                    SET Estado=20
+                    WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 10 AND 19);`;
+
+        connection.on('connect', function(err) {
+            if (err) {
+                reject(err);
+            } else {
+                request = new Request(query, function(err, rowCount, rows) {
+                    if (err) {
+                        reject(err);
+                    }
+                    connection.close();
+                });
+
+                request.addParameter('idUsuario', TYPES.Int, idUsuario);
+                request.addParameter('idPerfil', TYPES.Int, idPerfil);
+                request.addParameter('idEntrevista', TYPES.Int, idEntrevista);
+                
+                request.on('requestCompleted', function() {
+                    resolve(null);
                 });
 
                 connection.execSql(request);

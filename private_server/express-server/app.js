@@ -21,7 +21,7 @@ app.use('/', routes);
 // Ruta no encontrada: tratamiento del error
 app.use(errorHandlers.notFound);
 
-const server = app.listen(8081, function () {
+const server = app.listen(8081, function() {
     var host = server.address().address;
     var port = server.address().port;
     console.log('Servidor iniciado en http://%s:%s', host, port);

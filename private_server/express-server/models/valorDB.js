@@ -3,6 +3,7 @@ const Request = require('tedious').Request;
 const TYPES = require('tedious').TYPES;
 
 const config = require('../helpers/config');
+const entrevistaData = require('../models/entrevistasDB')
 
 /**
  * Extrae los valores asociados a un item determinado
@@ -38,7 +39,7 @@ exports.extraerValores = function(item) {
                     result.push(rowObject);
                 });
 
-                request.on('requestCompleted', function () {
+                request.on('requestCompleted', function() {
                     resolve(result);
                 });
 
@@ -84,7 +85,7 @@ exports.extraerIdValoresRespondidos = function(idUsuario, idPerfil, idEntrevista
                     result.push(rowObject);
                 });
                 
-                request.on('requestCompleted', function () {
+                request.on('requestCompleted', function() {
                     resolve(result);
                 });
 
@@ -120,10 +121,10 @@ exports.almacenarItemValor = function(idUsuario, idPerfil, item) {
                 request.addParameter('idEntrevista', TYPES.Int, item.IdEntrevista);
                 request.addParameter('idItem', TYPES.Int, item.IdItem);
 
-                request.on('requestCompleted', function () {
+                request.on('requestCompleted', function() {
                     almacenarValor(idUsuario, idPerfil, item, 0)
                     .then(function(res) {
-                        actualizarEstadoEntrevista(idUsuario, idPerfil, res)
+                        entrevistaData.actualizarEstadoEntrevista(idUsuario, idPerfil, res)
                         .then(function(res) {
                             resolve(res);
                         })
@@ -170,7 +171,7 @@ function almacenarValor(idUsuario, idPerfil, item, index) {
                 request.addParameter('idValor', TYPES.Int, item.Valores[index].IdValor);
                 request.addParameter('valorTexto', TYPES.NVarChar, item.Valores[index].ValorTexto);
                 
-                request.on('requestCompleted', function () {
+                request.on('requestCompleted', function() {
                     if (item.Valores[++index]) {
                         almacenarValor(idUsuario, idPerfil, item, index)
                         .then(function(res) {
@@ -182,41 +183,6 @@ function almacenarValor(idUsuario, idPerfil, item, index) {
                     } else {
                         resolve(item);
                     }
-                });
-
-                connection.execSql(request);
-            }
-        });
-    });
-}
-
-/**
- * Actualiza el estado de la entrevista (en progreso)
- */
-function actualizarEstadoEntrevista(idUsuario, idPerfil, item) {
-    return new Promise(function(resolve, reject) {
-        var connection = new Connection(config.auth);
-        var query = `UPDATE OP_ENTREVISTA
-                    SET Estado=10
-                    WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 0 AND 1);`;
-
-        connection.on('connect', function(err) {
-            if (err) {
-                reject(err);
-            } else {
-                request = new Request(query, function(err, rowCount, rows) {
-                    if (err) {
-                        reject(err);
-                    }
-                    connection.close();
-                });
-
-                request.addParameter('idUsuario', TYPES.Int, idUsuario);
-                request.addParameter('idPerfil', TYPES.Int, idPerfil);
-                request.addParameter('idEntrevista', TYPES.Int, item.IdEntrevista);
-                
-                request.on('requestCompleted', function () {
-                    resolve(item);
                 });
 
                 connection.execSql(request);
