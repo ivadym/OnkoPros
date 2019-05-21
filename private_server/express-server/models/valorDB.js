@@ -58,7 +58,7 @@ exports.extraerIdValoresRespondidos = function(idUsuario, idPerfil, idEntrevista
         var query = `SELECT eiv.IdValor, eiv.ValorTexto
                     FROM OP_ENTREVISTA e INNER JOIN OP_ENTREVISTA_ITEM ei ON e.IdEntrevistaUsuario=ei.IdEntrevistaUsuario
                     INNER JOIN OP_ENTREVISTA_ITEM_VALOR eiv ON ei.IdEntrevistaItem=eiv.IdEntrevistaItem
-                    WHERE e.IdUsuario=@idUsuario AND e.IdPerfil=@idPerfil AND e.IdEntrevista=@idEntrevista AND ei.IdItem=@idItem AND (e.Estado BETWEEN 0 AND 19) AND ei.Estado=1 AND eiv.Estado=1;`;
+                    WHERE e.IdUsuario=@idUsuario AND e.IdPerfil=@idPerfil AND e.IdEntrevista=@idEntrevista AND ei.IdItem=@idItem AND (e.Estado BETWEEN 10 AND 19) AND ei.Estado=1 AND eiv.Estado=1;`;
         var result = [];
 
         connection.on('connect', function(err) {
@@ -96,57 +96,9 @@ exports.extraerIdValoresRespondidos = function(idUsuario, idPerfil, idEntrevista
 }
 
 /**
- * Guarda la respuesta del usuario en la BBDD
- */
-exports.almacenarItemValor = function(idUsuario, idPerfil, item) {
-    return new Promise(function(resolve, reject) {
-        var connection = new Connection(config.auth);
-        var query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdItem, Estado)
-                    VALUES ((SELECT ISNULL(MAX(IdEntrevistaItem), 0)+1 FROM OP_ENTREVISTA_ITEM),
-                    (SELECT IdEntrevistaUsuario FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 0 AND 19)), @idItem, 1);`;
-
-        connection.on('connect', function(err) {
-            if (err) {
-                reject(err);
-            } else {
-                request = new Request(query, function(err, rowCount, rows) {
-                    if (err) {
-                        reject(err);
-                    }
-                    connection.close();
-                });
-                
-                request.addParameter('idUsuario', TYPES.Int, idUsuario);
-                request.addParameter('idPerfil', TYPES.Int, idPerfil);
-                request.addParameter('idEntrevista', TYPES.Int, item.IdEntrevista);
-                request.addParameter('idItem', TYPES.Int, item.IdItem);
-
-                request.on('requestCompleted', function() {
-                    almacenarValor(idUsuario, idPerfil, item, 0)
-                    .then(function(res) {
-                        entrevistaData.actualizarEstadoEntrevista(idUsuario, idPerfil, res)
-                        .then(function(res) {
-                            resolve(res);
-                        })
-                        .catch(function(error) {
-                            reject(error);
-                        });
-                    })
-                    .catch(function(error) {
-                        reject(error);
-                    });
-                });
-
-                connection.execSql(request);
-            }
-        });
-    });
-}
-
-/**
  * Almacenar los valores contestados por el usuario
  */
-function almacenarValor(idUsuario, idPerfil, item, index) {
+exports.almacenarValor = function(idUsuario, idPerfil, item, index) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `INSERT INTO OP_ENTREVISTA_ITEM_VALOR (IdEntrevistaItemValor, IdEntrevistaItem, IdValor, Estado, ValorTexto)
@@ -173,7 +125,7 @@ function almacenarValor(idUsuario, idPerfil, item, index) {
                 
                 request.on('requestCompleted', function() {
                     if (item.Valores[++index]) {
-                        almacenarValor(idUsuario, idPerfil, item, index)
+                        exports.almacenarValor(idUsuario, idPerfil, item, index)
                         .then(function(res) {
                             resolve(res);
                         })
@@ -183,6 +135,43 @@ function almacenarValor(idUsuario, idPerfil, item, index) {
                     } else {
                         resolve(item);
                     }
+                });
+
+                connection.execSql(request);
+            }
+        });
+    });
+}
+
+/**
+ * Elimina los valores contestados previamente por el usuario
+ */
+exports.eliminarValores = function(idUsuario, idPerfil, item) {
+    return new Promise(function(resolve, reject) {
+        var connection = new Connection(config.auth);
+        var query = `DELETE eiv
+                    FROM OP_ENTREVISTA_ITEM_VALOR eiv 
+                    INNER JOIN OP_ENTREVISTA_ITEM ei ON ei.IdEntrevistaItem=eiv.IdEntrevistaItem
+                    WHERE ei.IdItem=@idItem AND ei.IdEntrevistaUsuario=(SELECT IdEntrevistaUsuario FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 10 AND 19)) AND eiv.Estado=1 AND ei.Estado=1;`;
+
+        connection.on('connect', function(err) {
+            if (err) {
+                reject(err);
+            } else {
+                request = new Request(query, function(err, rowCount, rows) {
+                    if (err) {
+                        reject(err);
+                    }
+                    connection.close();
+                });
+
+                request.addParameter('idUsuario', TYPES.Int, idUsuario);
+                request.addParameter('idPerfil', TYPES.Int, idPerfil);
+                request.addParameter('idEntrevista', TYPES.Int, item.IdEntrevista);
+                request.addParameter('idItem', TYPES.Int, item.IdItem);
+                
+                request.on('requestCompleted', function() {
+                    resolve(true);
                 });
 
                 connection.execSql(request);

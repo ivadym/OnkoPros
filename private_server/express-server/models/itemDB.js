@@ -117,7 +117,7 @@ exports.extraerItemRespondido = function(idUsuario, idPerfil, idEntrevista, idIt
         var query = `SELECT i.IdItem, e.IdEntrevista, i.Titulo, i.Subtitulo, i.Tooltip, i.TipoItem
                     FROM OP_ENTREVISTA e INNER JOIN OP_ENTREVISTA_ITEM ei ON e.IdEntrevistaUsuario=ei.IdEntrevistaUsuario
                     INNER JOIN GEOP_ITEM i ON ei.IdItem=i.IdItem
-                    WHERE e.IdUsuario=@idUsuario AND e.IdPerfil=@idPerfil AND e.IdEntrevista=@idEntrevista AND ei.IdItem=@idItem AND (e.Estado BETWEEN 0 AND 19) AND ei.Estado=1 AND i.Estado=1 AND i.EsAgrupacion=0;`;
+                    WHERE e.IdUsuario=@idUsuario AND e.IdPerfil=@idPerfil AND e.IdEntrevista=@idEntrevista AND ei.IdItem=@idItem AND (e.Estado BETWEEN 10 AND 19) AND ei.Estado=1 AND i.Estado=1 AND i.EsAgrupacion=0;`;
         var result = [];
 
         connection.on('connect', function(err) {
@@ -149,12 +149,12 @@ exports.extraerItemRespondido = function(idUsuario, idPerfil, idEntrevista, idIt
                         valorData.extraerValores(result[0]) // Devuelve los valores del item correspondiente
                         .then(function(valores) {
                             valorData.extraerIdValoresRespondidos(idUsuario, idPerfil, idEntrevista, idItem)
-                            .then(function(res) {
+                            .then(function(valoresRespondidos) {
                                 for (var i = 0; i < valores.length; i++) {
-                                    for (var j = 0; j < res.length; j++) {
-                                        if (valores[i].IdValor === res[j].IdValor) { // Valor seleccionado previamente
+                                    for (var j = 0; j < valoresRespondidos.length; j++) {
+                                        if (valores[i].IdValor === valoresRespondidos[j].IdValor) { // Valor seleccionado previamente
                                             valores[i].Seleccionado = true;
-                                            valores[i].ValorTexto = res[j].ValorTexto;
+                                            valores[i].ValorTexto = valoresRespondidos[j].ValorTexto;
                                         }
                                     }
                                 }
@@ -185,10 +185,11 @@ exports.extraerItemRespondido = function(idUsuario, idPerfil, idEntrevista, idIt
 exports.extraerIdItemsRespondidos = function(idUsuario, idPerfil, idEntrevista) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
-        var query = `SELECT ei.IdItem
-                    FROM OP_ENTREVISTA e INNER JOIN OP_ENTREVISTA_ITEM ei ON e.IdEntrevistaUsuario=ei.IdEntrevistaUsuario
-                    WHERE e.IdUsuario=@idUsuario AND e.IdPerfil=@idPerfil AND e.IdEntrevista=@idEntrevista AND (e.Estado BETWEEN 0 AND 19) AND ei.Estado=1
-                    ORDER BY ei.FechaRegistro ASC;`;
+        var query = `SELECT op_ei.IdItem
+                    FROM OP_ENTREVISTA e INNER JOIN OP_ENTREVISTA_ITEM op_ei ON e.IdEntrevistaUsuario=op_ei.IdEntrevistaUsuario
+                    INNER JOIN GEOP_ENTREVISTA_ITEM ei ON op_ei.IdItem=ei.IdItem
+                    WHERE e.IdUsuario=@idUsuario AND e.IdPerfil=@idPerfil AND e.IdEntrevista=@idEntrevista AND (e.Estado BETWEEN 10 AND 19) AND ei.Estado=1 AND op_ei.Estado=1
+                    ORDER BY ei.Orden ASC;`;
         var result = [];
 
         connection.on('connect', function(err) {
@@ -327,6 +328,102 @@ function finalizarItemAgrupacion(idUsuario, idPerfil, idEntrevista, itemAgrupaci
 
                 request.on('requestCompleted', function() {
                     resolve(null);
+                });
+
+                connection.execSql(request);
+            }
+        });
+    });
+}
+
+/**
+ * Guarda la respuesta del usuario en la BBDD
+ */
+exports.almacenarItem = function(idUsuario, idPerfil, item) {
+    return new Promise(function(resolve, reject) {
+        var connection = new Connection(config.auth);
+        var query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdItem, Estado)
+                    VALUES ((SELECT ISNULL(MAX(IdEntrevistaItem), 0)+1 FROM OP_ENTREVISTA_ITEM),
+                    (SELECT IdEntrevistaUsuario FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 0 AND 19)), @idItem, 1);`;
+
+        connection.on('connect', function(err) {
+            if (err) {
+                reject(err);
+            } else {
+                request = new Request(query, function(err, rowCount, rows) {
+                    if (err) {
+                        reject(err);
+                    }
+                    connection.close();
+                });
+                
+                request.addParameter('idUsuario', TYPES.Int, idUsuario);
+                request.addParameter('idPerfil', TYPES.Int, idPerfil);
+                request.addParameter('idEntrevista', TYPES.Int, item.IdEntrevista);
+                request.addParameter('idItem', TYPES.Int, item.IdItem);
+
+                request.on('requestCompleted', function() {
+                    valorData.almacenarValor(idUsuario, idPerfil, item, 0)
+                    .then(function(res) {
+                        entrevistaData.actualizarEstadoEntrevista(idUsuario, idPerfil, res)
+                        .then(function(res) {
+                            resolve(res);
+                        })
+                        .catch(function(error) {
+                            reject(error);
+                        });
+                    })
+                    .catch(function(error) {
+                        reject(error);
+                    });
+                });
+
+                connection.execSql(request);
+            }
+        });
+    });
+}
+
+/**
+ * Actualiza la respuesta del usuario en la BBDD
+ */
+exports.actualizarItem = function(idUsuario, idPerfil, item) {
+    return new Promise(function(resolve, reject) {
+        var connection = new Connection(config.auth);
+        var query = `UPDATE OP_ENTREVISTA_ITEM
+                    SET FechaRegistro=DEFAULT
+                    WHERE IdItem=@idItem AND IdEntrevistaUsuario=(SELECT IdEntrevistaUsuario FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 10 AND 19));`;
+
+        connection.on('connect', function(err) {
+            if (err) {
+                reject(err);
+            } else {
+                request = new Request(query, function(err, rowCount, rows) {
+                    if (err) {
+                        reject(err);
+                    }
+                    connection.close();
+                });
+                
+                request.addParameter('idUsuario', TYPES.Int, idUsuario);
+                request.addParameter('idPerfil', TYPES.Int, idPerfil);
+                request.addParameter('idEntrevista', TYPES.Int, item.IdEntrevista);
+                request.addParameter('idItem', TYPES.Int, item.IdItem);
+
+                request.on('requestCompleted', function() {
+                    valorData.eliminarValores(idUsuario, idPerfil, item)
+                    .then(function(res) {
+                        valorData.almacenarValor(idUsuario, idPerfil, item, 0) // Se almacenan los valores actualizados
+                        .then(function(itemOriginal) {
+                            resolve(itemOriginal);
+                        })
+                        .catch(function(error) {
+                            reject(error);
+                        });
+                    })
+                    .catch(function(error) {
+                        reject(error);
+                    });
                 });
 
                 connection.execSql(request);

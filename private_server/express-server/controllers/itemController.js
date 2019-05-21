@@ -47,3 +47,41 @@ exports.getItemRespondido = function(req, res, next) {
         res.sendStatus(500); // HTTP 500 Internal Server Error
     });
 };
+
+/**
+ * Guarda la respuesta del usuario en la base de datos
+ */
+exports.setItem = function(req, res, next) {
+    itemData.almacenarItem(req.idUsuario, req.idPerfil, req.body)
+    .then(function(item) {
+        if (item) {
+            res.status(201).json(item);
+        } else {
+            // TODO: Mejor manejo de errores
+            res.sendStatus(500); // HTTP 500 Internal Server Error
+        }
+    })
+    .catch(function(error) {
+        // TODO: Mejor manejo de errores
+        res.sendStatus(500); // HTTP 500 Internal Server Error
+    });
+};
+
+/**
+ * Actualiza la respuesta del usuario en la base de datos
+ */
+exports.updateItem = function(req, res, next) {
+    itemData.actualizarItem(req.idUsuario, req.idPerfil, req.body)
+    .then(function(item) {
+        if (item) {
+            res.status(201).json(item);
+        } else {
+            // TODO: Mejor manejo de errores
+            res.sendStatus(500); // HTTP 500 Internal Server Error
+        }
+    })
+    .catch(function(error) {
+        // TODO: Mejor manejo de errores
+        res.sendStatus(500); // HTTP 500 Internal Server Error
+    });
+};

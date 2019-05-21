@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { Subscription, BehaviorSubject } from 'rxjs';
+import { Subscription, BehaviorSubject, Observable } from 'rxjs';
 
 import { Item } from '../../../../../classes/item';
 import { Valor } from '../../../../../classes/valor';
@@ -150,13 +150,13 @@ export class ItemsComponent implements OnInit {
             this.idItemsRespondidos = datos.idItemsRespondidos;
             this.paginaSeleccionada = this.idItemsRespondidos.indexOf(datos.item.IdItem) + 1;
 
-            for (let i = 0; i < (<any>this.item.Valores).length; i++) { // setValor() de valores respondidos anteriormente
+            for (let i = 0; i < datos.item.Valores.length; i++) { // setValor() de valores respondidos anteriormente
               if (this.item.Valores[i].Seleccionado) {
                 this.indiceSeleccionado = i;
                 this.setValor(this.item.Valores[i]);
               }
             }
-
+            
             if (datos.item.TipoItem === 'SB') {
               this.actualizarTituloValores(datos.item.Valores);
             }
@@ -175,9 +175,16 @@ export class ItemsComponent implements OnInit {
   /**
    * Envía la respuesta del usuario y actualiza el contexto (limpia los campos obsoletos y extrae nuevo item)
    */
-  enviarItemValor(item: Item): void {
+  enviarItem(item: Item): void {
+    var observableItemValor: Observable<any> = null;
+    if (this.idItemsRespondidos.slice(0, this.idItemsRespondidos.length - 1).includes(item.IdItem)) { // Actualizado item/valor
+      observableItemValor = this.entrevistasService.postActualizarItem(item);
+    } else { // Enviado nuevo item/valor
+      observableItemValor = this.entrevistasService.postItem(item);
+    }
+     
     this.limpiarContexto();
-    this.entrevistasService.postItemValor(item).subscribe(
+    observableItemValor.subscribe(
       item => {
         if (item) {
           for (var i = 0; i < item.Valores.length; i++) {
@@ -198,12 +205,12 @@ export class ItemsComponent implements OnInit {
           this.extraerSiguienteItem(item.IdEntrevista);
         } else {
           // TODO: Tratamiento del error/Mensaje de error al usuario (footer popup)
-          console.error('ERROR enviarItemValor()');
+          console.error('ERROR enviarItem()');
         }
       },
       error => {
         //TODO: Fichero de logs
-        this.errorHandler.handleError(error, `enviarItemValor(${item.IdItem})`);
+        this.errorHandler.handleError(error, `enviarItem(${item.IdItem})`);
       }
     )
   }
@@ -270,7 +277,7 @@ export class ItemsComponent implements OnInit {
   responder(): void {
     var itemRespondido: Item = this.item;
     itemRespondido.Valores = this.valoresSeleccionados;
-    this.enviarItemValor(itemRespondido);
+    this.enviarItem(itemRespondido);
   }
 
   /**
@@ -278,6 +285,8 @@ export class ItemsComponent implements OnInit {
    */
   limpiarContexto(): void {
     this.item = null;
+    this.idItemsRespondidos = [];
+    this.paginaSeleccionada = null;
     this.tituloValores = [];
     this.valoresSeleccionados = [];
     this.indiceSeleccionado = null;
