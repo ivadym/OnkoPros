@@ -74,7 +74,7 @@
 
 .item-btn {
     color: white;
-    background-color: #2A7B6F;
+    background-color: #2A367B;
     font-size: 24;
     text-align: center;
     padding: 10;
@@ -83,4 +83,26 @@
 
 :disabled {
     opacity: 0.5;
+}
+
+.fas-l, .fas-r {
+    background-color: #2A7B6F;
+    text-align: center;
+    width: 50;
+    border-radius: 5;
+    padding: 5;
+}
+
+.fas {
+    color: white;
+    font-family: Font Awesome 5 Free, fa-solid-900;
+    font-size: 32;
+}
+
+.fas-l {
+    margin-right: 5;
+}
+
+.fas-r {
+    margin-left: 5;
 }

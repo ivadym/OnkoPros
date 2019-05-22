@@ -29,6 +29,7 @@
           <GridLayout *ngIf="item.TipoItem ==='CB' && val != null" row="1" columns="*, auto">
             <CheckBox col="0" class="item-opcion-cb"
               [isEnabled]="!spinner"
+              [checked]="val.Seleccionado"
               [text]="val.Titulo" textWrap="true"
               boxType="square"
               fillColor="#2A367B"
@@ -71,8 +72,26 @@
       style.placeholderColor="rgba(42, 54, 123, 0.6)">
     </TextField>
   </GridLayout>
-  <GridLayout row="5" class="item-btn" (tap)="responder()" [isEnabled]="(valoresSeleccionados[0] && !spinner)">
+  <GridLayout row="5" columns="auto, auto, *, auto, auto">
+    <GridLayout col="0" class="fas-l" [isEnabled]="idItemsRespondidos[paginaSeleccionada-2] && !spinner"
+      (tap)="paginaSeleccionada=1; extraerItemRespondido()">
+        <Label class="fas" text="&#xf100;"></Label>
+    </GridLayout>
+    <GridLayout col="1" class="fas-l" [isEnabled]="idItemsRespondidos[paginaSeleccionada-2] && !spinner"
+      (tap)="paginaSeleccionada=paginaSeleccionada-1; extraerItemRespondido()">
+        <Label class="fas" text="&#xf104;"></Label>
+    </GridLayout>
+    <GridLayout col="2" class="item-btn" (tap)="responder()" [isEnabled]="valoresSeleccionados[0] && !spinner">
       <Label text="Responder"></Label>
+    </GridLayout>
+    <GridLayout col="3" class="fas-r" [isEnabled]="idItemsRespondidos[paginaSeleccionada] && !spinner"
+      (tap)="paginaSeleccionada=paginaSeleccionada+1; extraerItemRespondido()">
+        <Label class="fas" text="&#xf105;"></Label>
+    </GridLayout>
+    <GridLayout col="4" class="fas-r" [isEnabled]="idItemsRespondidos[paginaSeleccionada] && !spinner"
+      (tap)="paginaSeleccionada=idItemsRespondidos.length; extraerItemRespondido()">
+        <Label class="fas" text="&#xf101;"></Label>
+    </GridLayout>
   </GridLayout>
 </GridLayout>
 <ActivityIndicator

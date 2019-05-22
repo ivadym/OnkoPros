@@ -151,6 +151,8 @@ exports.extraerItemRespondido = function(idUsuario, idPerfil, idEntrevista, idIt
                             valorData.extraerIdValoresRespondidos(idUsuario, idPerfil, idEntrevista, idItem)
                             .then(function(valoresRespondidos) {
                                 for (var i = 0; i < valores.length; i++) {
+                                    valores[i].Seleccionado = false;
+                                    valores[i].ValorTexto = null;
                                     for (var j = 0; j < valoresRespondidos.length; j++) {
                                         if (valores[i].IdValor === valoresRespondidos[j].IdValor) { // Valor seleccionado previamente
                                             valores[i].Seleccionado = true;

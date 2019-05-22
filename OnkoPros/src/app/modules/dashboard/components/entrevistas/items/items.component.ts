@@ -108,12 +108,14 @@ export class ItemsComponent implements OnInit {
       datos => {
         if (datos && datos.item && datos.idItemsRespondidos) {
           //TODO: Fichero de logs
-          console.log('SERVIDOR - Item extraído: ' + datos.item.IdItem);
+          console.log('SERVIDOR - Item sig. extraído: ' + datos.item.IdItem);
           this.item = datos.item;
           this.idItemsRespondidos = datos.idItemsRespondidos;
           this.idItemsRespondidos.push(datos.item.IdItem);
           this.paginaSeleccionada = this.idItemsRespondidos.indexOf(datos.item.IdItem) + 1;
 
+          this.actualizarSeleccionDefecto(datos.item.Valores);
+          
           if (datos.item.TipoItem === 'SB') {
             this.actualizarTituloValores(datos.item.Valores);
           }
@@ -144,29 +146,24 @@ export class ItemsComponent implements OnInit {
         datos => {
           if (datos && datos.item && datos.idItemsRespondidos) {
             //TODO: Fichero de logs
-            console.log('SERVIDOR - Item extraído (getItem()): ' + datos.item.IdItem);
+            console.log('SERVIDOR - Item resp. extraído (getItem()): ' + datos.item.IdItem);
             this.item = datos.item;
             datos.idItemsRespondidos.push(idUltimoItem); // Mantener último contexto
             this.idItemsRespondidos = datos.idItemsRespondidos;
             this.paginaSeleccionada = this.idItemsRespondidos.indexOf(datos.item.IdItem) + 1;
 
-            for (let i = 0; i < datos.item.Valores.length; i++) { // setValor() de valores respondidos anteriormente
-              if (this.item.Valores[i].Seleccionado) {
-                this.indiceSeleccionado = i;
-                this.setValor(this.item.Valores[i]);
-              }
-            }
+            this.actualizarSeleccionDefecto(datos.item.Valores);
             
             if (datos.item.TipoItem === 'SB') {
               this.actualizarTituloValores(datos.item.Valores);
             }
           } else {
             // TODO: Tratamiento de errores
-            throw new Error("extraerItemRespondido() no ha devuelto ningún valor");
+            throw new Error("getItemRespondido() no ha devuelto ningún valor");
           }
         },
         error => {
-          this.errorHandler.handleError(error, `extraerItemRespondido(${idEntrevista}, ${idItemSoclicitado})`);
+          this.errorHandler.handleError(error, `getItemRespondido(${idEntrevista}, ${idItemSoclicitado})`);
         }
       )
     }
@@ -213,6 +210,18 @@ export class ItemsComponent implements OnInit {
         this.errorHandler.handleError(error, `enviarItem(${item.IdItem})`);
       }
     )
+  }
+
+  /**
+   *
+   */
+  actualizarSeleccionDefecto(valores: Valor[]) {
+    for (let i = 0; i < valores.length; i++) { // setValor() de valores respondidos anteriormente
+      if (this.item.Valores[i].Seleccionado) {
+        this.indiceSeleccionado = i;
+        this.setValor(this.item.Valores[i]);
+      }
+    }
   }
 
   /**
