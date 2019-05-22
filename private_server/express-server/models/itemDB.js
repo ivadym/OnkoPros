@@ -191,7 +191,7 @@ exports.extraerIdItemsRespondidos = function(idUsuario, idPerfil, idEntrevista) 
                     FROM OP_ENTREVISTA e INNER JOIN OP_ENTREVISTA_ITEM op_ei ON e.IdEntrevistaUsuario=op_ei.IdEntrevistaUsuario
                     INNER JOIN GEOP_ENTREVISTA_ITEM ei ON op_ei.IdItem=ei.IdItem
                     WHERE e.IdUsuario=@idUsuario AND e.IdPerfil=@idPerfil AND e.IdEntrevista=@idEntrevista AND (e.Estado BETWEEN 10 AND 19) AND ei.Estado=1 AND op_ei.Estado=1
-                    ORDER BY ei.Orden ASC;`;
+                    ORDER BY op_ei.FechaRegistro ASC;`;
         var result = [];
 
         connection.on('connect', function(err) {
@@ -391,45 +391,18 @@ exports.almacenarItem = function(idUsuario, idPerfil, item) {
  */
 exports.actualizarItem = function(idUsuario, idPerfil, item) {
     return new Promise(function(resolve, reject) {
-        var connection = new Connection(config.auth);
-        var query = `UPDATE OP_ENTREVISTA_ITEM
-                    SET FechaRegistro=DEFAULT
-                    WHERE IdItem=@idItem AND IdEntrevistaUsuario=(SELECT IdEntrevistaUsuario FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 10 AND 19));`;
-
-        connection.on('connect', function(err) {
-            if (err) {
-                reject(err);
-            } else {
-                request = new Request(query, function(err, rowCount, rows) {
-                    if (err) {
-                        reject(err);
-                    }
-                    connection.close();
-                });
-                
-                request.addParameter('idUsuario', TYPES.Int, idUsuario);
-                request.addParameter('idPerfil', TYPES.Int, idPerfil);
-                request.addParameter('idEntrevista', TYPES.Int, item.IdEntrevista);
-                request.addParameter('idItem', TYPES.Int, item.IdItem);
-
-                request.on('requestCompleted', function() {
-                    valorData.eliminarValores(idUsuario, idPerfil, item)
-                    .then(function(res) {
-                        valorData.almacenarValor(idUsuario, idPerfil, item, 0) // Se almacenan los valores actualizados
-                        .then(function(itemOriginal) {
-                            resolve(itemOriginal);
-                        })
-                        .catch(function(error) {
-                            reject(error);
-                        });
-                    })
-                    .catch(function(error) {
-                        reject(error);
-                    });
-                });
-
-                connection.execSql(request);
-            }
-        });
+        valorData.eliminarValores(idUsuario, idPerfil, item)
+        .then(function(res) {
+            valorData.almacenarValor(idUsuario, idPerfil, item, 0) // Se almacenan los valores actualizados
+            .then(function(itemOriginal) {
+                resolve(itemOriginal);
+            })
+            .catch(function(error) {
+                reject(error);
+            });
+        })
+        .catch(function(error) {
+            reject(error);
+        });  
     });
 }
