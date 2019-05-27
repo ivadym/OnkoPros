@@ -4,7 +4,7 @@ const authData = require('../models/authDB');
  * Lleva a cabo la autenticación del usuario
  */
 exports.autenticacion = function(req, res, next) {
-const usuario = req.body.usuario;
+    const usuario = req.body.usuario;
     const clave = req.body.clave;
     authData.comprobarCredenciales(usuario, clave)
     .then(function(usuario) {

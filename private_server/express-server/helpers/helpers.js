@@ -7,13 +7,13 @@ exports.adaptarPerfilUsuario = function(usuarios) {
         switch (usuarios[i].IdPerfil) {
             case 0:
                 perfiles.push('Administrador');
-                break; 
+                break;
             case 1:
                 perfiles.push('Profesional de la salud');
-                break; 
+                break;
             case 2:
                 perfiles.push('Paciente');
-                break; 
+                break;
         }
     }
     return perfiles;

@@ -2,7 +2,7 @@ const Connection = require('tedious').Connection;
 const Request = require('tedious').Request;
 const TYPES = require('tedious').TYPES;
 
-const config = require('../helpers/config');
+const config = require('../config/authSQL');
 const entrevistaData = require('../models/entrevistasDB')
 const valorData = require('../models/valorDB');
 

@@ -2,8 +2,7 @@ const Connection = require('tedious').Connection;
 const Request = require('tedious').Request;
 const TYPES = require('tedious').TYPES;
 
-const config = require('../helpers/config');
-const entrevistaData = require('../models/entrevistasDB')
+const config = require('../config/authSQL');
 
 /**
  * Extrae los valores asociados a un item determinado
