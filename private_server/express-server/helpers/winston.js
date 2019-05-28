@@ -6,15 +6,19 @@ const log = require('../config/log')
 /**
  * Filtra los logs a mostrar/escribir por nivel
  */
-const filtarLevel = winston.format((info, opts) => {
-    if (log.filtroUnico) {
-        if (log.level === info.level) {
-            return info;
+const filtrarLogs = winston.format((info, opts) => {
+    if(log.activo) {
+        if (log.filtroUnico) {
+            if (log.level === info.level) {
+                return info;
+            } else {
+                return false;
+            }
         } else {
-            return false;
+            return info;
         }
     } else {
-        return info;
+        return false;
     }
 });
 
@@ -29,7 +33,7 @@ const expressLogger = expressWinston.logger({
         })
     ],
     format: winston.format.combine(
-        filtarLevel(),
+        filtrarLogs(),
         winston.format.json(),
         winston.format.colorize()
     )
@@ -44,7 +48,7 @@ const expressErrorLogger = expressWinston.errorLogger({
         new winston.transports.Console()
     ],
     format: winston.format.combine(
-        filtarLevel(),
+        filtrarLogs(),
         winston.format.json(),
         winston.format.colorize()
     )
