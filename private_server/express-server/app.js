@@ -4,7 +4,7 @@ const cors = require('cors');
 
 const routes = require('./routes/index');
 const errorHandler = require('./handlers/errorHandler');
-const { expressLogger } = require('./helpers/winston');
+const { expressLogger, expressErrorLogger } = require('./helpers/winston');
 
 // Creación de la aplicación de Express
 const app = express();
@@ -22,8 +22,11 @@ app.use(expressLogger);
 // Tratamiento de las rutas
 app.use('/', routes);
 
-// Ruta no encontrada: tratamiento del error
-app.use(errorHandler.notFound);
+// Express error logger (DESPUÉS de cargar las rutas y ANTES del tratamiento de errores)
+app.use(expressErrorLogger);
+
+// Tratamiento de los errores
+app.use(errorHandler.errorHandler);
 
 const server = app.listen(8081, function() {
     var host = server.address().address;

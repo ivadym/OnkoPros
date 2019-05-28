@@ -19,8 +19,9 @@ function getSiguienteItem(req, res, next) {
         }
     })
     .catch(function(error) {
-        // TODO: Mejor manejo de errores
-        res.sendStatus(500); // HTTP 500 Internal Server Error
+        var err = new Error(error.message ? error.message : error);
+        err.statusCode = 500; // HTTP 500 Internal Server Error
+        next(err);
     });
 };
 
@@ -43,8 +44,9 @@ function getItemRespondido(req, res, next) {
         }
     })
     .catch(function(error) {
-        // TODO: Mejor manejo de errores
-        res.sendStatus(500); // HTTP 500 Internal Server Error
+        var err = new Error(error.message ? error.message : error);
+        err.statusCode = 500; // HTTP 500 Internal Server Error
+        next(err);
     });
 };
 
@@ -54,16 +56,12 @@ function getItemRespondido(req, res, next) {
 function setItem(req, res, next) {
     itemData.almacenarItem(req.idUsuario, req.idPerfil, req.body)
     .then(function(item) {
-        if (item) {
-            res.status(201).json(item);
-        } else {
-            // TODO: Mejor manejo de errores
-            res.sendStatus(500); // HTTP 500 Internal Server Error
-        }
+        res.status(201).json(item);
     })
     .catch(function(error) {
-        // TODO: Mejor manejo de errores
-        res.sendStatus(500); // HTTP 500 Internal Server Error
+        var err = new Error(error.message ? error.message : error);
+        err.statusCode = 500; // HTTP 500 Internal Server Error
+        next(err);
     });
 };
 
@@ -76,13 +74,15 @@ function updateItem(req, res, next) {
         if (item) {
             res.status(201).json(item);
         } else {
-            // TODO: Mejor manejo de errores
-            res.sendStatus(500); // HTTP 500 Internal Server Error
+            var err = new Error(error.message ? error.message : error);
+            err.statusCode = 500; // HTTP 500 Internal Server Error
+            next(err);
         }
     })
     .catch(function(error) {
-        // TODO: Mejor manejo de errores
-        res.sendStatus(500); // HTTP 500 Internal Server Error
+        var err = new Error(error.message ? error.message : error);
+        err.statusCode = 500; // HTTP 500 Internal Server Error
+        next(err);
     });
 };
 

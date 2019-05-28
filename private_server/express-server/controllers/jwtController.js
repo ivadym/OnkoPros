@@ -21,8 +21,9 @@ function generarJWT(req, res, next) {
     );
     res.status(200).json(req.usuario);
   } catch (error) {
-    // TODO: Tratamiento error interno servidor
-    res.sendStatus(500) // HTTP 500 Internal Server Error
+    var err = new Error(error.message ? error.message : error);
+    err.statusCode = 500; // HTTP 500 Internal Server Error
+    next(err);
   }
 };
 
@@ -35,26 +36,24 @@ function verificarJWT(req, res, next) {
     var idPerfil = helpers.adaptarPerfilSql(req.headers['perfil']);
     var token = req.headers['authorization'].split(' ')[1];
     jwt.verify(token, publicKey, function(err, decoded) {
-      if (err) {
-        // TODO: Mejor manejo errores
-        res.sendStatus(403); // HTTP 403 Forbidden
-      } else if (decoded) {
-        if (decoded.id == idUsuario) {
-          req.idUsuario = decoded.id;
-          req.idPerfil = idPerfil;
-          next();
-        } else {
-          // TODO: Mejor manejo errores
-          res.sendStatus(403); // HTTP 403 Forbidden
-        }
+      if (err || !decoded) {
+        var err = new Error("Forbidden");
+        err.statusCode = 403; // HTTP 403 Forbidden
+        next(err);
+      } else if (decoded && decoded.id == idUsuario) {
+        req.idUsuario = decoded.id;
+        req.idPerfil = idPerfil;
+        next();
       } else {
-        // TODO: Mejor manejo errores
-        res.sendStatus(403); // HTTP 403 Forbidden
+        var err = new Error("Forbidden");
+        err.statusCode = 403; // HTTP 403 Forbidden
+        next(err);
       }
     });
   } catch (error) {
-    // TODO: Mejor manejo errores
-    res.sendStatus(403); // HTTP 403 Forbidden
+    var err = new Error(error.message ? error.message : error);
+    err.statusCode = 500; // HTTP 500 Internal Server Error
+    next(err);
   }
 };
 

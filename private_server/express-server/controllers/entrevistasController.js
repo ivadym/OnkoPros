@@ -13,8 +13,9 @@ function getEntrevistas(req, res, next) {
         }
     })
     .catch(function(error) {
-        // TODO: Mejor manejo de errores
-        res.sendStatus(500); // HTTP 500 Internal Server Error
+        var err = new Error(error.message ? error.message : error);
+        err.statusCode = 500; // HTTP 500 Internal Server Error
+        next(err);
     });
 };
 
@@ -31,8 +32,9 @@ function getEntrevista(req, res, next) {
         }
     })
     .catch(function(error) {
-        // TODO: Mejor manejo de errores
-        res.sendStatus(500); // HTTP 500 Internal Server Error
+        var err = new Error(error.message ? error.message : error);
+        err.statusCode = 500; // HTTP 500 Internal Server Error
+        next(err);
     });
 };
 

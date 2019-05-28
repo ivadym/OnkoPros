@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const routes = require('./routes/index');
+const errorHandler = require('./handlers/errorHandler');
 
 // Creación de la aplicación de Express
 const app = express();
@@ -16,6 +17,9 @@ app.use(cors());
 
 // Tratamiento de las rutas
 app.use('/', routes);
+
+// Tratamiento de los errores
+app.use(errorHandler.errorHandler);
 
 const server = app.listen(8080, function() {
     var host = server.address().address;

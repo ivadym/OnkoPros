@@ -217,8 +217,12 @@ function extraerIdItemsRespondidos(idUsuario, idPerfil, idEntrevista) {
                     result.push(rowObject);
                 });
 
-                request.on('requestCompleted', function() {                
-                    resolve(result);
+                request.on('requestCompleted', function() {
+                    if (result) {
+                        resolve(result);
+                    } else {
+                        reject('Error al extraer los IDs de los items respondidos')
+                    }
                 });
 
                 connection.execSql(request);

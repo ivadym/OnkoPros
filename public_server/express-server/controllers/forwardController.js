@@ -21,8 +21,9 @@ function reenviar(req, res, next) {
     if (req.method === 'POST') {
         request.post(options, function optionalCallback(error, response, body) {
             if (error) {
-                // TODO: Mejor manejo de errores
-                res.sendStatus(500); // HTTP 500 Internal Server Error
+                var err = new Error(error.message ? error.message : error);
+                err.statusCode = 500; // HTTP 500 Internal Server Error
+                next(err);
             } else {
                 res.status(response.statusCode).json(body);
             }
@@ -30,8 +31,9 @@ function reenviar(req, res, next) {
     } else if (req.method === 'GET') {
         request.get(options, function optionalCallback(error, response, body) {
             if (error) {
-                // TODO: Mejor manejo de errores
-                res.sendStatus(500); // HTTP 500 Internal Server Error
+                var err = new Error(error.message ? error.message : error);
+                err.statusCode = 500; // HTTP 500 Internal Server Error
+                next(err);
             } else {
                 res.status(response.statusCode).json(body);
             }

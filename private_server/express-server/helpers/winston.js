@@ -35,4 +35,19 @@ const expressLogger = expressWinston.logger({
     )
 });
 
-module.exports = { expressLogger };
+/**
+ * Express error logger (peticiones HTTP/accesos BBDD)
+ */
+const expressErrorLogger = expressWinston.errorLogger({
+    level: 'error',
+    transports: [
+        new winston.transports.Console()
+    ],
+    format: winston.format.combine(
+        filtarLevel(),
+        winston.format.json(),
+        winston.format.colorize()
+    )
+});
+
+module.exports = { expressLogger, expressErrorLogger };

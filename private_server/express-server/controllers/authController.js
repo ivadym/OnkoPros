@@ -12,13 +12,15 @@ function autenticacion(req, res, next) {
             req.usuario = usuario;
             next();
         } else {
-            // TODO: Mejor manejo de errores
-            res.sendStatus(403); // HTTP 403 Forbidden
+            var err = new Error("Forbidden");
+            err.statusCode = 403; // HTTP 403 Forbidden
+            next(err);
         }
     })
     .catch(function(error) {
-        // TODO: Mejor manejo de errores
-        res.sendStatus(500); // HTTP 500 Internal Server Error
+        var err = new Error(error.message ? error.message : error);
+        err.statusCode = 500; // HTTP 500 Internal Server Error
+        next(err);
     });
 };
 
