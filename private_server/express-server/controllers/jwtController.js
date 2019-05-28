@@ -9,7 +9,7 @@ var publicKey  = fs.readFileSync('./RSA/public.key');
 /**
  * Genera un JWT asociado a un usuario determinado
  */
-exports.generarJWT = function(req, res, next) {
+function generarJWT(req, res, next) {
   try {
     req.usuario.JWT = jwt.sign(
       { id: req.usuario.IdUsuario },
@@ -29,7 +29,7 @@ exports.generarJWT = function(req, res, next) {
 /**
  * Verifica el JWT asociado a un determinado cliente
  */
-exports.verificarJWT = function(req, res, next) {
+function verificarJWT(req, res, next) {
   try {
     var idUsuario = req.headers['id'];
     var idPerfil = helpers.adaptarPerfilSql(req.headers['perfil']);
@@ -57,3 +57,5 @@ exports.verificarJWT = function(req, res, next) {
     res.sendStatus(403); // HTTP 403 Forbidden
   }
 };
+
+module.exports = { generarJWT, verificarJWT }

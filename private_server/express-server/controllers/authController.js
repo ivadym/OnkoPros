@@ -3,7 +3,7 @@ const authData = require('../models/authDB');
 /**
  * Lleva a cabo la autenticación del usuario
  */
-exports.autenticacion = function(req, res, next) {
+function autenticacion(req, res, next) {
     const usuario = req.body.usuario;
     const clave = req.body.clave;
     authData.comprobarCredenciales(usuario, clave)
@@ -21,3 +21,5 @@ exports.autenticacion = function(req, res, next) {
         res.sendStatus(500); // HTTP 500 Internal Server Error
     });
 };
+
+module.exports = { autenticacion }

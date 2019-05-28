@@ -7,7 +7,7 @@ const config = require('../config/authSQL');
 /**
  * Extrae los valores asociados a un item determinado
  */
-exports.extraerValores = function(item) {
+function extraerValores(item) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `SELECT v.IdValor, v.Titulo, v.Seleccionado, v.Valor, v.TipoValor, v.VisibleValor, v.CajaTexto, v.ValorTexto, v.Alerta
@@ -51,7 +51,7 @@ exports.extraerValores = function(item) {
 /**
  * Devuelve un array con los valores contestados anteriormente
  */
-exports.extraerIdValoresRespondidos = function(idUsuario, idPerfil, idEntrevista, idItem) {
+function extraerIdValoresRespondidos(idUsuario, idPerfil, idEntrevista, idItem) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `SELECT eiv.IdValor, eiv.ValorTexto
@@ -97,7 +97,7 @@ exports.extraerIdValoresRespondidos = function(idUsuario, idPerfil, idEntrevista
 /**
  * Almacenar los valores contestados por el usuario
  */
-exports.almacenarValor = function(idUsuario, idPerfil, item, index) {
+function almacenarValor(idUsuario, idPerfil, item, index) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `INSERT INTO OP_ENTREVISTA_ITEM_VALOR (IdEntrevistaItemValor, IdEntrevistaItem, IdValor, Estado, ValorTexto)
@@ -124,7 +124,7 @@ exports.almacenarValor = function(idUsuario, idPerfil, item, index) {
                 
                 request.on('requestCompleted', function() {
                     if (item.Valores[++index]) {
-                        exports.almacenarValor(idUsuario, idPerfil, item, index)
+                        almacenarValor(idUsuario, idPerfil, item, index)
                         .then(function(res) {
                             resolve(res);
                         })
@@ -145,7 +145,7 @@ exports.almacenarValor = function(idUsuario, idPerfil, item, index) {
 /**
  * Elimina los valores contestados previamente por el usuario
  */
-exports.eliminarValores = function(idUsuario, idPerfil, item) {
+function eliminarValores(idUsuario, idPerfil, item) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `DELETE eiv
@@ -178,3 +178,5 @@ exports.eliminarValores = function(idUsuario, idPerfil, item) {
         });
     });
 }
+
+module.exports = { extraerValores, extraerIdValoresRespondidos, almacenarValor, eliminarValores }

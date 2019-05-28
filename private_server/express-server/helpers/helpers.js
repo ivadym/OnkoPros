@@ -1,7 +1,7 @@
 /**
  * Adapta los perfiles de usuario extraídos de la BBDD para su presentación
  */
-exports.adaptarPerfilUsuario = function(usuarios) {
+function adaptarPerfilUsuario(usuarios) {
     var perfiles = [];
     for (var i = 0; i < usuarios.length; i++) {
         switch (usuarios[i].IdPerfil) {
@@ -22,7 +22,7 @@ exports.adaptarPerfilUsuario = function(usuarios) {
 /**
  * Adapta el perfil de usuario a su estructura en la BBDD
  */
-exports.adaptarPerfilSql = function(perfil) {
+function adaptarPerfilSql(perfil) {
     switch (perfil) {
         case 'Administrador':
             return 0;
@@ -36,7 +36,7 @@ exports.adaptarPerfilSql = function(perfil) {
 /**
  * Adapta los sexos de los usuarios extraídos de la BBDD para su presentación
  */
-exports.adaptarSexo = function(sexo) {
+function adaptarSexo(sexo) {
     switch (sexo) {
         case 0:
             return 'Desconocido';
@@ -48,3 +48,5 @@ exports.adaptarSexo = function(sexo) {
             return 'No aplicable'
     }
 }
+
+module.exports = { adaptarPerfilUsuario, adaptarPerfilSql, adaptarSexo }

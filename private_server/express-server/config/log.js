@@ -3,5 +3,5 @@
  */
 module.exports = {
     filtroUnico: false, // Impreme los logs de un único nivel determinado (level)
-    level: 'info'
+    level: 'error'
 }

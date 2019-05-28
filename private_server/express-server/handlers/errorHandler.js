@@ -1,6 +1,8 @@
 /**
  * HTTP 404 Not Found
  */
-exports.notFound = (req, res, next) => {
+function notFound(req, res, next) {
   res.sendStatus(404);
 };
+
+module.exports = { notFound }

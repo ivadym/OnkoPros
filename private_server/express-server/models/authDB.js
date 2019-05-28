@@ -8,7 +8,7 @@ const helpers = require('../helpers/helpers');
 /**
  * Comprueba las credenciales de usuario recibidas
  */
-exports.comprobarCredenciales = function(usuario, clave) {
+function comprobarCredenciales(usuario, clave) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `SELECT u.IdUsuario, up.IdPerfil, u.Usuario, u.Nombre, u.PrimerApellido, u.SegundoApellido, u.Sexo,  u.FechaNacimiento, u.Telefono, u.Email
@@ -54,3 +54,5 @@ exports.comprobarCredenciales = function(usuario, clave) {
         });
     });
 }
+
+module.exports = { comprobarCredenciales }

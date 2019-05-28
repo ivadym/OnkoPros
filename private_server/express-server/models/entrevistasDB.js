@@ -7,7 +7,7 @@ const config = require('../config/authSQL');
 /**
  * Extrae las entrevistas asociadas a un usuario determinado
  */
-exports.extraerEntrevistas = function(idUsuario, idPerfil) {
+function extraerEntrevistas(idUsuario, idPerfil) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `SELECT e.IdEntrevista, e.IdSujeto, e.TipoSujeto, eg.Titulo, eg.Tooltip, ei.InstruccionPrincipal, ei.InstruccionSecundaria, e.FechaLimite
@@ -53,7 +53,7 @@ exports.extraerEntrevistas = function(idUsuario, idPerfil) {
 /**
  * Estrae la entrevista asociada a un usuario e identificador determinados
  */
-exports.extraerEntrevista = function(idUsuario, idPerfil, idEntrevista) {
+function extraerEntrevista(idUsuario, idPerfil, idEntrevista) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `SELECT e.IdEntrevista, e.IdSujeto, e.TipoSujeto, eg.Titulo, eg.Tooltip, ei.InstruccionPrincipal, ei.InstruccionSecundaria, e.FechaLimite
@@ -99,7 +99,7 @@ exports.extraerEntrevista = function(idUsuario, idPerfil, idEntrevista) {
 /**
  * Actualiza el estado de la entrevista (en progreso)
  */
-exports.actualizarEstadoEntrevista = function(idUsuario, idPerfil, item) {
+function actualizarEstadoEntrevista(idUsuario, idPerfil, item) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `UPDATE OP_ENTREVISTA
@@ -134,7 +134,7 @@ exports.actualizarEstadoEntrevista = function(idUsuario, idPerfil, item) {
 /**
  * Finaliza una entrevista deetrminada (no quedan más items por responder)
  */
-exports.finalizarEntrevista = function(idUsuario, idPerfil, idEntrevista) {
+function finalizarEntrevista(idUsuario, idPerfil, idEntrevista) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `UPDATE OP_ENTREVISTA
@@ -165,3 +165,5 @@ exports.finalizarEntrevista = function(idUsuario, idPerfil, idEntrevista) {
         });
     });
 }
+
+module.exports = { extraerEntrevistas, extraerEntrevista, actualizarEstadoEntrevista, finalizarEntrevista }

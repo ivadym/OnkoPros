@@ -9,7 +9,7 @@ const valorData = require('../models/valorDB');
 /**
  * Devuelve la siguiente pregunta disponible asociada a un usuario y a una entrevista determinados
  */
-exports.extraerSiguienteItem = function(idUsuario, idPerfil, idEntrevista) {
+function extraerSiguienteItem(idUsuario, idPerfil, idEntrevista) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `SELECT TOP 1 i.IdItem, e.IdEntrevista, i.Titulo, i.Subtitulo, i.Tooltip, i.TipoItem, i.EsAgrupacion
@@ -64,7 +64,7 @@ exports.extraerSiguienteItem = function(idUsuario, idPerfil, idEntrevista) {
                                 } else { // No hay más hijos
                                     finalizarItemAgrupacion(idUsuario, idPerfil, idEntrevista, siguienteItem) // Agrupación respondida
                                     .then(function(res) {
-                                        exports.extraerSiguienteItem(idUsuario, idPerfil, idEntrevista) // Sigue con la extracción
+                                        extraerSiguienteItem(idUsuario, idPerfil, idEntrevista) // Sigue con la extracción
                                         .then(function(res) {
                                             resolve(res);
                                         })
@@ -111,7 +111,7 @@ exports.extraerSiguienteItem = function(idUsuario, idPerfil, idEntrevista) {
 /**
  * Extrae el item asociado a un ID determinado y que ya ha sido previamente respondido por el usuario
  */
-exports.extraerItemRespondido = function(idUsuario, idPerfil, idEntrevista, idItem) {
+function extraerItemRespondido(idUsuario, idPerfil, idEntrevista, idItem) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `SELECT i.IdItem, e.IdEntrevista, ei.IdAgrupacion, i.Titulo, i.Subtitulo, i.Tooltip, i.TipoItem
@@ -184,7 +184,7 @@ exports.extraerItemRespondido = function(idUsuario, idPerfil, idEntrevista, idIt
 /**
  * Devuelve un array de los items contestados anteriormente
  */
-exports.extraerIdItemsRespondidos = function(idUsuario, idPerfil, idEntrevista) {
+function extraerIdItemsRespondidos(idUsuario, idPerfil, idEntrevista) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `SELECT op_ei.IdItem
@@ -343,7 +343,7 @@ function finalizarItemAgrupacion(idUsuario, idPerfil, idEntrevista, itemAgrupaci
 /**
  * Guarda la respuesta del usuario en la BBDD
  */
-exports.almacenarItem = function(idUsuario, idPerfil, item) {
+function almacenarItem(idUsuario, idPerfil, item) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdAgrupacion, IdItem, Estado, Orden)
@@ -393,7 +393,7 @@ exports.almacenarItem = function(idUsuario, idPerfil, item) {
 /**
  * Actualiza la respuesta del usuario en la BBDD
  */
-exports.actualizarItem = function(idUsuario, idPerfil, item) {
+function actualizarItem(idUsuario, idPerfil, item) {
     return new Promise(function(resolve, reject) {
         var connection = new Connection(config.auth);
         var query = `UPDATE OP_ENTREVISTA_ITEM
@@ -437,3 +437,5 @@ exports.actualizarItem = function(idUsuario, idPerfil, item) {
         });
     });
 }
+
+module.exports = { extraerSiguienteItem, extraerItemRespondido, extraerIdItemsRespondidos, almacenarItem, actualizarItem }

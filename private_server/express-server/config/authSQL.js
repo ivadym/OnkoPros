@@ -1,7 +1,7 @@
 /**
  * Credenciales de accesso al Servidor y a la Base de Datos especificados
  */
-exports.auth = {
+const auth = {
     authentication: {
         type: 'default',
         options: {
@@ -15,3 +15,5 @@ exports.auth = {
         database: 'ONKOIMPETUS'
     }
 }
+
+module.exports = { auth }
