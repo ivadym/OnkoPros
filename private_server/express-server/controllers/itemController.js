@@ -35,17 +35,13 @@ function getItemRespondido(req, res, next) {
     logger.info('itemController.getItemRespondido');
     itemData.extraerItemRespondido(req.idUsuario, req.idPerfil, req.params['idEntrevista'], req.params['idItem'])
     .then(function(item) {
-        if (item) {
-            itemData.extraerIdItemsRespondidos(req.idUsuario, req.idPerfil, req.params['idEntrevista'])
-            .then(function(idItemsRespondidos) {
-                res.status(200).json({
-                    item: item,
-                    idItemsRespondidos: idItemsRespondidos
-                });
-            })
-        } else {
-            res.status(200).json(null);
-        }
+        itemData.extraerIdItemsRespondidos(req.idUsuario, req.idPerfil, req.params['idEntrevista'])
+        .then(function(idItemsRespondidos) {
+            res.status(200).json({
+                item: item,
+                idItemsRespondidos: idItemsRespondidos
+            });
+        })
     })
     .catch(function(error) {
         logger.error('itemController.getItemRespondido.500');
@@ -79,14 +75,7 @@ function updateItem(req, res, next) {
     logger.info('itemController.updateItem');
     itemData.actualizarItem(req.idUsuario, req.idPerfil, req.body)
     .then(function(item) {
-        if (item) {
-            res.status(201).json(item);
-        } else {
-            logger.error('itemController.updateItem.500.1');
-            var err = new Error(error.message ? error.message : error);
-            err.statusCode = 500; // HTTP 500 Internal Server Error
-            next(err);
-        }
+        res.status(201).json(item);
     })
     .catch(function(error) {
         logger.error('itemController.updateItem.500');

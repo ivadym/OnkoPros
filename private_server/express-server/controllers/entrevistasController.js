@@ -32,7 +32,10 @@ function getEntrevista(req, res, next) {
         if (entrevista) {
             res.status(200).json(entrevista);
         } else {
-            res.status(200).json(null);
+            logger.error('entrevistasController.getEntrevista.404');
+            var err = new Error('Error en la obtención de una entrevista determinada');
+            err.statusCode = 404; // HTTP 404 Not Found
+            next(err);
         }
     })
     .catch(function(error) {

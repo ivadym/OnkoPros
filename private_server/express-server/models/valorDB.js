@@ -39,7 +39,11 @@ function extraerValores(item) {
                 });
 
                 request.on('requestCompleted', function() {
-                    resolve(result);
+                    if (result.length > 0) {
+                        resolve(result);
+                    } else {
+                        reject('Error en la extracción de los valores asociados a un item determinado');
+                    }
                 });
 
                 connection.execSql(request);
@@ -85,7 +89,11 @@ function extraerIdValoresRespondidos(idUsuario, idPerfil, idEntrevista, idItem) 
                 });
                 
                 request.on('requestCompleted', function() {
-                    resolve(result);
+                    if (result.length > 0) {
+                        resolve(result);
+                    } else {
+                        reject('Error en la obtención de los valores respondidos previamente por el usuario');
+                    }
                 });
 
                 connection.execSql(request);
@@ -170,7 +178,7 @@ function eliminarValores(idUsuario, idPerfil, item) {
                 request.addParameter('idItem', TYPES.Int, item.IdItem);
                 
                 request.on('requestCompleted', function() {
-                    resolve(true);
+                    resolve(item);
                 });
 
                 connection.execSql(request);

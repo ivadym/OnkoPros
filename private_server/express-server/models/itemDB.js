@@ -171,7 +171,7 @@ function extraerItemRespondido(idUsuario, idPerfil, idEntrevista, idItem) {
                             reject(error);
                         });
                     } else {
-                        resolve(null);   
+                        reject('Error en la obtención del item respondido previamente por el usuario')
                     }
                 });
 
@@ -216,15 +216,11 @@ function extraerIdItemsRespondidos(idUsuario, idPerfil, idEntrevista) {
                     });
                     result.push(rowObject);
                 });
-
+                
                 request.on('requestCompleted', function() {
-                    if (result) {
-                        resolve(result);
-                    } else {
-                        reject('Error al extraer los IDs de los items respondidos')
-                    }
+                    resolve(result);
                 });
-
+                
                 connection.execSql(request);
             }
         });
@@ -423,7 +419,7 @@ function actualizarItem(idUsuario, idPerfil, item) {
                 request.on('requestCompleted', function() {
                     valorData.eliminarValores(idUsuario, idPerfil, item)
                     .then(function(res) {
-                        valorData.almacenarValor(idUsuario, idPerfil, item, 0) // Se almacenan los valores actualizados
+                        valorData.almacenarValor(idUsuario, idPerfil, res, 0) // Se almacenan los valores actualizados
                         .then(function(itemOriginal) {
                             resolve(itemOriginal);
                         })

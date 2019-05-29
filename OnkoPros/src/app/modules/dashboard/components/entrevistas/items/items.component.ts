@@ -144,22 +144,17 @@ export class ItemsComponent implements OnInit {
       this.limpiarContexto();
       this.entrevistasService.getItemRespondido(idEntrevista, idItemSoclicitado).subscribe(
         datos => {
-          if (datos && datos.item && datos.idItemsRespondidos) {
-            //TODO: Fichero de logs
-            console.log('SERVIDOR - Item resp. extraído (getItem()): ' + datos.item.IdItem);
-            this.item = datos.item;
-            datos.idItemsRespondidos.push(idUltimoItem); // Mantener último contexto
-            this.idItemsRespondidos = datos.idItemsRespondidos;
-            this.paginaSeleccionada = this.idItemsRespondidos.indexOf(datos.item.IdItem) + 1;
-
-            this.actualizarSeleccionDefecto(datos.item.Valores);
-            
-            if (datos.item.TipoItem === 'SB') {
-              this.actualizarTituloValores(datos.item.Valores);
-            }
-          } else {
-            // TODO: Tratamiento de errores
-            throw new Error("getItemRespondido() no ha devuelto ningún valor");
+          //TODO: Fichero de logs
+          console.log('SERVIDOR - Item resp. extraído (getItem()): ' + datos.item.IdItem);
+          this.item = datos.item;
+          datos.idItemsRespondidos.push(idUltimoItem); // Mantener último contexto
+          this.idItemsRespondidos = datos.idItemsRespondidos;
+          this.paginaSeleccionada = this.idItemsRespondidos.indexOf(datos.item.IdItem) + 1;
+          
+          this.actualizarSeleccionDefecto(datos.item.Valores);
+          
+          if (datos.item.TipoItem === 'SB') {
+            this.actualizarTituloValores(datos.item.Valores);
           }
         },
         error => {
@@ -183,27 +178,22 @@ export class ItemsComponent implements OnInit {
     this.limpiarContexto();
     observableItemValor.subscribe(
       item => {
-        if (item) {
-          for (var i = 0; i < item.Valores.length; i++) {
-            if (item.Valores[i].Alerta) {
-              this.cuadroDialogoService.alerta(
-                'Atención, es necesario que siga las siguientes intrucciones:',
-                item.Valores[i].Alerta
-              ).then(
-                res => {
-                  console.log('SERVIDOR - Confirmación respuesta usuario (+ alerta): ' + item.IdItem);
-                  this.extraerSiguienteItem(item.IdEntrevista);
-                  return;
-                }
-              );
-            }
+        for (var i = 0; i < item.Valores.length; i++) {
+          if (item.Valores[i].Alerta) {
+            this.cuadroDialogoService.alerta(
+              'Atención, es necesario que siga las siguientes intrucciones:',
+              item.Valores[i].Alerta
+            ).then(
+              res => {
+                console.log('SERVIDOR - Confirmación respuesta usuario (+ alerta): ' + item.IdItem);
+                this.extraerSiguienteItem(item.IdEntrevista);
+                return;
+              }
+            );
           }
-          console.log('SERVIDOR - Confirmación respuesta usuario: ' + item.IdItem);
-          this.extraerSiguienteItem(item.IdEntrevista);
-        } else {
-          // TODO: Tratamiento del error/Mensaje de error al usuario (footer popup)
-          console.error('ERROR enviarItem()');
         }
+        console.log('SERVIDOR - Confirmación respuesta usuario: ' + item.IdItem);
+        this.extraerSiguienteItem(item.IdEntrevista);
       },
       error => {
         //TODO: Fichero de logs

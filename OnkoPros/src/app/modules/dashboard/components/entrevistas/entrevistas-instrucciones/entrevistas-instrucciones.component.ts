@@ -47,15 +47,12 @@ export class EntrevistasInstruccionesComponent implements OnInit {
   extraerEntrevista(id: number): void {
     this.entrevistasService.getEntrevista(id).subscribe(
       entrevista => {
-        if (entrevista && entrevista.InstruccionPrincipal) {
+        if (entrevista.InstruccionPrincipal) {
           //TODO: Fichero de logs
           console.log('SERVIDOR - Entrevista seleccionada: ' + entrevista.IdEntrevista);
           this.entrevista = entrevista;
-        } else if (entrevista) {
+        } else { // Entrevista sin instrucciones: se redirige al usuario directamente a la pregunta
             this.navegacionService.navegar('/dashboard/entrevistas/' + entrevista.IdEntrevista + '/items', false);
-        } else {
-          console.log(`LOG getEntrevista(${id}) (no existe la entrevista solicitada)`);
-          this.navegacionService.navegar('/404', false);
         }
       },
       error => {
