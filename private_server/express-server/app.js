@@ -4,7 +4,7 @@ const cors = require('cors');
 
 const routes = require('./routes/index');
 const errorHandler = require('./handlers/errorHandler');
-const { expressLogger, expressErrorLogger } = require('./helpers/winston');
+const { logger, expressLogger, expressErrorLogger } = require('./helpers/winston');
 
 // Creación de la aplicación de Express
 const app = express();
@@ -29,7 +29,5 @@ app.use(expressErrorLogger);
 app.use(errorHandler.errorHandler);
 
 const server = app.listen(8081, function() {
-    var host = server.address().address;
-    var port = server.address().port;
-    console.log('Servidor iniciado en http://%s:%s', host, port);
+    logger.info('servidor.iniciado.puerto.' + server.address().port);
 });
