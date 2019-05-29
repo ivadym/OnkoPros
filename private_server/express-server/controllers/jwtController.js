@@ -1,7 +1,8 @@
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 
-const helpers = require('../helpers/helpers')
+const helpers = require('../helpers/helpers');
+const { logger } = require('../helpers/winston');
 
 var privateKey  = fs.readFileSync('./RSA/private.key');
 var publicKey  = fs.readFileSync('./RSA/public.key');
@@ -10,6 +11,7 @@ var publicKey  = fs.readFileSync('./RSA/public.key');
  * Genera un JWT asociado a un usuario determinado
  */
 function generarJWT(req, res, next) {
+  logger.info('jwtController.generarJWT');
   try {
     req.usuario.JWT = jwt.sign(
       { id: req.usuario.IdUsuario },
@@ -21,6 +23,7 @@ function generarJWT(req, res, next) {
     );
     res.status(200).json(req.usuario);
   } catch (error) {
+    logger.error('jwtController.generarJWT.500');
     var err = new Error(error.message ? error.message : error);
     err.statusCode = 500; // HTTP 500 Internal Server Error
     next(err);
@@ -31,13 +34,15 @@ function generarJWT(req, res, next) {
  * Verifica el JWT asociado a un determinado cliente
  */
 function verificarJWT(req, res, next) {
+  logger.info('jwtController.verificarJWT');
   try {
     var idUsuario = req.headers['id'];
     var idPerfil = helpers.adaptarPerfilSql(req.headers['perfil']);
     var token = req.headers['authorization'].split(' ')[1];
     jwt.verify(token, publicKey, function(err, decoded) {
       if (err || !decoded) {
-        var err = new Error("Forbidden");
+        logger.error('jwtController.verificarJWT.403');
+        var err = new Error('Forbidden');
         err.statusCode = 403; // HTTP 403 Forbidden
         next(err);
       } else if (decoded && decoded.id == idUsuario) {
@@ -45,12 +50,14 @@ function verificarJWT(req, res, next) {
         req.idPerfil = idPerfil;
         next();
       } else {
-        var err = new Error("Forbidden");
+        logger.error('jwtController.verificarJWT.403.1');
+        var err = new Error('Forbidden');
         err.statusCode = 403; // HTTP 403 Forbidden
         next(err);
       }
     });
   } catch (error) {
+    logger.error('jwtController.verificarJWT.500');
     var err = new Error(error.message ? error.message : error);
     err.statusCode = 500; // HTTP 500 Internal Server Error
     next(err);
