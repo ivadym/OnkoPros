@@ -6,6 +6,7 @@ import { AuthService } from '../../../../services/auth/auth.service';
 import { NavegacionService } from '../../../../services/navegacion/navegacion.service';
 import { SpinnerService } from '../../../../services/spinner/spinner.service';
 import { CuadroDialogoService } from '../../../../services/cuadro-dialogo/cuadro-dialogo.service';
+import { LoggerService } from '../../../../services/logger/logger.service';
 import { HttpErrorHandlerService } from '../../../../services/error-handler/http-error-handler.service';
 
 @Component({
@@ -29,6 +30,7 @@ export class LoginComponent implements OnInit {
     private navegacionService: NavegacionService,
     private spinnerService: SpinnerService,
     private cuadroDialogoService: CuadroDialogoService,
+    private logger: LoggerService,
     private errorHandler: HttpErrorHandlerService,
     private _changeDetectionRef: ChangeDetectorRef
   ) {
@@ -64,12 +66,11 @@ export class LoginComponent implements OnInit {
     this._changeDetectionRef.detectChanges();
     this.authService.postLogin(this.usuario.value, this.clave.value).subscribe(
       usuario => {
-        // TODO: Fichero de logs
+        this.logger.log(`Usuario logueado correctamente (id: ${usuario.IdUsuario})`);
         if (usuario.Perfil.length > 1) { // Usuario con múltiples perfiles
           this.cuadroDialogoService.seleccionPerfil(usuario).then(
             res => {
               if (res) {
-                console.log('SERVIDOR - Autenticación: ' + res.Usuario + '/' + res.JWT);
                 this.authService.usuarioLogueado = res;
                 let redirect = this.authService.urlInicial ? this.authService.urlInicial : '';
                 this.navegacionService.navegar(redirect, true);
@@ -79,7 +80,6 @@ export class LoginComponent implements OnInit {
             }
           );
         } else { // Usuario con un único perfil
-          console.log('SERVIDOR - Autenticación: ' + usuario.Usuario + '/' + usuario.JWT);
           this.authService.usuarioLogueado = usuario;
           let redirect = this.authService.urlInicial ? this.authService.urlInicial : '';
           this.navegacionService.navegar(redirect, true);

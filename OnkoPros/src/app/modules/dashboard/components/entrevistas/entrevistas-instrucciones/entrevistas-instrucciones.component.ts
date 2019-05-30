@@ -7,6 +7,7 @@ import { Entrevista } from '../../../../../classes/entrevista';
 import { EntrevistasService } from '../../../../../services/entrevistas/entrevistas.service';
 import { NavegacionService } from '../../../../../services/navegacion/navegacion.service';
 import { SpinnerService } from '../../../../../services/spinner/spinner.service';
+import { LoggerService } from '../../../../../services/logger/logger.service';
 import { HttpErrorHandlerService } from '../../../../../services/error-handler/http-error-handler.service';
 
 @Component({
@@ -26,6 +27,7 @@ export class EntrevistasInstruccionesComponent implements OnInit {
     private entrevistasService: EntrevistasService,
     private navegacionService: NavegacionService,
     private spinnerService: SpinnerService,
+    private logger: LoggerService,
     private errorHandler: HttpErrorHandlerService
   ) {
     this._spinnerSubscription = this.spinnerService.estadoSpinnerObservable.subscribe(
@@ -47,16 +49,15 @@ export class EntrevistasInstruccionesComponent implements OnInit {
   extraerEntrevista(id: number): void {
     this.entrevistasService.getEntrevista(id).subscribe(
       entrevista => {
+        this.logger.log(`Entrevista extraída correctamente (id: ${entrevista.IdEntrevista})`);
         if (entrevista.InstruccionPrincipal) {
-          //TODO: Fichero de logs
-          console.log('SERVIDOR - Entrevista seleccionada: ' + entrevista.IdEntrevista);
           this.entrevista = entrevista;
         } else { // Entrevista sin instrucciones: se redirige al usuario directamente a la pregunta
-            this.navegacionService.navegar('/dashboard/entrevistas/' + entrevista.IdEntrevista + '/items', false);
+          this.navegacionService.navegar('/dashboard/entrevistas/' + entrevista.IdEntrevista + '/items', false);
         }
       },
       error => {
-        this.errorHandler.handleError(error, `getEntrevista(${id})`);
+        this.errorHandler.handleError(error, `extraerEntrevistaEntrevista(id: ${id})`);
       }
     );
   }

@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Usuario } from '../../../../classes/usuario';
 
 import { AuthService } from '../../../../services/auth/auth.service';
+import { LoggerService } from '../../../../services/logger/logger.service.tns';
 
 @Component({
   selector: 'app-inicio',
@@ -14,7 +15,8 @@ export class InicioComponent implements OnInit {
   usuarioLogueado: Usuario;
 
   constructor(
-    private authService : AuthService
+    private authService : AuthService,
+    private logger : LoggerService
   ) {
     this.usuarioLogueado = this.authService.usuarioLogueado;
   }
@@ -36,12 +38,12 @@ export class InicioComponent implements OnInit {
     {data: [3, 4, 4, 7, 3, 5, 7], label: 'Calidad de vida'}
   ];
  
-  public historialClicked(e:any):void {
-    console.log(e);
+  public historialClicked(e: any):void {
+    this.logger.log(e);
   }
  
-  public historialHovered(e:any):void {
-    console.log(e);
+  public historialHovered(e: any):void {
+    this.logger.log(e);
   }
  
   public cambiarGrafica():void {
@@ -87,12 +89,12 @@ export class InicioComponent implements OnInit {
     ]
   }];
 
-  public preguntasClicked(e:any):void {
-    console.log(e);
+  public preguntasClicked(e: any):void {
+    this.logger.log(e);
   }
  
-  public preguntasHovered(e:any):void {
-    console.log(e);
+  public preguntasHovered(e: any):void {
+    this.logger.log(e);
   }
   
   public randomize():void {
@@ -135,12 +137,12 @@ export class InicioComponent implements OnInit {
     }
   ];
  
-  public sintomasClicked(e:any):void {
-    console.log(e);
+  public sintomasClicked(e: any):void {
+    this.logger.log(e);
   }
  
-  public sintomasHovered(e:any):void {
-    console.log(e);
+  public sintomasHovered(e: any):void {
+    this.logger.log(e);
   }
   
   public randomize_2():void {

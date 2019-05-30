@@ -4,6 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../auth/auth.service';
 import { CuadroDialogoService } from '../cuadro-dialogo/cuadro-dialogo.service';
 import { NavegacionService } from '../navegacion/navegacion.service';
+import { LoggerService } from '../logger/logger.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,13 +14,15 @@ export class HttpErrorHandlerService {
   constructor(
     private authService: AuthService,
     private cuadroDialogoService: CuadroDialogoService,
-    private navegacionService: NavegacionService
+    private navegacionService: NavegacionService,
+    private logger: LoggerService
   ) { }
 
   /**
    * Trata las operaciones HTTP fallidas sin parar la ejecucción
    */
   handleError(error: HttpErrorResponse, operacion: string) {
+    this.logger.error(`ERROR en la operación ${operacion}: ${error.error}`);
     if (error.status === 400) {
       this.badRequest();
     } else if (error.status === 404) {
@@ -29,17 +32,6 @@ export class HttpErrorHandlerService {
     } else if (error.status === 0 || error.status === 500 || error.status === 504) {
       this.serverError();
     }
-
-    /**
-     * TODO: Tratamiento de los errores > Web & Móvil
-    const mensaje = (error.error instanceof ErrorEvent) ?
-      error.error.message : // Error en la red o en el lado del cliente
-      `El servidor ha devuelto el código de error: "${error.status}", 
-      con el cuerpo: "${error.error}"`; // Error del backend -> se analiza el body
-    // TODO: Mejorar el tratamiento del error para que sea digerido por el usuario
-    console.error(`ERROR en la operación ${operacion}: ${mensaje}`);
-    */
-    console.error(`ERROR en la operación ${operacion}: ${error.error}`);
   };
 
   /**

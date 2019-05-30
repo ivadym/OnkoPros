@@ -10,6 +10,7 @@ import { NavegacionService } from '../../../../../services/navegacion/navegacion
 import { CuadroDialogoService } from '../../../../../services/cuadro-dialogo/cuadro-dialogo.service';
 import { HttpErrorHandlerService } from '../../../../../services/error-handler/http-error-handler.service';
 import { SpinnerService } from '../../../../../services/spinner/spinner.service';
+import { LoggerService } from '../../../../../services/logger/logger.service';
 
 @Component({
   selector: 'app-items',
@@ -50,6 +51,7 @@ export class ItemsComponent implements OnInit {
     private navegacionService: NavegacionService,
     private spinnerService: SpinnerService,
     private cuadroDialogoService: CuadroDialogoService,
+    private logger: LoggerService,
     private errorHandler: HttpErrorHandlerService,
     private _changeDetectionRef: ChangeDetectorRef
 
@@ -83,6 +85,7 @@ export class ItemsComponent implements OnInit {
     nextState?: RouterStateSnapshot
   ): Promise<boolean> | boolean {
     if (this.item && nextState.url != '/login') {
+      this.logger.log('Activado el guard asociado a canDeactivate')
       return this.cuadroDialogoService.advertencia(
         '¿Desea abandonar la entrevista actual sin finalizarla?', 
         'Se perderán los cambios no guardados.'
@@ -107,8 +110,7 @@ export class ItemsComponent implements OnInit {
     this.entrevistasService.getSiguienteItem(idEntrevista).subscribe(
       datos => {
         if (datos && datos.item && datos.idItemsRespondidos) {
-          //TODO: Fichero de logs
-          console.log('SERVIDOR - Item sig. extraído: ' + datos.item.IdItem);
+          this.logger.log(`Item extraído correctamente (id: ${datos.item.IdItem})`);
           this.item = datos.item;
           this.idItemsRespondidos = datos.idItemsRespondidos;
           this.idItemsRespondidos.push(datos.item.IdItem);
@@ -120,7 +122,7 @@ export class ItemsComponent implements OnInit {
             this.actualizarTituloValores(datos.item.Valores);
           }
         } else {
-          console.log('LOG getSiguienteItem() (no hay más items)');
+          this.logger.log(`No quedan items asociados a la entrevista con id: ${idEntrevista})`);
           this.navegacionService.navegar(`/dashboard/entrevistas/${idEntrevista}/fin`, true);
         }
       },
@@ -144,8 +146,7 @@ export class ItemsComponent implements OnInit {
       this.limpiarContexto();
       this.entrevistasService.getItemRespondido(idEntrevista, idItemSoclicitado).subscribe(
         datos => {
-          //TODO: Fichero de logs
-          console.log('SERVIDOR - Item resp. extraído (getItem()): ' + datos.item.IdItem);
+          this.logger.log(`Item respondido extraído correctamente (id: ${datos.item.IdItem})`);
           this.item = datos.item;
           datos.idItemsRespondidos.push(idUltimoItem); // Mantener último contexto
           this.idItemsRespondidos = datos.idItemsRespondidos;
@@ -165,7 +166,7 @@ export class ItemsComponent implements OnInit {
   }
 
   /**
-   * Envía la respuesta del usuario y actualiza el contexto (limpia los campos obsoletos y extrae nuevo item)
+   * Envía la respuesta del usuario y actualiza el contexto (limpia los campos obsoletos y extrae el nuevo item)
    */
   enviarItem(item: Item): void {
     var observableItemValor: Observable<any> = null;
@@ -178,6 +179,7 @@ export class ItemsComponent implements OnInit {
     this.limpiarContexto();
     observableItemValor.subscribe(
       item => {
+        this.logger.log(`Item enviado correctamente (id: ${item.IdItem})`);
         for (var i = 0; i < item.Valores.length; i++) {
           if (item.Valores[i].Alerta) {
             this.cuadroDialogoService.alerta(
@@ -185,28 +187,25 @@ export class ItemsComponent implements OnInit {
               item.Valores[i].Alerta
             ).then(
               res => {
-                console.log('SERVIDOR - Confirmación respuesta usuario (+ alerta): ' + item.IdItem);
                 this.extraerSiguienteItem(item.IdEntrevista);
                 return;
               }
             );
           }
         }
-        console.log('SERVIDOR - Confirmación respuesta usuario: ' + item.IdItem);
         this.extraerSiguienteItem(item.IdEntrevista);
       },
       error => {
-        //TODO: Fichero de logs
         this.errorHandler.handleError(error, `enviarItem(${item.IdItem})`);
       }
     )
   }
 
   /**
-   *
+   * Actualiza el item con los valores por defecto o respondidos anteriormente
    */
   actualizarSeleccionDefecto(valores: Valor[]) {
-    for (let i = 0; i < valores.length; i++) { // setValor() de valores respondidos anteriormente
+    for (let i = 0; i < valores.length; i++) {
       if (this.item.Valores[i].Seleccionado) {
         this.indiceSeleccionado = i;
         this.setValor(this.item.Valores[i]);
@@ -247,6 +246,7 @@ export class ItemsComponent implements OnInit {
    * Despliega el tooltip asociado al item mostrado
    */
   mostrarTooltip(): void {
+    this.logger.log('Tooltip desplegado');
     this.cuadroDialogoService.alerta(
       null,
       this.item.Tooltip
