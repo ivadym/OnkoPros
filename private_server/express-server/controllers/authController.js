@@ -1,3 +1,6 @@
+const ConnectionPool = require('tedious-connection-pool');
+
+const configDB = require('../config/database');
 const authData = require('../models/authDB');
 const { logger } = require('../helpers/winston');
 
@@ -6,9 +9,12 @@ const { logger } = require('../helpers/winston');
  */
 function autenticacion(req, res, next) {
     logger.info('authController.autenticacion');
+
+    var pool = new ConnectionPool(configDB.pool, configDB.auth);
+    
     const usuario = req.body.usuario;
     const clave = req.body.clave;
-    authData.comprobarCredenciales(usuario, clave)
+    authData.comprobarCredenciales(pool, usuario, clave)
     .then(function(usuario) {
         if (usuario) {
             req.usuario = usuario;
@@ -25,6 +31,9 @@ function autenticacion(req, res, next) {
         var err = new Error(error.message ? error.message : error);
         err.statusCode = 500; // HTTP 500 Internal Server Error
         next(err);
+    })
+    .finally(function() {
+        pool.drain(); // Se cierran todas las conexiones
     });
 };
 

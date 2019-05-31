@@ -1,3 +1,6 @@
+const ConnectionPool = require('tedious-connection-pool');
+
+const configDB = require('../config/database');
 const itemData = require('../models/itemDB');
 const { logger } = require('../helpers/winston');
 
@@ -6,10 +9,13 @@ const { logger } = require('../helpers/winston');
  */
 function getSiguienteItem(req, res, next) {
     logger.info('itemController.getsiguienteItem');
-    itemData.extraerSiguienteItem(req.idUsuario, req.idPerfil, req.params['idEntrevista']) // Extrae el siguiente item disponible
+
+    var pool = new ConnectionPool(configDB.pool, configDB.auth);
+    
+    itemData.extraerSiguienteItem(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista']) // Extrae el siguiente item disponible
     .then(function(item) {
         if (item) {
-            itemData.extraerIdItemsRespondidos(req.idUsuario, req.idPerfil, req.params['idEntrevista'])
+            return itemData.extraerIdItemsRespondidos(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista'])
             .then(function(idItemsRespondidos) {
                 res.status(200).json({
                     item: item,
@@ -25,6 +31,9 @@ function getSiguienteItem(req, res, next) {
         var err = new Error(error.message ? error.message : error);
         err.statusCode = 500; // HTTP 500 Internal Server Error
         next(err);
+    })
+    .finally(function() {
+        pool.drain(); // Se cierran todas las conexiones
     });
 };
 
@@ -33,9 +42,12 @@ function getSiguienteItem(req, res, next) {
  */
 function getItemRespondido(req, res, next) {
     logger.info('itemController.getItemRespondido');
-    itemData.extraerItemRespondido(req.idUsuario, req.idPerfil, req.params['idEntrevista'], req.params['idItem'])
+
+    var pool = new ConnectionPool(configDB.pool, configDB.auth);
+    
+    itemData.extraerItemRespondido(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista'], req.params['idItem'])
     .then(function(item) {
-        itemData.extraerIdItemsRespondidos(req.idUsuario, req.idPerfil, req.params['idEntrevista'])
+        return itemData.extraerIdItemsRespondidos(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista'])
         .then(function(idItemsRespondidos) {
             res.status(200).json({
                 item: item,
@@ -48,6 +60,9 @@ function getItemRespondido(req, res, next) {
         var err = new Error(error.message ? error.message : error);
         err.statusCode = 500; // HTTP 500 Internal Server Error
         next(err);
+    })
+    .finally(function() {
+        pool.drain(); // Se cierran todas las conexiones
     });
 };
 
@@ -56,7 +71,10 @@ function getItemRespondido(req, res, next) {
  */
 function setItem(req, res, next) {
     logger.info('itemController.setItem');
-    itemData.almacenarItem(req.idUsuario, req.idPerfil, req.body)
+
+    var pool = new ConnectionPool(configDB.pool, configDB.auth);
+    
+    itemData.almacenarItem(pool, req.idUsuario, req.idPerfil, req.body)
     .then(function(item) {
         res.status(201).json(item);
     })
@@ -65,6 +83,9 @@ function setItem(req, res, next) {
         var err = new Error(error.message ? error.message : error);
         err.statusCode = 500; // HTTP 500 Internal Server Error
         next(err);
+    })
+    .finally(function() {
+        pool.drain(); // Se cierran todas las conexiones
     });
 };
 
@@ -73,7 +94,10 @@ function setItem(req, res, next) {
  */
 function updateItem(req, res, next) {
     logger.info('itemController.updateItem');
-    itemData.actualizarItem(req.idUsuario, req.idPerfil, req.body)
+    
+    var pool = new ConnectionPool(configDB.pool, configDB.auth);
+    
+    itemData.actualizarItem(pool, req.idUsuario, req.idPerfil, req.body)
     .then(function(item) {
         res.status(201).json(item);
     })
@@ -82,6 +106,9 @@ function updateItem(req, res, next) {
         var err = new Error(error.message ? error.message : error);
         err.statusCode = 500; // HTTP 500 Internal Server Error
         next(err);
+    })
+    .finally(function() {
+        pool.drain(); // Se cierran todas las conexiones
     });
 };
 

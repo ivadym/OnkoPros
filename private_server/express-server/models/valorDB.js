@@ -1,15 +1,11 @@
-const Connection = require('tedious').Connection;
 const Request = require('tedious').Request;
 const TYPES = require('tedious').TYPES;
-
-const config = require('../config/authSQL');
 
 /**
  * Extrae los valores asociados a un item determinado
  */
-function extraerValores(item) {
+function extraerValores(pool, item) {
     return new Promise(function(resolve, reject) {
-        var connection = new Connection(config.auth);
         var query = `SELECT v.IdValor, v.Titulo, v.Seleccionado, v.Valor, v.TipoValor, v.VisibleValor, v.CajaTexto, v.ValorTexto, v.Alerta
                     FROM GEOP_ITEM i INNER JOIN GEOP_ITEM_VALOR iv ON i.IdItem=iv.IdItem
                     INNER JOIN GEOP_VALOR v ON iv.IdValor=v.IdValor
@@ -17,15 +13,16 @@ function extraerValores(item) {
                     ORDER BY len(iv.Orden), iv.Orden ASC;`;
         var result = [];
 
-        connection.on('connect', function(err) {
+        pool.acquire(function (err, connection) {
             if (err) {
                 reject(err);
             } else {
-                request = new Request(query, function(err, rowCount, rows) {
+                var request = new Request(query, function(err, rowCount, rows) {
                     if (err) {
                         reject(err);
+                    } else {
+                        connection.release();
                     }
-                    connection.close();
                 });
 
                 request.addParameter('idItem', TYPES.Int, item.IdItem);
@@ -55,24 +52,24 @@ function extraerValores(item) {
 /**
  * Devuelve un array con los valores contestados anteriormente
  */
-function extraerIdValoresRespondidos(idUsuario, idPerfil, idEntrevista, idItem) {
+function extraerIdValoresRespondidos(pool, idUsuario, idPerfil, idEntrevista, idItem) {
     return new Promise(function(resolve, reject) {
-        var connection = new Connection(config.auth);
         var query = `SELECT eiv.IdValor, eiv.ValorTexto
                     FROM OP_ENTREVISTA e INNER JOIN OP_ENTREVISTA_ITEM ei ON e.IdEntrevistaUsuario=ei.IdEntrevistaUsuario
                     INNER JOIN OP_ENTREVISTA_ITEM_VALOR eiv ON ei.IdEntrevistaItem=eiv.IdEntrevistaItem
                     WHERE e.IdUsuario=@idUsuario AND e.IdPerfil=@idPerfil AND e.IdEntrevista=@idEntrevista AND ei.IdItem=@idItem AND (e.Estado BETWEEN 10 AND 19) AND ei.Estado=1 AND eiv.Estado=1;`;
         var result = [];
 
-        connection.on('connect', function(err) {
+        pool.acquire(function (err, connection) {
             if (err) {
                 reject(err);
             } else {
-                request = new Request(query, function(err, rowCount, rows) {
+                var request = new Request(query, function(err, rowCount, rows) {
                     if (err) {
                         reject(err);
+                    } else {
+                        connection.release();
                     }
-                    connection.close();
                 });
 
                 request.addParameter('idUsuario', TYPES.Int, idUsuario);
@@ -105,22 +102,22 @@ function extraerIdValoresRespondidos(idUsuario, idPerfil, idEntrevista, idItem) 
 /**
  * Almacenar los valores contestados por el usuario
  */
-function almacenarValor(idUsuario, idPerfil, item, index) {
+function almacenarValor(pool, idUsuario, idPerfil, item, index) {
     return new Promise(function(resolve, reject) {
-        var connection = new Connection(config.auth);
         var query = `INSERT INTO OP_ENTREVISTA_ITEM_VALOR (IdEntrevistaItemValor, IdEntrevistaItem, IdValor, Estado, ValorTexto)
                     VALUES ((SELECT ISNULL(MAX(IdEntrevistaItemValor), 0)+1 FROM OP_ENTREVISTA_ITEM_VALOR),
                     (SELECT IdEntrevistaItem FROM OP_ENTREVISTA_ITEM op_ei WHERE op_ei.IdItem=@idItem AND op_ei.Estado=1 AND op_ei.IdEntrevistaUsuario=(SELECT IdEntrevistaUsuario FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 0 AND 19))), @idValor, 1, @valorTexto);`;
 
-        connection.on('connect', function(err) {
+        pool.acquire(function (err, connection) {
             if (err) {
                 reject(err);
             } else {
-                request = new Request(query, function(err, rowCount, rows) {
+                var request = new Request(query, function(err, rowCount, rows) {
                     if (err) {
                         reject(err);
+                    } else {
+                        connection.release();
                     }
-                    connection.close();
                 });
 
                 request.addParameter('idUsuario', TYPES.Int, idUsuario);
@@ -132,13 +129,10 @@ function almacenarValor(idUsuario, idPerfil, item, index) {
                 
                 request.on('requestCompleted', function() {
                     if (item.Valores[++index]) {
-                        almacenarValor(idUsuario, idPerfil, item, index)
+                        return almacenarValor(pool, idUsuario, idPerfil, item, index)
                         .then(function(res) {
                             resolve(res);
                         })
-                        .catch(function(error) {
-                            reject(error);
-                        });
                     } else {
                         resolve(item);
                     }
@@ -153,23 +147,23 @@ function almacenarValor(idUsuario, idPerfil, item, index) {
 /**
  * Elimina los valores contestados previamente por el usuario
  */
-function eliminarValores(idUsuario, idPerfil, item) {
+function eliminarValores(pool, idUsuario, idPerfil, item) {
     return new Promise(function(resolve, reject) {
-        var connection = new Connection(config.auth);
         var query = `DELETE eiv
                     FROM OP_ENTREVISTA_ITEM_VALOR eiv 
                     INNER JOIN OP_ENTREVISTA_ITEM ei ON ei.IdEntrevistaItem=eiv.IdEntrevistaItem
                     WHERE ei.IdItem=@idItem AND ei.IdEntrevistaUsuario=(SELECT IdEntrevistaUsuario FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 10 AND 19)) AND eiv.Estado=1 AND ei.Estado=1;`;
 
-        connection.on('connect', function(err) {
+        pool.acquire(function (err, connection) {
             if (err) {
                 reject(err);
             } else {
-                request = new Request(query, function(err, rowCount, rows) {
+                var request = new Request(query, function(err, rowCount, rows) {
                     if (err) {
                         reject(err);
+                    } else {
+                        connection.release();
                     }
-                    connection.close();
                 });
 
                 request.addParameter('idUsuario', TYPES.Int, idUsuario);

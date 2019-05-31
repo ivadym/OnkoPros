@@ -1,3 +1,6 @@
+const ConnectionPool = require('tedious-connection-pool');
+
+const configDB = require('../config/database');
 const entrevistasData = require('../models/entrevistasDB');
 const { logger } = require('../helpers/winston');
 
@@ -6,7 +9,10 @@ const { logger } = require('../helpers/winston');
  */
 function getEntrevistas(req, res, next) {
     logger.info('entrevistasController.getEntrevistas');
-    entrevistasData.extraerEntrevistas(req.idUsuario, req.idPerfil)
+
+    var pool = new ConnectionPool(configDB.pool, configDB.auth);
+    
+    entrevistasData.extraerEntrevistas(pool, req.idUsuario, req.idPerfil)
     .then(function(entrevistas) {
         if (entrevistas[0]) { // Hay al menos 1 entrevista
             res.status(200).json(entrevistas);
@@ -19,6 +25,9 @@ function getEntrevistas(req, res, next) {
         var err = new Error(error.message ? error.message : error);
         err.statusCode = 500; // HTTP 500 Internal Server Error
         next(err);
+    })
+    .finally(function() {
+        pool.drain(); // Se cierran todas las conexiones
     });
 };
 
@@ -27,7 +36,10 @@ function getEntrevistas(req, res, next) {
  */
 function getEntrevista(req, res, next) {
     logger.info('entrevistasController.getEntrevista');
-    entrevistasData.extraerEntrevista(req.idUsuario, req.idPerfil, req.params['idEntrevista'])
+
+    var pool = new ConnectionPool(configDB.pool, configDB.auth);
+    
+    entrevistasData.extraerEntrevista(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista'])
     .then(function(entrevista) {
         if (entrevista) {
             res.status(200).json(entrevista);
@@ -43,6 +55,9 @@ function getEntrevista(req, res, next) {
         var err = new Error(error.message ? error.message : error);
         err.statusCode = 500; // HTTP 500 Internal Server Error
         next(err);
+    })
+    .finally(function() {
+        pool.drain(); // Se cierran todas las conexiones
     });
 };
 
