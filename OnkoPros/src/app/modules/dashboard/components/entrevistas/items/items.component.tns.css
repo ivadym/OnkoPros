@@ -4,7 +4,7 @@
 
 .fas {
     color: blue;
-    font-family: Font Awesome 5 Free, fa-solid-900;
+    font-family: "Font Awesome 5 Free", "fa-solid-900";
     font-size: 32;
     margin: 5;
 }
@@ -95,7 +95,7 @@
 
 .fas {
     color: white;
-    font-family: Font Awesome 5 Free, fa-solid-900;
+    font-family: "Font Awesome 5 Free", "fa-solid-900";
     font-size: 32;
 }
 

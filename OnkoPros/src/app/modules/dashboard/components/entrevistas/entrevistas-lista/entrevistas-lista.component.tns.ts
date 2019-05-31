@@ -8,6 +8,7 @@ import { Entrevista } from '../../../../../classes/entrevista';
 
 import { EntrevistasService } from '../../../../../services/entrevistas/entrevistas.service';
 import { SpinnerService } from '../../../../../services/spinner/spinner.service';
+import { LoggerService } from '../../../../../services/logger/logger.service.tns';
 import { HttpErrorHandlerService } from '../../../../../services/error-handler/http-error-handler.service';
 
 @Component({
@@ -29,6 +30,7 @@ export class EntrevistasListaComponent implements OnInit {
   constructor(
     private entrevistasService: EntrevistasService,
     private spinnerService: SpinnerService,
+    private logger: LoggerService,
     private errorHandler: HttpErrorHandlerService
   ) {
     this._spinnerSubscription = this.spinnerService.estadoSpinnerObservable.subscribe(
@@ -58,18 +60,17 @@ export class EntrevistasListaComponent implements OnInit {
       entrevistas => {
         args ? args.object.notifyPullToRefreshFinished() : null;
         if (entrevistas) {
-          //TODO: Fichero de logs
-          console.log('SERVIDOR - Entrevistas: ' + entrevistas.length);
+          this.logger.log(`Lista de entrevistas extraída (núm. entrevistas: ${entrevistas.length})`);
           this.entrevistas = entrevistas;
           this.entrevistasDisponibles = true;
         } else {
-          console.log("LOG getEntrevistas() (no hay más entrevistas disponibles)");
+          this.logger.log('No quedan entrevistas pendientes/disponibles');
           this.entrevistasDisponibles = false;
         }
       },
       error => {
         args ? args.object.notifyPullToRefreshFinished() : null;
-        this.errorHandler.handleError(error, 'getEntrevistas()');
+        this.errorHandler.handleError(error, 'extraerEntrevistas()');
       }
     );
   }

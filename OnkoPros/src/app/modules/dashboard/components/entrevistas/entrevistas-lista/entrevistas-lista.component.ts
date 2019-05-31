@@ -48,11 +48,11 @@ export class EntrevistasListaComponent implements OnInit {
     this.entrevistasService.getEntrevistas().subscribe(
       entrevistas => {
         if (entrevistas) {
-        this.logger.log(`Lista de entrevistas extraída (núm. entrevistas: ${entrevistas.length})`)
+        this.logger.log(`Lista de entrevistas extraída (núm. entrevistas: ${entrevistas.length})`);
         this.entrevistas = entrevistas;
         this.entrevistasDisponibles = true;
         } else {
-          this.logger.log('No quedan entrevistas pendientes/disponibles')
+          this.logger.log('No quedan entrevistas pendientes/disponibles');
           this.entrevistasDisponibles = false;
         }
       },

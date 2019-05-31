@@ -48,13 +48,13 @@
 
 .fas-refrescar {
     color: #2A367B;
-    font-family: Font Awesome 5 Free, fa-solid-900;
+    font-family: "Font Awesome 5 Free", "fa-solid-900";
     font-size: 42;
     text-align: center;
 }
 
 .fas-entrevista {
-    font-family: Font Awesome 5 Free, fa-solid-900;
+    font-family: "Font Awesome 5 Free", "fa-solid-900";
     font-size: 82;
     text-align: center;
 }

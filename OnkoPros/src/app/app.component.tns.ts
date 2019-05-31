@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Message } from "nativescript-plugin-firebase/messaging";
 
+import { LoggerService } from './services/logger/logger.service.tns';
+
 const firebase = require("nativescript-plugin-firebase");
 
 @Component({
@@ -10,18 +12,24 @@ const firebase = require("nativescript-plugin-firebase");
 })
 export class AppComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private logger: LoggerService
+  ) { }
 
   ngOnInit() {
     firebase.init({
+      // TODO
       onPushTokenReceivedCallback: (token: string) => {
-        console.log("LOG Firebase token recibido: " + token);
+        this.logger.log('Firebase token recibido: ' + token);
       }
     }).then(
       () => {
-        console.log("LOG Firebase init")
+        // TODO
+        this.logger.log('Firebase iniciado');
       },
       (error: string) => {
+        // TODO
+        this.logger.error('')
         console.error("ERROR Firebase init: " + error)
       }
     );
