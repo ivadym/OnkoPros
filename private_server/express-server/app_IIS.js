@@ -4,7 +4,7 @@ const cors = require('cors');
 
 const routes = require('./routes/index');
 const errorHandler = require('./handlers/errorHandler');
-const { logger, expressLogger, expressErrorLogger } = require('./helpers/winston');
+const { logger, expressLogger, expressErrorLogger } = require('./helpers/logger');
 
 // Creación de la aplicación de Express
 const app = express();

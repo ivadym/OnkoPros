@@ -1,7 +1,7 @@
 const Request = require('tedious').Request;
 const TYPES = require('tedious').TYPES;
 
-const helpers = require('../helpers/helpers');
+const { adaptarPerfilUsuario, adaptarSexo } = require('../helpers/helper');
 
 /**
  * Comprueba las credenciales de usuario recibidas
@@ -38,9 +38,9 @@ function comprobarCredenciales(pool, usuario, clave) {
                 
                 request.on('requestCompleted', function() {
                     if (result[0]) {
-                        result[0].Perfil = helpers.adaptarPerfilUsuario(result);
+                        result[0].Perfil = adaptarPerfilUsuario(result);
                         delete result[0]['IdPerfil'];
-                        result[0].Sexo = helpers.adaptarSexo(result[0].Sexo);
+                        result[0].Sexo = adaptarSexo(result[0].Sexo);
                         resolve(result[0]);
                     } else {
                         resolve(null);

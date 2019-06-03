@@ -1,8 +1,8 @@
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 
-const helpers = require('../helpers/helpers');
-const { logger } = require('../helpers/winston');
+const { adaptarPerfilSql } = require('../helpers/helper');
+const { logger } = require('../helpers/logger');
 
 var privateKey  = fs.readFileSync('./RSA/private.key');
 var publicKey  = fs.readFileSync('./RSA/public.key');
@@ -37,7 +37,7 @@ function verificarJWT(req, res, next) {
   logger.info('jwtController.verificarJWT');
   try {
     var idUsuario = req.headers['id'];
-    var idPerfil = helpers.adaptarPerfilSql(req.headers['perfil']);
+    var idPerfil = adaptarPerfilSql(req.headers['perfil']);
     var token = req.headers['authorization'].split(' ')[1];
     jwt.verify(token, publicKey, function(err, decoded) {
       if (err || !decoded) {

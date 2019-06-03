@@ -11,23 +11,6 @@ const auth = {
     }
 }
 
-/*
-const auth = {
-    authentication: {
-        type: 'default',
-        options: {
-            userName: 'OKImpetusUser',
-            password: 'p9Kju7t@8Tn',
-        }
-    },
-    server: 'SRVKIRO',
-    options: {
-        encrypt: true,
-        database: 'ONKOIMPETUS'
-    }
-}
-*/
-
 /**
  * Configuración de la agrupación de conexiones
  */

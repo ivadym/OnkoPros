@@ -1,17 +1,14 @@
-const ConnectionPool = require('tedious-connection-pool');
-
-const configDB = require('../config/database');
 const entrevistasData = require('../models/entrevistasDB');
-const { logger } = require('../helpers/winston');
+const { conexionPool } = require('../helpers/helper');
+const { logger } = require('../helpers/logger');
 
 /**
  * Devuelve las entrevistas disponibles actualmente
  */
 function getEntrevistas(req, res, next) {
     logger.info('entrevistasController.getEntrevistas');
-
-    var pool = new ConnectionPool(configDB.pool, configDB.auth);
     
+    var pool = conexionPool();
     entrevistasData.extraerEntrevistas(pool, req.idUsuario, req.idPerfil)
     .then(function(entrevistas) {
         if (entrevistas[0]) { // Hay al menos 1 entrevista
@@ -36,9 +33,8 @@ function getEntrevistas(req, res, next) {
  */
 function getEntrevista(req, res, next) {
     logger.info('entrevistasController.getEntrevista');
-
-    var pool = new ConnectionPool(configDB.pool, configDB.auth);
     
+    var pool = conexionPool();
     entrevistasData.extraerEntrevista(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista'])
     .then(function(entrevista) {
         if (entrevista) {

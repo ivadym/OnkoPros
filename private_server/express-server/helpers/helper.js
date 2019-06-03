@@ -1,3 +1,14 @@
+const ConnectionPool = require('tedious-connection-pool');
+
+const configDB = require('../config/database');
+
+/**
+ * Define una nueva conexión entre la base de datos y el módulo tedious
+ */
+function conexionPool() {
+    return new ConnectionPool(configDB.pool, configDB.auth);
+}
+
 /**
  * Adapta los perfiles de usuario extraídos de la BBDD para su presentación
  */
@@ -49,4 +60,4 @@ function adaptarSexo(sexo) {
     }
 }
 
-module.exports = { adaptarPerfilUsuario, adaptarPerfilSql, adaptarSexo }
+module.exports = { adaptarPerfilUsuario, adaptarPerfilSql, adaptarSexo, conexionPool }

@@ -1,19 +1,17 @@
-const ConnectionPool = require('tedious-connection-pool');
-
-const configDB = require('../config/database');
 const authData = require('../models/authDB');
-const { logger } = require('../helpers/winston');
+const { conexionPool } = require('../helpers/helper');
+const { logger } = require('../helpers/logger');
 
 /**
  * Lleva a cabo la autenticación del usuario
  */
 function autenticacion(req, res, next) {
     logger.info('authController.autenticacion');
-
-    var pool = new ConnectionPool(configDB.pool, configDB.auth);
     
     const usuario = req.body.usuario;
     const clave = req.body.clave;
+    
+    var pool = conexionPool();
     authData.comprobarCredenciales(pool, usuario, clave)
     .then(function(usuario) {
         if (usuario) {

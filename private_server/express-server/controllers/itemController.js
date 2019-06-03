@@ -1,8 +1,6 @@
-const ConnectionPool = require('tedious-connection-pool');
-
-const configDB = require('../config/database');
 const itemData = require('../models/itemDB');
-const { logger } = require('../helpers/winston');
+const { conexionPool } = require('../helpers/helper');
+const { logger } = require('../helpers/logger');
 
 /**
  * Devuelve la siguiente pregunta disponible
@@ -10,8 +8,7 @@ const { logger } = require('../helpers/winston');
 function getSiguienteItem(req, res, next) {
     logger.info('itemController.getsiguienteItem');
 
-    var pool = new ConnectionPool(configDB.pool, configDB.auth);
-    
+    var pool =  conexionPool();
     itemData.extraerSiguienteItem(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista']) // Extrae el siguiente item disponible
     .then(function(item) {
         if (item) {
@@ -43,8 +40,7 @@ function getSiguienteItem(req, res, next) {
 function getItemRespondido(req, res, next) {
     logger.info('itemController.getItemRespondido');
 
-    var pool = new ConnectionPool(configDB.pool, configDB.auth);
-    
+    var pool =  conexionPool();
     itemData.extraerItemRespondido(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista'], req.params['idItem'])
     .then(function(item) {
         return itemData.extraerIdItemsRespondidos(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista'])
@@ -71,9 +67,8 @@ function getItemRespondido(req, res, next) {
  */
 function setItem(req, res, next) {
     logger.info('itemController.setItem');
-
-    var pool = new ConnectionPool(configDB.pool, configDB.auth);
     
+    var pool =  conexionPool();
     itemData.almacenarItem(pool, req.idUsuario, req.idPerfil, req.body)
     .then(function(item) {
         res.status(201).json(item);
@@ -90,13 +85,12 @@ function setItem(req, res, next) {
 };
 
 /**
- * Actualiza la respuesta del usuario en la base de datos
+ * Actualiza la respuesta del usuario en la base de datos (se sobrescribe la anterior respuesta)
  */
 function updateItem(req, res, next) {
     logger.info('itemController.updateItem');
     
-    var pool = new ConnectionPool(configDB.pool, configDB.auth);
-    
+    var pool =  conexionPool();
     itemData.actualizarItem(pool, req.idUsuario, req.idPerfil, req.body)
     .then(function(item) {
         res.status(201).json(item);

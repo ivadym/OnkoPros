@@ -1,4 +1,4 @@
-const { logger } = require('../helpers/winston');
+const { logger } = require('../helpers/logger');
 
 /**
  * Tratamiento de los errores ocurridos en el lado del servidor
