@@ -10,7 +10,7 @@ function extraerValores(pool, item) {
                     FROM GEOP_ITEM i INNER JOIN GEOP_ITEM_VALOR iv ON i.IdItem=iv.IdItem
                     INNER JOIN GEOP_VALOR v ON iv.IdValor=v.IdValor
                     WHERE i.IdItem=@idItem AND i.Estado=1 AND i.EsAgrupacion=0 AND iv.Estado=1 AND v.Estado=1
-                    ORDER BY len(iv.Orden), iv.Orden ASC;`;
+                    ORDER BY CAST(iv.Orden AS numeric) ASC;`;
         var result = [];
 
         pool.acquire(function (err, connection) {
@@ -106,7 +106,8 @@ function almacenarValor(pool, idUsuario, idPerfil, item, index) {
     return new Promise(function(resolve, reject) {
         var query = `INSERT INTO OP_ENTREVISTA_ITEM_VALOR (IdEntrevistaItemValor, IdEntrevistaItem, IdValor, Estado, ValorTexto)
                     VALUES ((SELECT ISNULL(MAX(IdEntrevistaItemValor), 0)+1 FROM OP_ENTREVISTA_ITEM_VALOR),
-                    (SELECT IdEntrevistaItem FROM OP_ENTREVISTA_ITEM op_ei WHERE op_ei.IdItem=@idItem AND op_ei.Estado=1 AND op_ei.IdEntrevistaUsuario=(SELECT IdEntrevistaUsuario FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 0 AND 19))), @idValor, 1, @valorTexto);`;
+                    (SELECT op_ei.IdEntrevistaItem FROM OP_ENTREVISTA_ITEM op_ei INNER JOIN OP_ENTREVISTA op_e ON op_ei.IdEntrevistaUsuario=op_e.IdEntrevistaUsuario
+                    WHERE op_e.IdUsuario=@idUsuario AND op_e.IdPerfil=@idPerfil AND op_e.IdEntrevista=@idEntrevista AND op_ei.IdItem=@idItem AND (op_e.Estado BETWEEN 0 AND 19) AND op_ei.Estado=1), @idValor, 1, @valorTexto);`;
 
         pool.acquire(function (err, connection) {
             if (err) {
@@ -149,10 +150,11 @@ function almacenarValor(pool, idUsuario, idPerfil, item, index) {
  */
 function eliminarValores(pool, idUsuario, idPerfil, item) {
     return new Promise(function(resolve, reject) {
-        var query = `DELETE eiv
-                    FROM OP_ENTREVISTA_ITEM_VALOR eiv 
-                    INNER JOIN OP_ENTREVISTA_ITEM ei ON ei.IdEntrevistaItem=eiv.IdEntrevistaItem
-                    WHERE ei.IdItem=@idItem AND ei.IdEntrevistaUsuario=(SELECT IdEntrevistaUsuario FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 10 AND 19)) AND eiv.Estado=1 AND ei.Estado=1;`;
+        var query = `DELETE op_eiv
+                    FROM OP_ENTREVISTA_ITEM_VALOR op_eiv
+                    INNER JOIN OP_ENTREVISTA_ITEM op_ei ON op_ei.IdEntrevistaItem=op_eiv.IdEntrevistaItem
+                    INNER JOIN OP_ENTREVISTA op_e ON op_e.IdEntrevistaUsuario=op_ei.IdEntrevistaUsuario
+                    WHERE op_e.IdUsuario=@idUsuario AND op_e.IdPerfil=@idPerfil AND op_e.IdEntrevista=@idEntrevista AND op_ei.IdItem=@idItem AND (op_e.Estado BETWEEN 10 AND 19) AND op_ei.Estado=1 AND op_eiv.Estado=1;`;
 
         pool.acquire(function (err, connection) {
             if (err) {

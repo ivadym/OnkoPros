@@ -15,7 +15,7 @@ function extraerSiguienteItem(pool, idUsuario, idPerfil, idEntrevista) {
                     INNER JOIN GEOP_ITEM i ON ei.IdItem=i.IdItem
                     WHERE e.IdUsuario=@idUsuario AND e.IdPerfil=@idPerfil AND e.IdEntrevista=@idEntrevista AND (e.Estado BETWEEN 0 AND 19) AND eg.Estado=1 AND ei.Estado>0 AND i.Estado=1
                     AND (i.IdItem NOT IN (SELECT op_ei.IdItem FROM OP_ENTREVISTA_ITEM op_ei WHERE op_ei.Estado>0 AND op_ei.IdEntrevistaUsuario=e.IdEntrevistaUsuario))
-                    ORDER BY len(ei.Orden), ei.Orden ASC;`;
+                    ORDER BY CAST(ei.Orden AS numeric) ASC;`;
         var result = [];
 
         pool.acquire(function (err, connection) {
@@ -156,7 +156,7 @@ function extraerItemRespondido(pool, idUsuario, idPerfil, idEntrevista, idItem) 
 }
 
 /**
- * Devuelve un array de los items contestados anteriormente
+ * Devuelve un array de los items contestados anteriormente (no agrupaciones)
  */
 function extraerIdItemsRespondidos(pool, idUsuario, idPerfil, idEntrevista) {
     return new Promise(function(resolve, reject) {
@@ -164,7 +164,7 @@ function extraerIdItemsRespondidos(pool, idUsuario, idPerfil, idEntrevista) {
                     FROM OP_ENTREVISTA e INNER JOIN OP_ENTREVISTA_ITEM op_ei ON e.IdEntrevistaUsuario=op_ei.IdEntrevistaUsuario
                     INNER JOIN GEOP_ENTREVISTA_ITEM ei ON op_ei.IdItem=ei.IdItem
                     WHERE e.IdUsuario=@idUsuario AND e.IdPerfil=@idPerfil AND e.IdEntrevista=@idEntrevista AND (e.Estado BETWEEN 10 AND 19) AND ei.Estado=1 AND op_ei.Estado=1
-                    ORDER BY len(op_ei.Orden), op_ei.Orden ASC;`;
+                    ORDER BY CAST(op_ei.Orden AS numeric) ASC;`;
         var result = [];
 
         pool.acquire(function (err, connection) {
@@ -208,9 +208,10 @@ function extraerItemHijo(pool, idUsuario, idPerfil, idEntrevista, itemAgrupacion
     return new Promise(function(resolve, reject) {
         var query = `SELECT TOP 1 i.IdItem, @idEntrevista IdEntrevista, ia.IdAgrupacion, i.Titulo, i.Subtitulo, i.Tooltip, i.TipoItem, i.EsAgrupacion
                     FROM GEOP_ITEM i INNER JOIN GEOP_ITEM_AGRUPACION ia ON i.IdItem=ia.IdItem
+                    INNER JOIN OP_ENTREVISTA op_e ON op_e.IdEntrevista=@idEntrevista AND op_e.IdUsuario=@idUsuario AND op_e.IdPerfil=@idPerfil AND (op_e.Estado BETWEEN 0 AND 19)
                     WHERE ia.IdAgrupacion=@idAgrupacion AND ia.Estado=1 AND i.Estado=1
-                    AND (i.IdItem NOT IN (SELECT op_ei.IdItem FROM OP_ENTREVISTA_ITEM op_ei WHERE op_ei.Estado>0 AND op_ei.IdEntrevistaUsuario=(SELECT op_e.IdEntrevistaUsuario FROM OP_ENTREVISTA op_e WHERE op_e.IdUsuario=@idUsuario AND op_e.IdPerfil=@idPerfil AND op_e.IdEntrevista=@idEntrevista AND (op_e.Estado BETWEEN 0 AND 19))))
-                    ORDER BY len(ia.Orden), ia.Orden ASC;`;
+                    AND (i.IdItem NOT IN (SELECT op_ei.IdItem FROM OP_ENTREVISTA_ITEM op_ei WHERE op_ei.Estado>0 AND op_ei.IdEntrevistaUsuario=op_e.IdEntrevistaUsuario))
+                    ORDER BY CAST(ia.Orden AS numeric) ASC;`;
         var result = [];
 
         pool.acquire(function (err, connection) {
@@ -271,35 +272,38 @@ function extraerItemHijo(pool, idUsuario, idPerfil, idEntrevista, itemAgrupacion
  */
 function finalizarItemAgrupacion(pool, idUsuario, idPerfil, idEntrevista, itemAgrupacion) {
     return new Promise(function(resolve, reject) {
-        var query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdAgrupacion, IdItem, Estado, Orden)
-                    VALUES ((SELECT ISNULL(MAX(IdEntrevistaItem), 0)+1 FROM OP_ENTREVISTA_ITEM),
-                    (SELECT IdEntrevistaUsuario FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 0 AND 19)), @idAgrupacion, @idItem, 2,
-                    (SELECT ISNULL(MAX(CAST(Orden AS int)), 0)+1 FROM OP_ENTREVISTA_ITEM op_ei WHERE op_ei.Estado>0 AND op_ei.IdEntrevistaUsuario=(SELECT op_e.IdEntrevistaUsuario FROM OP_ENTREVISTA op_e WHERE op_e.IdUsuario=@idUsuario AND op_e.IdPerfil=@idPerfil AND op_e.IdEntrevista=@idEntrevista AND (op_e.Estado BETWEEN 0 AND 19))));`
+        return extraerOrden(pool, idUsuario, idPerfil, idEntrevista)
+        .then(orden => {
+            var query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdAgrupacion, IdItem, Estado, Orden)
+                        VALUES ((SELECT ISNULL(MAX(IdEntrevistaItem), 0)+1 FROM OP_ENTREVISTA_ITEM),
+                        (SELECT IdEntrevistaUsuario FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 0 AND 19)), @idAgrupacion, @idItem, 2, @orden);`;
         
-        pool.acquire(function (err, connection) {
-            if (err) {
-                reject(err);
-            } else {
-                var request = new Request(query, function(err, rowCount, rows) {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        connection.release();
-                    }
-                });
-
-                request.addParameter('idUsuario', TYPES.Int, idUsuario);
-                request.addParameter('idPerfil', TYPES.Int, idPerfil);
-                request.addParameter('idEntrevista', TYPES.Int, idEntrevista);
-                request.addParameter('idAgrupacion', TYPES.Int, itemAgrupacion.IdAgrupacion);
-                request.addParameter('idItem', TYPES.Int, itemAgrupacion.IdItem);
-
-                request.on('requestCompleted', function() {
-                    resolve(null);
-                });
-
-                connection.execSql(request);
-            }
+            pool.acquire(function (err, connection) {
+                if (err) {
+                    reject(err);
+                } else {
+                    var request = new Request(query, function(err, rowCount, rows) {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            connection.release();
+                        }
+                    });
+                
+                    request.addParameter('idUsuario', TYPES.Int, idUsuario);
+                    request.addParameter('idPerfil', TYPES.Int, idPerfil);
+                    request.addParameter('idEntrevista', TYPES.Int, idEntrevista);
+                    request.addParameter('idAgrupacion', TYPES.Int, itemAgrupacion.IdAgrupacion);
+                    request.addParameter('idItem', TYPES.Int, itemAgrupacion.IdItem);
+                    request.addParameter('orden', TYPES.VarChar, orden);
+                
+                    request.on('requestCompleted', function() {
+                        resolve(null);
+                    });
+                
+                    connection.execSql(request);
+                }
+            });
         });
     });
 }
@@ -309,41 +313,44 @@ function finalizarItemAgrupacion(pool, idUsuario, idPerfil, idEntrevista, itemAg
  */
 function almacenarItem(pool, idUsuario, idPerfil, item) {
     return new Promise(function(resolve, reject) {
-        var query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdAgrupacion, IdItem, Estado, Orden)
-                    VALUES ((SELECT ISNULL(MAX(IdEntrevistaItem), 0)+1 FROM OP_ENTREVISTA_ITEM),
-                    (SELECT IdEntrevistaUsuario FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 0 AND 19)), @idAgrupacion, @idItem, 1,
-                    (SELECT ISNULL(MAX(CAST(Orden AS int)), 0)+1 FROM OP_ENTREVISTA_ITEM op_ei WHERE op_ei.Estado>0 AND op_ei.IdEntrevistaUsuario=(SELECT op_e.IdEntrevistaUsuario FROM OP_ENTREVISTA op_e WHERE op_e.IdUsuario=@idUsuario AND op_e.IdPerfil=@idPerfil AND op_e.IdEntrevista=@idEntrevista AND (op_e.Estado BETWEEN 0 AND 19))));`;
+        return extraerOrden(pool, idUsuario, idPerfil, item.IdEntrevista)
+        .then(orden => {
+            var query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdAgrupacion, IdItem, Estado, Orden)
+                        VALUES ((SELECT ISNULL(MAX(IdEntrevistaItem), 0)+1 FROM OP_ENTREVISTA_ITEM),
+                        (SELECT IdEntrevistaUsuario FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 0 AND 19)), @idAgrupacion, @idItem, 1, @orden);`;
+            
+            pool.acquire(function (err, connection) {
+                if (err) {
+                    reject(err);
+                } else {
+                    var request = new Request(query, function(err, rowCount, rows) {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            connection.release();
+                        }
+                    });
 
-        pool.acquire(function (err, connection) {
-            if (err) {
-                reject(err);
-            } else {
-                var request = new Request(query, function(err, rowCount, rows) {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        connection.release();
-                    }
-                });
-                
-                request.addParameter('idUsuario', TYPES.Int, idUsuario);
-                request.addParameter('idPerfil', TYPES.Int, idPerfil);
-                request.addParameter('idEntrevista', TYPES.Int, item.IdEntrevista);
-                request.addParameter('idAgrupacion', TYPES.Int, item.IdAgrupacion);
-                request.addParameter('idItem', TYPES.Int, item.IdItem);
-
-                request.on('requestCompleted', function() {
-                    return valorData.almacenarValor(pool, idUsuario, idPerfil, item, 0)
-                    .then(function(res) {
-                        return entrevistaData.actualizarEstadoEntrevista(pool, idUsuario, idPerfil, res)
+                    request.addParameter('idUsuario', TYPES.Int, idUsuario);
+                    request.addParameter('idPerfil', TYPES.Int, idPerfil);
+                    request.addParameter('idEntrevista', TYPES.Int, item.IdEntrevista);
+                    request.addParameter('idAgrupacion', TYPES.Int, item.IdAgrupacion);
+                    request.addParameter('idItem', TYPES.Int, item.IdItem);
+                    request.addParameter('orden', TYPES.VarChar, orden);
+                    
+                    request.on('requestCompleted', function() {
+                        return valorData.almacenarValor(pool, idUsuario, idPerfil, item, 0)
                         .then(function(res) {
-                            resolve(res);
+                            return entrevistaData.actualizarEstadoEntrevista(pool, idUsuario, idPerfil, res)
+                            .then(function(res) {
+                                resolve(res);
+                            })
                         })
-                    })
-                });
+                    });
 
-                connection.execSql(request);
-            }
+                    connection.execSql(request);
+                }
+            });
         });
     });
 }
@@ -353,9 +360,10 @@ function almacenarItem(pool, idUsuario, idPerfil, item) {
  */
 function actualizarItem(pool, idUsuario, idPerfil, item) {
     return new Promise(function(resolve, reject) {
-        var query = `UPDATE OP_ENTREVISTA_ITEM
+        var query = `UPDATE op_ei
                     SET FechaRegistro=GETDATE()
-                    WHERE IdItem=@idItem AND IdEntrevistaUsuario=(SELECT IdEntrevistaUsuario FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 10 AND 19));`;
+                    FROM OP_ENTREVISTA_ITEM op_ei INNER JOIN OP_ENTREVISTA op_e on op_ei.IdEntrevistaUsuario=op_e.IdEntrevistaUsuario
+                    WHERE op_e.IdUsuario=@idUsuario AND op_e.IdPerfil=@idPerfil AND op_e.IdEntrevista=@idEntrevista AND (op_e.Estado BETWEEN 10 AND 19) AND op_ei.IdItem=@idItem;`;
 
         pool.acquire(function (err, connection) {
             if (err) {
@@ -384,6 +392,50 @@ function actualizarItem(pool, idUsuario, idPerfil, item) {
                     })
                 });
                 
+                connection.execSql(request);
+            }
+        });
+    });
+}
+
+/**
+ * Extrae el siguiente orden de respuesta correspondiente a la tupla enterevista/usuario
+ */
+function extraerOrden(pool, idUsuario, idPerfil, idEntrevista) {
+    return new Promise(function(resolve, reject) {
+        var query = `SELECT ISNULL(MAX(CAST(Orden AS numeric)), 0)+1 FROM OP_ENTREVISTA_ITEM op_ei
+                    INNER JOIN OP_ENTREVISTA op_e ON op_ei.IdEntrevistaUsuario=op_e.IdEntrevistaUsuario
+                    WHERE op_e.IdUsuario=@idUsuario AND op_e.IdPerfil=@idPerfil AND op_e.IdEntrevista=@idEntrevista AND (op_e.Estado BETWEEN 0 AND 19) AND op_ei.Estado>0;`;
+        var result = [];
+        
+        pool.acquire(function (err, connection) {
+            if (err) {
+                reject(err);
+            } else {
+                var request = new Request(query, function(err, rowCount, rows) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        connection.release();
+                    }
+                });
+
+                request.addParameter('idUsuario', TYPES.Int, idUsuario);
+                request.addParameter('idPerfil', TYPES.Int, idPerfil);
+                request.addParameter('idEntrevista', TYPES.Int, idEntrevista);
+
+                request.on('row', function(columns) {
+                    var rowObject = {};
+                    columns.forEach(function(column) {
+                        rowObject = column.value; // Solo guardo los IdItem en el array
+                    });
+                    result.push(rowObject);
+                });
+
+                request.on('requestCompleted', function() {
+                    resolve(result[0]);
+                });
+
                 connection.execSql(request);
             }
         });
