@@ -17,7 +17,7 @@ const auth = {
 const pool = {
     min: 1,
     max: 10,
-    log: true
+    log: false
 };
 
 module.exports = { auth, pool }

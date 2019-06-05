@@ -271,38 +271,41 @@ function extraerItemHijo(pool, idUsuario, idPerfil, idEntrevista, itemAgrupacion
  * Finaliza el item agrupación correspondiente a un usuario determinado
  */
 function finalizarItemAgrupacion(pool, idUsuario, idPerfil, idEntrevista, itemAgrupacion) {
-    return new Promise(function(resolve, reject) {
-        return extraerOrden(pool, idUsuario, idPerfil, idEntrevista)
-        .then(orden => {
-            var query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdAgrupacion, IdItem, Estado, Orden)
-                        VALUES ((SELECT ISNULL(MAX(IdEntrevistaItem), 0)+1 FROM OP_ENTREVISTA_ITEM),
-                        (SELECT IdEntrevistaUsuario FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 0 AND 19)), @idAgrupacion, @idItem, 2, @orden);`;
+    var query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdAgrupacion, IdItem, Estado, Orden)
+                VALUES ((SELECT ISNULL(MAX(IdEntrevistaItem), 0)+1 FROM OP_ENTREVISTA_ITEM), @idEntrevistaUsuario, @idAgrupacion, @idItem, 2, @orden);`;
         
-            pool.acquire(function (err, connection) {
-                if (err) {
-                    reject(err);
-                } else {
-                    var request = new Request(query, function(err, rowCount, rows) {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            connection.release();
-                        }
-                    });
-                
-                    request.addParameter('idUsuario', TYPES.Int, idUsuario);
-                    request.addParameter('idPerfil', TYPES.Int, idPerfil);
-                    request.addParameter('idEntrevista', TYPES.Int, idEntrevista);
-                    request.addParameter('idAgrupacion', TYPES.Int, itemAgrupacion.IdAgrupacion);
-                    request.addParameter('idItem', TYPES.Int, itemAgrupacion.IdItem);
-                    request.addParameter('orden', TYPES.VarChar, orden);
-                
-                    request.on('requestCompleted', function() {
-                        resolve(null);
-                    });
-                
-                    connection.execSql(request);
-                }
+    return new Promise(function(resolve, reject) {
+        return extraerIdEntrevistaUsuario(pool, idUsuario, idPerfil, idEntrevista)
+        .then(idEntrevistaUsuario => {
+            return extraerOrden(pool, idUsuario, idPerfil, idEntrevista)
+            .then(orden => {
+                pool.acquire(function (err, connection) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        var request = new Request(query, function(err, rowCount, rows) {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                connection.release();
+                            }
+                        });
+                        
+                        request.addParameter('idUsuario', TYPES.Int, idUsuario);
+                        request.addParameter('idPerfil', TYPES.Int, idPerfil);
+                        request.addParameter('idEntrevista', TYPES.Int, idEntrevista);
+                        request.addParameter('idAgrupacion', TYPES.Int, itemAgrupacion.IdAgrupacion);
+                        request.addParameter('idItem', TYPES.Int, itemAgrupacion.IdItem);
+                        request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
+                        request.addParameter('orden', TYPES.VarChar, orden);
+                    
+                        request.on('requestCompleted', function() {
+                            resolve(null);
+                        });
+                        
+                        connection.execSql(request);
+                    }
+                });
             });
         });
     });
@@ -312,44 +315,47 @@ function finalizarItemAgrupacion(pool, idUsuario, idPerfil, idEntrevista, itemAg
  * Guarda la respuesta del usuario en la BBDD
  */
 function almacenarItem(pool, idUsuario, idPerfil, item) {
+    var query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdAgrupacion, IdItem, Estado, Orden)
+                VALUES ((SELECT ISNULL(MAX(IdEntrevistaItem), 0)+1 FROM OP_ENTREVISTA_ITEM), @idEntrevistaUsuario, @idAgrupacion, @idItem, 1, @orden);`;
+
     return new Promise(function(resolve, reject) {
-        return extraerOrden(pool, idUsuario, idPerfil, item.IdEntrevista)
-        .then(orden => {
-            var query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdAgrupacion, IdItem, Estado, Orden)
-                        VALUES ((SELECT ISNULL(MAX(IdEntrevistaItem), 0)+1 FROM OP_ENTREVISTA_ITEM),
-                        (SELECT IdEntrevistaUsuario FROM OP_ENTREVISTA WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 0 AND 19)), @idAgrupacion, @idItem, 1, @orden);`;
-            
-            pool.acquire(function (err, connection) {
-                if (err) {
-                    reject(err);
-                } else {
-                    var request = new Request(query, function(err, rowCount, rows) {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            connection.release();
-                        }
-                    });
-
-                    request.addParameter('idUsuario', TYPES.Int, idUsuario);
-                    request.addParameter('idPerfil', TYPES.Int, idPerfil);
-                    request.addParameter('idEntrevista', TYPES.Int, item.IdEntrevista);
-                    request.addParameter('idAgrupacion', TYPES.Int, item.IdAgrupacion);
-                    request.addParameter('idItem', TYPES.Int, item.IdItem);
-                    request.addParameter('orden', TYPES.VarChar, orden);
-                    
-                    request.on('requestCompleted', function() {
-                        return valorData.almacenarValor(pool, idUsuario, idPerfil, item, 0)
-                        .then(function(res) {
-                            return entrevistaData.actualizarEstadoEntrevista(pool, idUsuario, idPerfil, res)
+        return extraerIdEntrevistaUsuario(pool, idUsuario, idPerfil, item.IdEntrevista)
+        .then(idEntrevistaUsuario => {
+            return extraerOrden(pool, idUsuario, idPerfil, item.IdEntrevista)
+            .then(orden => {
+                pool.acquire(function (err, connection) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        var request = new Request(query, function(err, rowCount, rows) {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                connection.release();
+                            }
+                        });
+    
+                        request.addParameter('idUsuario', TYPES.Int, idUsuario);
+                        request.addParameter('idPerfil', TYPES.Int, idPerfil);
+                        request.addParameter('idEntrevista', TYPES.Int, item.IdEntrevista);
+                        request.addParameter('idAgrupacion', TYPES.Int, item.IdAgrupacion);
+                        request.addParameter('idItem', TYPES.Int, item.IdItem);
+                        request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
+                        request.addParameter('orden', TYPES.VarChar, orden);
+                        
+                        request.on('requestCompleted', function() {
+                            return valorData.almacenarValor(pool, idUsuario, idPerfil, item, 0)
                             .then(function(res) {
-                                resolve(res);
+                                return entrevistaData.actualizarEstadoEntrevista(pool, idUsuario, idPerfil, res)
+                                .then(function(res) {
+                                    resolve(res);
+                                })
                             })
-                        })
-                    });
-
-                    connection.execSql(request);
-                }
+                        });
+    
+                        connection.execSql(request);
+                    }
+                });
             });
         });
     });
@@ -399,6 +405,49 @@ function actualizarItem(pool, idUsuario, idPerfil, item) {
 }
 
 /**
+ * Extrae el ID asociado a una entrevista asignada a un usuario y perfil determinados
+ */
+function extraerIdEntrevistaUsuario(pool, idUsuario, idPerfil, idEntrevista) {
+    return new Promise(function(resolve, reject) {
+        var query = `SELECT IdEntrevistaUsuario FROM OP_ENTREVISTA
+                    WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 0 AND 19);`;
+        var result = [];
+        
+        pool.acquire(function (err, connection) {
+            if (err) {
+                reject(err);
+            } else {
+                var request = new Request(query, function(err, rowCount, rows) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        connection.release();
+                    }
+                });
+                
+                request.addParameter('idUsuario', TYPES.Int, idUsuario);
+                request.addParameter('idPerfil', TYPES.Int, idPerfil);
+                request.addParameter('idEntrevista', TYPES.Int, idEntrevista);
+                
+                request.on('row', function(columns) {
+                    var rowObject = {};
+                    columns.forEach(function(column) {
+                        rowObject = column.value;
+                    });
+                    result.push(rowObject);
+                });
+                
+                request.on('requestCompleted', function() {
+                    resolve(result[0]);
+                });
+                
+                connection.execSql(request);
+            }
+        });
+    });
+}
+
+/**
  * Extrae el siguiente orden de respuesta correspondiente a la tupla enterevista/usuario
  */
 function extraerOrden(pool, idUsuario, idPerfil, idEntrevista) {
@@ -427,7 +476,7 @@ function extraerOrden(pool, idUsuario, idPerfil, idEntrevista) {
                 request.on('row', function(columns) {
                     var rowObject = {};
                     columns.forEach(function(column) {
-                        rowObject = column.value; // Solo guardo los IdItem en el array
+                        rowObject = column.value;
                     });
                     result.push(rowObject);
                 });
