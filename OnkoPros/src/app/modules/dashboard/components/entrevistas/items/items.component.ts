@@ -11,6 +11,7 @@ import { CuadroDialogoService } from '../../../../../services/cuadro-dialogo/cua
 import { HttpErrorHandlerService } from '../../../../../services/error-handler/http-error-handler.service';
 import { SpinnerService } from '../../../../../services/spinner/spinner.service';
 import { LoggerService } from '../../../../../services/logger/logger.service';
+import { HelperService } from '../../../../../services/helper/helper.service';
 
 @Component({
   selector: 'app-items',
@@ -38,7 +39,7 @@ export class ItemsComponent implements OnInit {
   item: Item;
   idItemsRespondidos: number[] = [];
   paginaSeleccionada: number = null;
-  tituloValores: string[] = []; // Uso exclusivo Select Button {N}
+  tituloValores: string[] = [];
   valoresSeleccionados: Valor[] = [];
   indiceSeleccionado: number = null;
 
@@ -52,9 +53,9 @@ export class ItemsComponent implements OnInit {
     private spinnerService: SpinnerService,
     private cuadroDialogoService: CuadroDialogoService,
     private logger: LoggerService,
+    private helperService: HelperService,
     private errorHandler: HttpErrorHandlerService,
     private _changeDetectionRef: ChangeDetectorRef
-
   ) {
     this._checkedValorSubject = new BehaviorSubject(null);
     this._checkedValorSubject.asObservable().subscribe(
@@ -258,16 +259,10 @@ export class ItemsComponent implements OnInit {
   }
 
   /**
-   * Actualiza los títulos de los valores (implementación exclusiva {Nativescript})
+   * Actualiza los títulos de los valores
    */
   actualizarTituloValores(valores: any): void {
-    for (const key in valores) {
-      if (valores[key].VisibleValor) {
-        this.tituloValores.push(valores[key].Titulo + " (" + valores[key].Valor + ")");
-      } else {
-        this.tituloValores.push(valores[key].Titulo);
-      }
-    }
+    this.tituloValores = this.helperService.actualizarTituloValores(valores);
   }
 
   /**
