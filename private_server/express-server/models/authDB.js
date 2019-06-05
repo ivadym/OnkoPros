@@ -1,7 +1,7 @@
 const Request = require('tedious').Request;
 const TYPES = require('tedious').TYPES;
 
-const { adaptarPerfilUsuario, adaptarSexo } = require('../helpers/helper');
+const { adaptarPerfilUsuario, adaptarSexo } = require('../helpers/adaptador');
 
 /**
  * Comprueba las credenciales de usuario recibidas

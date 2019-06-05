@@ -1,7 +1,7 @@
 const winston = require('winston');
 const expressWinston = require('express-winston');
 
-const log = require('../config/log')
+const log = require('../config/logger')
 
 /**
  * Formato de impresión personalizado

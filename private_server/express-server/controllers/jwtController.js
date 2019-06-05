@@ -1,7 +1,7 @@
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 
-const { adaptarPerfilSql } = require('../helpers/helper');
+const { adaptarPerfilSql } = require('../helpers/adaptador');
 const { logger } = require('../helpers/logger');
 
 var privateKey  = fs.readFileSync('./RSA/private.key');
