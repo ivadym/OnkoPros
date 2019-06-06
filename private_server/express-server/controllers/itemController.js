@@ -1,5 +1,6 @@
 const itemData = require('../models/itemDB');
 const { conexionPool } = require('../config/database');
+const { extraerIdEntrevistaUsuario } = require('../helpers/helperDB');
 const { logger } = require('../helpers/logger');
 
 /**
@@ -8,20 +9,24 @@ const { logger } = require('../helpers/logger');
 function getSiguienteItem(req, res, next) {
     logger.info('itemController.getsiguienteItem');
 
-    var pool =  conexionPool();
-    itemData.extraerSiguienteItem(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista']) // Extrae el siguiente item disponible
-    .then(function(item) {
-        if (item) {
-            return itemData.extraerIdItemsRespondidos(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista'])
-            .then(function(idItemsRespondidos) {
-                res.status(200).json({
-                    item: item,
-                    idItemsRespondidos: idItemsRespondidos
-                });
-            })
-        } else {
-            res.status(200).json(null);
-        }
+    var pool = conexionPool();
+
+    extraerIdEntrevistaUsuario(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista'])
+    .then(idEntrevistaUsuario => {
+        return itemData.extraerSiguienteItem(pool, idEntrevistaUsuario) // Extrae el siguiente item disponible
+        .then(function(item) {
+            if (item) {
+                return itemData.extraerIdItemsRespondidos(pool, idEntrevistaUsuario)
+                .then(function(idItemsRespondidos) {
+                    res.status(200).json({
+                        item: item,
+                        idItemsRespondidos: idItemsRespondidos
+                    });
+                })
+            } else {
+                res.status(200).json(null);
+            }
+        });
     })
     .catch(function(error) {
         logger.error('itemController.getsiguienteItem.500');
@@ -30,7 +35,7 @@ function getSiguienteItem(req, res, next) {
         next(err);
     })
     .finally(function() {
-        pool.drain(); // Se cierran todas las conexiones
+        // pool.drain(); // Se cierran todas las conexiones
     });
 };
 
@@ -40,16 +45,19 @@ function getSiguienteItem(req, res, next) {
 function getItemRespondido(req, res, next) {
     logger.info('itemController.getItemRespondido');
 
-    var pool =  conexionPool();
-    itemData.extraerItemRespondido(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista'], req.params['idItem'])
-    .then(function(item) {
-        return itemData.extraerIdItemsRespondidos(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista'])
-        .then(function(idItemsRespondidos) {
-            res.status(200).json({
-                item: item,
-                idItemsRespondidos: idItemsRespondidos
-            });
-        })
+    var pool = conexionPool();
+    extraerIdEntrevistaUsuario(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista'])
+    .then(idEntrevistaUsuario => {
+        return itemData.extraerItemRespondido(pool, idEntrevistaUsuario, req.params['idItem'])
+        .then(function(item) {
+            return itemData.extraerIdItemsRespondidos(pool, idEntrevistaUsuario)
+            .then(function(idItemsRespondidos) {
+                res.status(200).json({
+                    item: item,
+                    idItemsRespondidos: idItemsRespondidos
+                });
+            })
+        });
     })
     .catch(function(error) {
         logger.error('itemController.getItemRespondido.500');
@@ -58,7 +66,7 @@ function getItemRespondido(req, res, next) {
         next(err);
     })
     .finally(function() {
-        pool.drain(); // Se cierran todas las conexiones
+        // pool.drain(); // Se cierran todas las conexiones
     });
 };
 
@@ -68,7 +76,7 @@ function getItemRespondido(req, res, next) {
 function setItem(req, res, next) {
     logger.info('itemController.setItem');
     
-    var pool =  conexionPool();
+    var pool = conexionPool();
     itemData.almacenarItem(pool, req.idUsuario, req.idPerfil, req.body)
     .then(function(item) {
         res.status(201).json(item);
@@ -80,7 +88,7 @@ function setItem(req, res, next) {
         next(err);
     })
     .finally(function() {
-        pool.drain(); // Se cierran todas las conexiones
+        // pool.drain(); // Se cierran todas las conexiones
     });
 };
 
@@ -102,7 +110,7 @@ function updateItem(req, res, next) {
         next(err);
     })
     .finally(function() {
-        pool.drain(); // Se cierran todas las conexiones
+        // pool.drain(); // Se cierran todas las conexiones
     });
 };
 

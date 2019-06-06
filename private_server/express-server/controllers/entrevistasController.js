@@ -24,7 +24,7 @@ function getEntrevistas(req, res, next) {
         next(err);
     })
     .finally(function() {
-        pool.drain(); // Se cierran todas las conexiones
+        // pool.drain(); // Se cierran todas las conexiones
     });
 };
 
@@ -53,7 +53,7 @@ function getEntrevista(req, res, next) {
         next(err);
     })
     .finally(function() {
-        pool.drain(); // Se cierran todas las conexiones
+        // pool.drain(); // Se cierran todas las conexiones
     });
 };
 

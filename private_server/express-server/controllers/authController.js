@@ -31,7 +31,7 @@ function autenticacion(req, res, next) {
         next(err);
     })
     .finally(function() {
-        pool.drain(); // Se cierran todas las conexiones
+        // pool.drain(); // Se cierran todas las conexiones
     });
 };
 

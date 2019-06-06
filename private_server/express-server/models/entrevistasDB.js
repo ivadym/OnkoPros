@@ -5,14 +5,14 @@ const TYPES = require('tedious').TYPES;
  * Extrae las entrevistas asociadas a un usuario determinado
  */
 function extraerEntrevistas(pool, idUsuario, idPerfil) {
+    var query = `SELECT op_e.IdEntrevista, op_e.IdSujeto, op_e.TipoSujeto, e.Titulo, e.Tooltip, ei.InstruccionPrincipal, ei.InstruccionSecundaria, op_e.FechaLimite
+                FROM OP_ENTREVISTA op_e INNER JOIN GEOP_ENTREVISTA e ON e.IdEntrevista=op_e.IdEntrevista
+                INNER JOIN GEOP_ENTREVISTA_INSTRUCCIONES ei ON ei.IdEntrevista=op_e.IdEntrevista
+                WHERE op_e.IdUsuario=@idUsuario AND op_e.IdPerfil=@idPerfil AND (op_e.Estado BETWEEN 0 AND 19) AND (@fechaActual BETWEEN op_e.FechaInicio AND op_e.FechaLimite) AND e.Estado=1
+                ORDER BY op_e.FechaLimite ASC;`;
+    var result = [];
+    
     return new Promise(function(resolve, reject) {
-        var query = `SELECT e.IdEntrevista, e.IdSujeto, e.TipoSujeto, eg.Titulo, eg.Tooltip, ei.InstruccionPrincipal, ei.InstruccionSecundaria, e.FechaLimite
-                    FROM OP_ENTREVISTA e INNER JOIN GEOP_ENTREVISTA eg ON e.IdEntrevista=eg.IdEntrevista
-                    INNER JOIN GEOP_ENTREVISTA_INSTRUCCIONES ei ON e.IdEntrevista=ei.IdEntrevista
-                    WHERE e.IdUsuario=@idUsuario AND e.IdPerfil=@idPerfil AND (e.Estado BETWEEN 0 AND 19) AND eg.Estado=1 AND (@fechaActual BETWEEN e.FechaInicio AND e.FechaLimite)
-                    ORDER BY e.FechaLimite ASC;`;
-        var result = [];
-
         pool.acquire(function (err, connection) {
             if (err) {
                 reject(err);
@@ -51,13 +51,13 @@ function extraerEntrevistas(pool, idUsuario, idPerfil) {
  * Estrae la entrevista asociada a un usuario e identificador determinados
  */
 function extraerEntrevista(pool, idUsuario, idPerfil, idEntrevista) {
+    var query = `SELECT op_e.IdEntrevista, op_e.IdSujeto, op_e.TipoSujeto, e.Titulo, e.Tooltip, ei.InstruccionPrincipal, ei.InstruccionSecundaria, op_e.FechaLimite
+                FROM OP_ENTREVISTA op_e INNER JOIN GEOP_ENTREVISTA e ON e.IdEntrevista=op_e.IdEntrevista
+                INNER JOIN GEOP_ENTREVISTA_INSTRUCCIONES ei ON ei.IdEntrevista=op_e.IdEntrevista
+                WHERE op_e.IdUsuario=@idUsuario AND op_e.IdPerfil=@idPerfil AND op_e.IdEntrevista=@idEntrevista AND (op_e.Estado BETWEEN 0 AND 19) AND (@fechaActual BETWEEN op_e.FechaInicio AND op_e.FechaLimite) AND e.Estado=1;`;
+    var result = [];
+    
     return new Promise(function(resolve, reject) {
-        var query = `SELECT e.IdEntrevista, e.IdSujeto, e.TipoSujeto, eg.Titulo, eg.Tooltip, ei.InstruccionPrincipal, ei.InstruccionSecundaria, e.FechaLimite
-                    FROM OP_ENTREVISTA e INNER JOIN GEOP_ENTREVISTA eg ON e.IdEntrevista=eg.IdEntrevista
-                    INNER JOIN GEOP_ENTREVISTA_INSTRUCCIONES ei ON e.IdEntrevista=ei.IdEntrevista
-                    WHERE e.IdUsuario=@idUsuario AND e.IdPerfil=@idPerfil AND e.IdEntrevista=@idEntrevista AND (e.Estado BETWEEN 0 AND 19) AND eg.Estado=1 AND (@fechaActual BETWEEN e.FechaInicio AND e.FechaLimite);`;
-        var result = [];
-
         pool.acquire(function (err, connection) {
             if (err) {
                 reject(err);
@@ -96,12 +96,12 @@ function extraerEntrevista(pool, idUsuario, idPerfil, idEntrevista) {
 /**
  * Actualiza el estado de la entrevista (en progreso)
  */
-function actualizarEstadoEntrevista(pool, idUsuario, idPerfil, item) {
+function actualizarEstadoEntrevista(pool, idEntrevistaUsuario, item) {
+    var query = `UPDATE OP_ENTREVISTA
+                SET Estado=10
+                WHERE IdEntrevistaUsuario=@idEntrevistaUsuario AND (Estado BETWEEN 0 AND 1);`;
+    
     return new Promise(function(resolve, reject) {
-        var query = `UPDATE OP_ENTREVISTA
-                    SET Estado=10
-                    WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 0 AND 1);`;
-
         pool.acquire(function (err, connection) {
             if (err) {
                 reject(err);
@@ -113,10 +113,8 @@ function actualizarEstadoEntrevista(pool, idUsuario, idPerfil, item) {
                         connection.release();
                     }
                 });
-
-                request.addParameter('idUsuario', TYPES.Int, idUsuario);
-                request.addParameter('idPerfil', TYPES.Int, idPerfil);
-                request.addParameter('idEntrevista', TYPES.Int, item.IdEntrevista);
+                
+                request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
                 
                 request.on('requestCompleted', function() {
                     resolve(item);
@@ -131,12 +129,12 @@ function actualizarEstadoEntrevista(pool, idUsuario, idPerfil, item) {
 /**
  * Finaliza una entrevista deetrminada (no quedan más items por responder)
  */
-function finalizarEntrevista(pool, idUsuario, idPerfil, idEntrevista) {
+function finalizarEntrevista(pool, idEntrevistaUsuario) {
+    var query = `UPDATE OP_ENTREVISTA
+                SET Estado=20
+                WHERE IdEntrevistaUsuario=@idEntrevistaUsuario`;
+    
     return new Promise(function(resolve, reject) {
-        var query = `UPDATE OP_ENTREVISTA
-                    SET Estado=20
-                    WHERE IdUsuario=@idUsuario AND IdPerfil=@idPerfil AND IdEntrevista=@idEntrevista AND (Estado BETWEEN 10 AND 19);`;
-
         pool.acquire(function (err, connection) {
             if (err) {
                 reject(err);
@@ -148,15 +146,13 @@ function finalizarEntrevista(pool, idUsuario, idPerfil, idEntrevista) {
                         connection.release();
                     }
                 });
-
-                request.addParameter('idUsuario', TYPES.Int, idUsuario);
-                request.addParameter('idPerfil', TYPES.Int, idPerfil);
-                request.addParameter('idEntrevista', TYPES.Int, idEntrevista);
+                
+                request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
                 
                 request.on('requestCompleted', function() {
                     resolve(null);
                 });
-
+                
                 connection.execSql(request);
             }
         });
