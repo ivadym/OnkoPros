@@ -10,22 +10,19 @@ function getEntrevistas(req, res, next) {
     
     var pool = conexionPool();
     entrevistasData.extraerEntrevistas(pool, req.idUsuario, req.idPerfil)
-    .then(function(entrevistas) {
+    .then(entrevistas => {
         if (entrevistas[0]) { // Hay al menos 1 entrevista
             res.status(200).json(entrevistas);
         } else {
             res.status(200).json(null);
         }
     })
-    .catch(function(error) {
+    .catch(error => {
         logger.error('entrevistasController.getEntrevistas.500');
         var err = new Error(error.message ? error.message : error);
         err.statusCode = 500; // HTTP 500 Internal Server Error
         next(err);
     })
-    .finally(function() {
-        // pool.drain(); // Se cierran todas las conexiones
-    });
 };
 
 /**
@@ -36,7 +33,7 @@ function getEntrevista(req, res, next) {
     
     var pool = conexionPool();
     entrevistasData.extraerEntrevista(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista'])
-    .then(function(entrevista) {
+    .then(entrevista => {
         if (entrevista) {
             res.status(200).json(entrevista);
         } else {
@@ -46,15 +43,12 @@ function getEntrevista(req, res, next) {
             next(err);
         }
     })
-    .catch(function(error) {
+    .catch(error => {
         logger.error('entrevistasController.getEntrevista.500');
         var err = new Error(error.message ? error.message : error);
         err.statusCode = 500; // HTTP 500 Internal Server Error
         next(err);
     })
-    .finally(function() {
-        // pool.drain(); // Se cierran todas las conexiones
-    });
 };
 
 module.exports = { getEntrevistas, getEntrevista }

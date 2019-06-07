@@ -13,7 +13,7 @@ function autenticacion(req, res, next) {
     
     var pool = conexionPool();
     authData.comprobarCredenciales(pool, usuario, clave)
-    .then(function(usuario) {
+    .then(usuario => {
         if (usuario) {
             req.usuario = usuario;
             next();
@@ -24,15 +24,12 @@ function autenticacion(req, res, next) {
             next(err);
         }
     })
-    .catch(function(error) {
+    .catch(error => {
         logger.error('authController.autenticacion.500');
         var err = new Error(error.message ? error.message : error);
         err.statusCode = 500; // HTTP 500 Internal Server Error
         next(err);
     })
-    .finally(function() {
-        // pool.drain(); // Se cierran todas las conexiones
-    });
 };
 
 module.exports = { autenticacion }

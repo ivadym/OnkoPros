@@ -121,7 +121,7 @@ function almacenarValor(pool, idEntrevistaItem, item, index) {
                 request.on('requestCompleted', function() {
                     if (item.Valores[++index]) {
                         return almacenarValor(pool, idEntrevistaItem, item, index)
-                        .then(function(res) {
+                        .then(res => {
                             resolve(res);
                         })
                     } else {

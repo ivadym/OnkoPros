@@ -46,19 +46,19 @@ function extraerSiguienteItem(pool, idEntrevistaUsuario) {
                     if (siguienteItem) { // Quedan items
                         if (siguienteItem.EsAgrupacion) { // Es agrupación
                             return extraerItemHijo(pool, idEntrevistaUsuario, siguienteItem.IdEntrevista, siguienteItem)
-                            .then(function(itemHijo) {
+                            .then(itemHijo => {
                                 if (itemHijo) { // Quedan hijos
                                     return valorData.extraerValores(pool, itemHijo) // Extracción de los valores del item hijo
-                                    .then(function(res) {
+                                    .then(res => {
                                         itemHijo.Valores = res;
                                         delete itemHijo['EsAgrupacion'];
                                         resolve(itemHijo); // Se envía al usuario el item hijo
                                     })
                                 } else { // No hay más hijos
                                     return finalizarItemAgrupacion(pool, idEntrevistaUsuario, siguienteItem) // Agrupación respondida
-                                    .then(function(res) {
+                                    .then(res => {
                                         return extraerSiguienteItem(pool, idEntrevistaUsuario) // Sigue con la extracción
-                                        .then(function(res) {
+                                        .then(res => {
                                             resolve(res);
                                         })
                                     })
@@ -66,7 +66,7 @@ function extraerSiguienteItem(pool, idEntrevistaUsuario) {
                             })
                         } else { // El item extraído no es agrupación
                             return valorData.extraerValores(pool, siguienteItem) // Devuelve los valores del item correspondiente
-                            .then(function(res) {
+                            .then(res => {
                                 siguienteItem.Valores = res;
                                 delete siguienteItem['EsAgrupacion'];
                                 resolve(siguienteItem); // Se envía al usuario el item
@@ -74,7 +74,7 @@ function extraerSiguienteItem(pool, idEntrevistaUsuario) {
                         }
                     } else { // No hay más items
                         return entrevistaData.finalizarEntrevista(pool, idEntrevistaUsuario) // Estado de la entrevista: Realizada
-                        .then(function(res) {
+                        .then(res => {
                             resolve(res); // Se devuelve al usuario un null (no hay más items para esta entrevista)
                         })
                     }
@@ -125,9 +125,9 @@ function extraerItemRespondido(pool, idEntrevistaUsuario, idItem) {
                     request.on('requestCompleted', function() {
                         if (result[0]) {
                             return valorData.extraerValores(pool, result[0]) // Devuelve los valores del item correspondiente
-                            .then(function(valores) {
+                            .then(valores => {
                                 return valorData.extraerIdValoresRespondidos(pool, idEntrevistaItem)
-                                .then(function(valoresRespondidos) {
+                                .then(valoresRespondidos => {
                                     for (var i = 0; i < valores.length; i++) {
                                         valores[i].Seleccionado = false;
                                         valores[i].ValorTexto = null;
@@ -238,14 +238,14 @@ function extraerItemHijo(pool, idEntrevistaUsuario, idEntrevista, itemAgrupacion
                     var itemHijo = result[0];
                     if (itemHijo && itemHijo.EsAgrupacion) { // Item hijo es a su vez agrupación
                         return extraerItemHijo(pool, idEntrevistaUsuario, idEntrevista, itemHijo)
-                        .then(function(itemHijoSiguiente) {
+                        .then(itemHijoSiguiente => {
                             if (itemHijoSiguiente) { // Quedan items hijos
                                 resolve(itemHijoSiguiente);
                             } else { // No hay más items hijos
                                 return finalizarItemAgrupacion(pool, idEntrevistaUsuario, itemHijo) // Item agrupación respondido
-                                .then(function(res) {
+                                .then(res => {
                                     return extraerItemHijo(pool, idEntrevistaUsuario, idEntrevista, itemAgrupacion) // Sigue el flujo principal
-                                    .then(function(res) {
+                                    .then(res => {
                                         resolve(res);
                                     })
                                 })
@@ -333,9 +333,9 @@ function almacenarItem(pool, idUsuario, idPerfil, item) {
                             return extraerIdEntrevistaItem(pool, idEntrevistaUsuario, item.IdItem)
                             .then(idEntrevistaItem => {
                                 return valorData.almacenarValor(pool, idEntrevistaItem, item, 0)
-                                .then(function(item) {
+                                .then(item => {
                                     return entrevistaData.actualizarEstadoEntrevista(pool, idEntrevistaUsuario, item)
-                                    .then(function(item) {
+                                    .then(item => {
                                         resolve(item);
                                     })
                                 })
@@ -379,9 +379,9 @@ function actualizarItem(pool, idUsuario, idPerfil, item) {
                         
                         request.on('requestCompleted', function() {
                             return valorData.eliminarValores(pool, idEntrevistaItem, item)
-                            .then(function(item) {
+                            .then(item => {
                                 return valorData.almacenarValor(pool, idEntrevistaItem, item, 0) // Se almacenan los valores actualizados
-                                .then(function(item) {
+                                .then(item => {
                                     resolve(item);
                                 })
                             })
