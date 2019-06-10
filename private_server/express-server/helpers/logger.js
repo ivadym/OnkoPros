@@ -6,7 +6,7 @@ const log = require('../config/logger')
 /**
  * Formato de impresión personalizado
  */
-const formatoPersonalizado = winston.format.printf(({ level, message, label, timestamp }) => {
+const formatoPersonalizado = winston.format.printf(({ timestamp, label, level, message }) => {
     return `${timestamp} [${label}] ${level}: ${message}`;
 });
 
@@ -52,7 +52,7 @@ const transports = {
         )
     }),
     file: new winston.transports.File({
-        filename: 'logs/app.log',
+        filename: log.filename,
         level: log.levelFile, // Máximo nivel de logs que se van a escribir
         format: winston.format.combine(
             filtrarLogs('file'),
@@ -81,7 +81,8 @@ const expressLogger = expressWinston.logger({
     transports: [
         transports.console,
         transports.file
-    ]
+    ],
+    msg: '{{req.idUsuario!=undefined ? req.idUsuario : req.body.usuario}} > HTTP {{req.method}} {{req.url}}'
 });
 
 /**

@@ -5,5 +5,6 @@ module.exports = {
     activo: true, // true: Logs activos, false: Logs desactivados
     filtroUnico: false, // Impreme los logs solamente del nivel especificado (level)
     levelConsole: 'info',
-    levelFile: 'error'
+    levelFile: 'error',
+    filename: 'C:/Users/vivanchuk/Documents/ws-OnkoPros/private_server/express-server/logs/app.log'
 }

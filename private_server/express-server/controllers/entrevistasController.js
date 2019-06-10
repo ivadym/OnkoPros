@@ -6,7 +6,7 @@ const { logger } = require('../helpers/logger');
  * Devuelve las entrevistas disponibles actualmente
  */
 function getEntrevistas(req, res, next) {
-    logger.info('entrevistasController.getEntrevistas');
+    logger.info(req.idUsuario + ' > entrevistasController.getEntrevistas');
     
     var pool = conexionPool();
     entrevistasData.extraerEntrevistas(pool, req.idUsuario, req.idPerfil)
@@ -18,7 +18,7 @@ function getEntrevistas(req, res, next) {
         }
     })
     .catch(error => {
-        logger.error('entrevistasController.getEntrevistas.500');
+        logger.error(req.idUsuario + ' > entrevistasController.getEntrevistas.500');
         var err = new Error(error.message ? error.message : error);
         err.statusCode = 500; // HTTP 500 Internal Server Error
         next(err);
@@ -29,7 +29,7 @@ function getEntrevistas(req, res, next) {
  * Devuelve la entrevista asociada a un usuario y perfil determinados
  */
 function getEntrevista(req, res, next) {
-    logger.info('entrevistasController.getEntrevista');
+    logger.info(req.idUsuario + ' > entrevistasController.getEntrevista');
     
     var pool = conexionPool();
     entrevistasData.extraerEntrevista(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista'])
@@ -37,14 +37,14 @@ function getEntrevista(req, res, next) {
         if (entrevista) {
             res.status(200).json(entrevista);
         } else {
-            logger.error('entrevistasController.getEntrevista.404');
+            logger.error(req.idUsuario + ' > entrevistasController.getEntrevista.404');
             var err = new Error('Error en la obtención de una entrevista determinada');
             err.statusCode = 404; // HTTP 404 Not Found
             next(err);
         }
     })
     .catch(error => {
-        logger.error('entrevistasController.getEntrevista.500');
+        logger.error(req.idUsuario + ' > entrevistasController.getEntrevista.500');
         var err = new Error(error.message ? error.message : error);
         err.statusCode = 500; // HTTP 500 Internal Server Error
         next(err);
