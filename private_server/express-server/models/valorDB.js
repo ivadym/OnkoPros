@@ -124,6 +124,7 @@ function almacenarValor(pool, idEntrevistaItem, item, index) {
                         .then(res => {
                             resolve(res);
                         })
+                        .catch(error => reject(error)); // Catch de promises anidadas
                     } else {
                         resolve(item);
                     }

@@ -64,6 +64,7 @@ function extraerSiguienteItem(pool, idEntrevistaUsuario) {
                                     })
                                 }
                             })
+                            .catch(error => reject(error)); // Catch de promises anidadas
                         } else { // El item extraído no es agrupación
                             return valorData.extraerValores(pool, siguienteItem) // Devuelve los valores del item correspondiente
                             .then(res => {
@@ -71,12 +72,14 @@ function extraerSiguienteItem(pool, idEntrevistaUsuario) {
                                 delete siguienteItem['EsAgrupacion'];
                                 resolve(siguienteItem); // Se envía al usuario el item
                             })
+                            .catch(error => reject(error)); // Catch de promises anidadas
                         }
                     } else { // No hay más items
                         return entrevistaData.finalizarEntrevista(pool, idEntrevistaUsuario) // Estado de la entrevista: Realizada
                         .then(res => {
                             resolve(res); // Se devuelve al usuario un null (no hay más items para esta entrevista)
                         })
+                        .catch(error => reject(error)); // Catch de promises anidadas
                     }
                 });
 
@@ -142,6 +145,7 @@ function extraerItemRespondido(pool, idEntrevistaUsuario, idItem) {
                                     resolve(result[0]); // Envío del item
                                 })
                             })
+                            .catch(error => reject(error)); // Catch de promises anidadas
                         } else {
                             reject('Error en la obtención del item respondido previamente por el usuario')
                         }
@@ -150,7 +154,8 @@ function extraerItemRespondido(pool, idEntrevistaUsuario, idItem) {
                     connection.execSql(request);
                 }
             });
-        });
+        })
+        .catch(error => reject(error)); // Catch de promises anidadas
     });
 }
 
@@ -251,6 +256,7 @@ function extraerItemHijo(pool, idEntrevistaUsuario, idEntrevista, itemAgrupacion
                                 })
                             } 
                         })
+                        .catch(error => reject(error)); // Catch de promises anidadas
                     } else {
                         resolve(itemHijo);
                     }
@@ -296,7 +302,8 @@ function finalizarItemAgrupacion(pool, idEntrevistaUsuario, itemAgrupacion) {
                     connection.execSql(request);
                 }
             });
-        });
+        })
+        .catch(error => reject(error)); // Catch de promises anidadas
     });
 }
 
@@ -339,14 +346,16 @@ function almacenarItem(pool, idUsuario, idPerfil, item) {
                                         resolve(item);
                                     })
                                 })
-                            });
+                            })
+                            .catch(error => reject(error)); // Catch de promises anidadas
                         });
     
                         connection.execSql(request);
                     }
                 });
             });
-        });
+        })
+        .catch(error => reject(error)); // Catch de promises anidadas
     });
 }
 
@@ -385,13 +394,15 @@ function actualizarItem(pool, idUsuario, idPerfil, item) {
                                     resolve(item);
                                 })
                             })
+                            .catch(error => reject(error)); // Catch de promises anidadas
                         });
                         
                         connection.execSql(request);
                     }
                 });
             });
-        });
+        })
+        .catch(error => reject(error)); // Catch de promises anidadas
     });
 }
 

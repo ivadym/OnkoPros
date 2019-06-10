@@ -86,7 +86,7 @@ function extraerEntrevista(pool, idUsuario, idPerfil, idEntrevista) {
                 request.on('requestCompleted', function() {
                     resolve(result[0]);
                 });
-
+                
                 connection.execSql(request);
             }
         });
