@@ -9,7 +9,11 @@ const auth = {
     server: 'SRVKIRO',
     options: {
         encrypt: true,
-        database: 'ONKOIMPETUS'
+        database: 'ONKOIMPETUS',
+        dateFormat: 'ymd',
+        connectTimeout: '10000', // The number of milliseconds before the attempt to connect is considered failed
+        requestTimeout: '10000', // The number of milliseconds before a request is considered failed, or 0 for no timeout
+        cancelTimeout: '5000' // The number of milliseconds before the cancel (abort) of a request is considered failed
     }
 }
 
