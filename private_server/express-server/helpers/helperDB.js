@@ -128,4 +128,107 @@ function extraerOrden(pool, idEntrevistaUsuario) {
     });
 }
 
-module.exports = { extraerIdEntrevistaUsuario, extraerIdEntrevistaItem, extraerOrden };
+/**
+ * Extrae las reglas a ejecutar asociadas a una agrupación y ejecuta los procedimientos almacenados correspondientes
+ */
+function comprobarReglaAgrupacion(pool, idEntrevistaUsuario, idAgrupacion) {
+    var query = `SELECT r.IdRegla, r.ProcedimientoSQL, r.IdAgrupacionSalto, r.UmbralSalto
+                FROM GEOP_ITEM_REGLA ir
+                INNER JOIN GEOP_REGLA r ON r.IdRegla=ir.IdRegla
+                WHERE ir.IdItem=@idAgrupacion AND ir.Estado=1 AND r.Estado=1
+                ORDER BY CAST(ir.Orden AS numeric) ASC;`;
+    var result = [];
+    
+    return new Promise(function(resolve, reject) {
+        pool.acquire(function (err, connection) {
+            if (err) {
+                reject(err);
+            } else {
+                var request = new Request(query, function(err, rowCount, rows) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        connection.release();
+                    }
+                });
+                
+                request.addParameter('idAgrupacion', TYPES.Int, idAgrupacion);
+                
+                request.on('row', function(columns) {
+                    var rowObject = {};
+                    columns.forEach(function(column) {
+                        rowObject[column.metadata.colName] = column.value;
+                    });
+                    result.push(rowObject);
+                });
+                
+                request.on('requestCompleted', function() {
+                    if (result[0]) {
+                        return ejecutarProcedimientoAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, result, 0)
+                        .then(res => {
+                            resolve(res);
+                        })
+                        .catch(error => reject(error)); // Catch de promises anidadas
+                    } else {
+                        resolve(null);
+                    }
+                });
+                
+                connection.execSql(request);
+            }
+        });
+    });
+}
+
+/**
+ * Ejecuta un procedimiento almacenado asociado a una regla determinada
+ */
+function ejecutarProcedimientoAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, regla, index) {
+    var procedimiento = regla[index].ProcedimientoSQL;
+    var result = null;
+    
+    return new Promise(function(resolve, reject) {
+        pool.acquire(function (err, connection) {
+            if (err) {
+                reject(err);
+            } else {
+                var request = new Request(procedimiento, function(err) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        connection.release();
+                    }
+                });
+                
+                request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
+                request.addParameter('idRegla', TYPES.Int, regla[index].IdRegla);
+                request.addParameter('idAgrupacion', TYPES.Int, idAgrupacion);
+                request.addOutputParameter('resultado', TYPES.Numeric, -2, {"precision": 18, "scale": 2});
+                
+                request.on('returnValue', function(parameterName, value, metadata) {
+                    result = value;
+                });
+                
+                request.on('requestCompleted', function() {
+                    if (regla[index].UmbralSalto && result >= regla[index].UmbralSalto) {
+                        // TODO: Añadir una nueva agrupación a la entrevista en curso con ID: regla[index].IdAgrupacionSalto
+                    }
+
+                    if (regla[++index]) { // Quedan más reglas asociadas a una agrupación
+                        return ejecutarProcedimientoAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, regla, index)
+                        .then(res => {
+                            resolve(res);
+                        })
+                        .catch(error => reject(error)); // Catch de promises anidadas
+                    } else {
+                        resolve(null);
+                    }
+                });
+                
+                connection.callProcedure(request);
+            }
+        });
+    });
+}
+
+module.exports = { extraerIdEntrevistaUsuario, extraerIdEntrevistaItem, extraerOrden, comprobarReglaAgrupacion };
