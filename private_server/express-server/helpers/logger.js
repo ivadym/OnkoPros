@@ -10,6 +10,8 @@ const formatoPersonalizado = winston.format.printf(({ timestamp, label, level, m
     return `${timestamp} [${label}] ${level}: ${message}`;
 });
 
+const timestampFormat = 'DD/MM/YYYY HH:mm:ss:SSS'
+
 /**
  * Filtra los logs a mostrar/escribir por nivel
  */
@@ -47,7 +49,9 @@ const transports = {
             filtrarLogs('console'),
             winston.format.colorize(),
             winston.format.label({ label: 'SERV' }),
-            winston.format.timestamp(),
+            winston.format.timestamp({
+                format: timestampFormat
+            }),
             formatoPersonalizado
         )
     }),
@@ -57,7 +61,9 @@ const transports = {
         format: winston.format.combine(
             filtrarLogs('file'),
             winston.format.label({ label: 'SERV' }),
-            winston.format.timestamp(),
+            winston.format.timestamp({
+                format: timestampFormat
+            }),
             formatoPersonalizado
         )
     })

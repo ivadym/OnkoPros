@@ -134,7 +134,6 @@ export class AuthService {
    * Limpia las credenciales de la sesión iniciada
    */
   limpiarSesion(): void {
-    // TODO: Fichero de logs
     this.localStorageService.removeItem('usuarioLogueado');
     this.usuarioLogueado = null;
     this.urlInicial = null;
