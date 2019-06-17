@@ -28,6 +28,6 @@ app.use(expressErrorLogger);
 // Ruta no encontrada: tratamiento del error
 app.use(errorHandler.errorHandler);
 
-app.listen(process.env.PORT, function() {
-    logger.info('servidor.IIS.iniciado.puerto.' + server.address().port);
+app.listen(process.env.PORT, function() { // Puerto definido por IIS de Windows
+    logger.info('servidor.IIS.iniciado.puerto.' + process.env.PORT);
 });

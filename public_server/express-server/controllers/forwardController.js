@@ -11,6 +11,7 @@ function reenviar(req, res, next) {
         url: privateServerURL + req.url,
         headers: {
             'id': req.headers.id,
+            'perfil': req.headers.perfil,
             'authorization': req.headers.authorization
         },
         json: req.body,
