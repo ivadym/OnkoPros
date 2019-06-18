@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 
 import { Usuario } from '../../classes/usuario';
 
@@ -21,9 +22,8 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class AuthService {
-
-  // private _authURL = 'api/auth'; // URL de la web api (NGINX)
-  private _authURL = 'http://172.27.6.220:8081/api/auth'; // URL de la web api (nodejs)
+    
+  private _authURL = environment.production ? 'api/auth' : 'http://172.27.6.220:8081/api/auth';
   
   private _urlInicial: string; // URL de redirección
   private _usuarioSubject: BehaviorSubject<Usuario>;

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 
 import { Entrevista } from '../../classes/entrevista';
 import { Item } from '../../classes/item';
@@ -19,9 +20,8 @@ const httpOptions = {
 })
 export class EntrevistasService {
 
-  // private _entrevistasURL = 'api/entrevistas';  // URL de la web api (NGINX)
-  private _entrevistasURL = 'http://172.27.6.220:8081/api/entrevistas'; // URL de la web api (nodejs)
-
+  private _entrevistasURL = environment.production ? 'api/entrevistas' : 'http://172.27.6.220:8081/api/entrevistas';
+  
   constructor(
     private http: HttpClient,
     private spinnerService: SpinnerService
