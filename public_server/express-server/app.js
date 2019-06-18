@@ -4,6 +4,8 @@ const cors = require('cors');
 
 const routes = require('./routes/index');
 const errorHandler = require('./handlers/errorHandler');
+const config = require('./config');
+const { logger, expressLogger, expressErrorLogger } = require('./helpers/logger');
 
 // Creación de la aplicación de Express
 const app = express();
@@ -15,14 +17,18 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // CORS
 app.use(cors());
 
+// Express logger
+app.use(expressLogger);
+
 // Tratamiento de las rutas
 app.use('/', routes);
+
+// Express error logger (DESPUÉS de cargar las rutas y ANTES del tratamiento de errores)
+app.use(expressErrorLogger);
 
 // Tratamiento de los errores
 app.use(errorHandler.errorHandler);
 
-const server = app.listen(8080, function() {
-    var host = server.address().address;
-    var port = server.address().port;
-    console.log('Servidor iniciado en http://%s:%s', host, port);
+app.listen(config.app.port, function() {
+    logger.info('servidor.iniciado.puerto.' + config.app.port);
 });

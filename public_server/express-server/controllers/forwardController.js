@@ -1,14 +1,14 @@
 const fs   = require('fs');
 const request = require('request');
 
-const privateServerURL = 'https://localhost:8443';
+const config = require('../config');
 
 /**
  * Lleva a cabo el reenvío de la petición completa al servidor privado
  */
 function reenviar(req, res, next) {
     const options = {
-        url: privateServerURL + req.url,
+        url: config.app.privateServerURL + req.url,
         headers: {
             'id': req.headers.id,
             'perfil': req.headers.perfil,
@@ -22,9 +22,7 @@ function reenviar(req, res, next) {
     if (req.method === 'POST') {
         request.post(options, function optionalCallback(error, response, body) {
             if (error) {
-                var err = new Error(error.message ? error.message : error);
-                err.statusCode = 500; // HTTP 500 Internal Server Error
-                next(err);
+                next(error);
             } else {
                 res.status(response.statusCode).json(body);
             }
@@ -32,9 +30,7 @@ function reenviar(req, res, next) {
     } else if (req.method === 'GET') {
         request.get(options, function optionalCallback(error, response, body) {
             if (error) {
-                var err = new Error(error.message ? error.message : error);
-                err.statusCode = 500; // HTTP 500 Internal Server Error
-                next(err);
+                next(error);
             } else {
                 res.status(response.statusCode).json(body);
             }
