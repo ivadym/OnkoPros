@@ -4,6 +4,7 @@ const cors = require('cors');
 
 const routes = require('./routes/index');
 const errorHandler = require('./handlers/errorHandler');
+const config = require('./config');
 const { logger, expressLogger, expressErrorLogger } = require('./helpers/logger');
 
 // Creación de la aplicación de Express
@@ -28,6 +29,6 @@ app.use(expressErrorLogger);
 // Ruta no encontrada: tratamiento del error
 app.use(errorHandler.errorHandler);
 
-app.listen(process.env.PORT, function() { // Puerto definido por IIS de Windows
-    logger.info('servidor.IIS.iniciado.puerto.' + process.env.PORT);
+app.listen(config.app.port, function() { // Puerto definido por IIS de Windows
+    logger.info('servidor.IIS.iniciado.puerto.' + config.app.port);
 });

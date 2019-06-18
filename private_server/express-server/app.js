@@ -4,6 +4,7 @@ const cors = require('cors');
 
 const routes = require('./routes/index');
 const errorHandler = require('./handlers/errorHandler');
+const config = require('./config');
 const { logger, expressLogger, expressErrorLogger } = require('./helpers/logger');
 
 // Creación de la aplicación de Express
@@ -28,6 +29,6 @@ app.use(expressErrorLogger);
 // Tratamiento de los errores
 app.use(errorHandler.errorHandler);
 
-const server = app.listen(8081, function() {
-    logger.info('servidor.iniciado.puerto.' + server.address().port);
+app.listen(config.app.port, function() {
+    logger.info('servidor.iniciado.puerto.' + config.app.port);
 });

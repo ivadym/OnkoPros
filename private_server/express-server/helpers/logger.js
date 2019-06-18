@@ -1,7 +1,7 @@
 const winston = require('winston');
 const expressWinston = require('express-winston');
 
-const log = require('../config/logger')
+const config = require('../config');
 
 /**
  * Formato de impresión personalizado
@@ -16,16 +16,16 @@ const timestampFormat = 'DD/MM/YYYY HH:mm:ss:SSS'
  * Filtra los logs a mostrar/escribir por nivel
  */
 const filtrarLogs = winston.format((info, opts) => {
-    if(log.activo) {
-        if (log.filtroUnico) {
+    if(config.logger.activo) {
+        if (config.logger.filtroUnico) {
             if (opts === 'console') {
-                if (log.levelConsole === info.level) {
+                if (config.logger.levelConsole === info.level) {
                     return info;
                 } else {
                     return false;
                 }
             } else if (opts === 'file') {
-                if (log.levelFile === info.level) {
+                if (config.logger.levelFile === info.level) {
                     return info;
                 } else {
                     return false;
@@ -44,7 +44,7 @@ const filtrarLogs = winston.format((info, opts) => {
  */
 const transports = {
     console: new winston.transports.Console({
-        level: log.levelConsole, // Máximo nivel de logs que se van a mostrar
+        level: config.logger.levelConsole, // Máximo nivel de logs que se van a mostrar
         format: winston.format.combine(
             filtrarLogs('console'),
             winston.format.colorize(),
@@ -56,8 +56,8 @@ const transports = {
         )
     }),
     file: new winston.transports.File({
-        filename: log.filename,
-        level: log.levelFile, // Máximo nivel de logs que se van a escribir
+        filename: config.logger.filename,
+        level: config.logger.levelFile, // Máximo nivel de logs que se van a escribir
         format: winston.format.combine(
             filtrarLogs('file'),
             winston.format.label({ label: 'SERV' }),

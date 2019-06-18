@@ -1,5 +1,5 @@
 const entrevistasData = require('../models/entrevistasDB');
-const { conexionPool } = require('../config/database');
+const { conexionPool } = require('../helpers/conexionPool');
 const { logger } = require('../helpers/logger');
 
 /**

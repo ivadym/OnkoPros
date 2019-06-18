@@ -1,5 +1,5 @@
 const authData = require('../models/authDB');
-const { conexionPool } = require('../config/database');
+const { conexionPool } = require('../helpers/conexionPool');
 const { logger } = require('../helpers/logger');
 
 /**

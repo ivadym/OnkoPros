@@ -40,6 +40,7 @@ testem.log
 /typings
 RSA
 logs
+config.env
 
 # System Files
 .DS_Store

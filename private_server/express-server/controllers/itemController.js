@@ -1,5 +1,5 @@
 const itemData = require('../models/itemDB');
-const { conexionPool } = require('../config/database');
+const { conexionPool } = require('../helpers/conexionPool');
 const { extraerIdEntrevistaUsuario } = require('../helpers/helperDB');
 const { logger } = require('../helpers/logger');
 
