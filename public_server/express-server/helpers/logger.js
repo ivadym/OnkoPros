@@ -10,7 +10,7 @@ const formatoPersonalizado = winston.format.printf(({ timestamp, label, level, m
     return `${timestamp} [${label}] ${level}: ${message}`;
 });
 
-const timestampFormat = 'DD/MM/YYYY HH:mm:ss:SSS'
+const timestampFormat = 'DD/MM/YYYY HH:mm:ss:SSS';
 
 /**
  * Filtra los logs a mostrar/escribir por nivel
