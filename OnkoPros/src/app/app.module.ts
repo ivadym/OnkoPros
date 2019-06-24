@@ -7,10 +7,12 @@ import { AppComponent } from './app.component';
 import { CuadroDialogoComponent } from './components/cuadro-dialogo/cuadro-dialogo.component';
 import { NoEncontradoComponent } from './components/no-encontrado/no-encontrado.component';
 
-import { AuthModule } from './modules/auth/auth.module';
-import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { AuthModule } from './modules/auth/auth.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { AppRoutingModule } from './app-routing.module';
 
 import { httpInterceptorProviders } from './interceptors/http-interceptor-providers';
@@ -24,7 +26,9 @@ import { httpInterceptorProviders } from './interceptors/http-interceptor-provid
   imports: [
     BrowserModule,
     HttpClientModule,
+    FlexLayoutModule,
     NgxSpinnerModule,
+    NoopAnimationsModule,
     AuthModule,
     DashboardModule,
     LoggerModule.forRoot({ // NgxLoggerLevels: TRACE|DEBUG|INFO|LOG|WARN|ERROR|FATAL|OFF
