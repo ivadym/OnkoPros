@@ -1,36 +1,35 @@
-<div class="row justify-content-center">
-  <div class="col-auto">
-    <form [formGroup]="loginForm" (ngSubmit)="login()">
-      <div class="row">
-        <div class="col-12 p-1">
-          <h2 class="login-instrucciones display-4">
-            Escriba su nombre de usuario y contraseña
-          </h2>
-        </div>
+<mat-card class="login-card">
+  <img mat-card-img class="logo-onkologikoa" src="../../../../../assets/logos/onkologikoa.svg" alt="Logo Onkologikoa">
+  <mat-card-title class="login-titulo">
+    Bienvenido a OnkoPros
+  </mat-card-title>
+  <mat-card-content>
+    <form [formGroup]="loginForm" (ngSubmit)="login()" #form="ngForm">
+      <div>
+        <mat-form-field class="login-campo" appearance="outline">
+          <mat-label class="login-label">Usuario</mat-label>
+          <input matInput placeholder="Nombre de usuario" formControlName="usuario" autocomplete="off" required autofocus>
+          <mat-icon matSuffix>person</mat-icon>
+          <mat-error *ngIf="usuario.invalid && (usuario.dirty || usuario.touched) && usuario.errors.required">
+            Debe introducir un nombre de usuario
+          </mat-error>
+        </mat-form-field>
       </div>
-      <div class="row">
-        <div class="col-12 p-1">
-          <input class="form-control" type="text" formControlName="usuario" placeholder="Usuario" required autofocus>
-          <div *ngIf="usuario.invalid && (usuario.dirty || usuario.touched) && usuario.errors.required" class="alert-warning">
-            Introduzca un nombre de usuario
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12 p-1">
-          <input class="form-control" type="password" formControlName="clave" placeholder="Clave" required>
-          <div *ngIf="clave.invalid && (clave.dirty || clave.touched) && clave.errors.required" class="alert-warning">
-            Introduzca una clave de usuario
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12 p-1">
-          <button [disabled]="!loginForm.valid" class="btn btn-block" type="submit">
-            Iniciar sesión
-          </button>
-        </div>
+      <div>
+        <mat-form-field class="login-campo" appearance="outline">
+          <mat-label class="login-label">Clave</mat-label>
+          <input matInput placeholder="Clave de usuario" formControlName="clave" required [type]="hidePassword ? 'password' : 'text'">
+          <mat-icon matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          <mat-error *ngIf="clave.invalid && (clave.dirty || clave.touched) && clave.errors.required">
+            Debe introducir una clave de usuario
+          </mat-error>
+        </mat-form-field>
       </div>
     </form>
-  </div>
-</div>
+    <mat-card-actions>
+      <button mat-button type="button" class="login-button" [disabled]="!loginForm.valid || spinner" (click)="form.ngSubmit.emit()">
+        Iniciar sesión
+      </button>
+    </mat-card-actions>  
+  </mat-card-content>
+</mat-card>

@@ -1,54 +1,72 @@
-.row {
-    display: block; /* IE11 */
-}
-
-.login-instrucciones {
-    font-size: 16px;
-}
-
-.form-control {
-    color: #2A367B;
-    font-weight: 900;
-    background-color:#F2F4FF;
-    border-radius: 5px;
-    border-color: transparent;
+.login-card {
+    max-width: 500px;
+    margin: auto;
+    margin-top: 5%;
+    text-align: center;
     box-shadow: none;
 }
 
-/* Campo de texto seleccionado */
-.form-control:focus {
-    border-bottom-color: #2A367B;
+.logo-onkologikoa {
+    width: 50%;
 }
 
-/* Placeholder */
-.form-control::placeholder {
-    font-weight: normal;
+.login-titulo {
+    color: #2A7B6F;
+    font-size: 24px;
+    font-weight: 400;
+    padding: 40px;
+}
+
+.login-campo {
+    color: #2A367B;
+    font-size: 16px;
+    font-weight: 400;
+    padding-bottom: 10px;
+    width: 80%;
+}
+
+::ng-deep .login-campo .mat-form-field-outline  { /* Bordes */
     color: #2A367B;
 }
 
-/* Placeholder */
-.form-control:focus::placeholder {
-    font-weight: normal;
+::ng-deep .login-campo .mat-form-field-label { /* Label del asterisco */
+    color: #2A367B;
+}
+
+::ng-deep .login-campo .mat-form-field-required-marker { /* Asterisco del label */
+    color: red;
+}
+
+::ng-deep .login-campo ::placeholder { /* Placeholder */
     color: rgba(42, 54, 123, 0.5);
 }
 
-.btn {
-    color: white;
-    background-color: #2A367B;
-    border-radius: 5px;
-    box-shadow: none;
+.login-label {
+    font-size: 16px;
 }
 
-.btn:disabled {
+.login-button {
+    color: white;
+    background-color: #2A7B6F;
+    font-size: 22px;
+    font-weight: 400;
+    outline: none;
+    padding: 10px;
+    box-shadow: none;
+    border: none;
+    border-radius: 5px;
+    width: 80%;
+    cursor: pointer;
+}
+
+.login-button:hover {
+    background-color: rgba(42, 123, 111, 0.9);
+}
+
+.login-button:disabled {
     cursor: not-allowed;
 }
 
-.btn:hover {
-    background-color: rgba(28, 43, 124, 0.9);
-}
-
-.alert-warning {
-    color: darkorange;
-    background-color: transparent;
-    font-size: 14px;
+:disabled {
+    opacity: 0.5;
 }

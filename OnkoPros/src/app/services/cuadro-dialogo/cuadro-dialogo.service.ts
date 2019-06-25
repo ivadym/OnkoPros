@@ -82,24 +82,22 @@ export class CuadroDialogoService {
     modal.componentInstance.mensaje_2 = 'Elija uno para iniciar sesión.';
     modal.componentInstance.perfiles = usuario.Perfil;
     modal.componentInstance.alerta = true;
-    return modal.result.then(
-      res => {
-        switch(res) {
-          case "Administrador": {
-            usuario.Perfil = ["Administrador"];
-            return usuario;
-          } 
-          case "Profesional de la salud": {
-            usuario.Perfil = ["Profesional de la salud"];
-            return usuario;
-          } 
-          case "Paciente": {
-            usuario.Perfil = ["Paciente"];
-            return usuario; 
-          }
+    return modal.result.then(res => {
+      switch(res) {
+        case "Administrador": {
+          usuario.Perfil = ["Administrador"];
+          return usuario;
+        } 
+        case "Profesional de la salud": {
+          usuario.Perfil = ["Profesional de la salud"];
+          return usuario;
+        } 
+        case "Paciente": {
+          usuario.Perfil = ["Paciente"];
+          return usuario; 
         }
       }
-    );
+    });
   }
 
 }

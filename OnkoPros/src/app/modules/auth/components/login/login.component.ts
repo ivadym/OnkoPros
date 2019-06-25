@@ -17,6 +17,7 @@ import { HttpErrorHandlerService } from '../../../../services/error-handler/http
 export class LoginComponent implements OnInit {
   
   spinner: boolean = false;
+  hidePassword: boolean = true;
   private _spinnerSubscription: Subscription;
 
   loginForm = this.formBuilder.group({
@@ -39,7 +40,9 @@ export class LoginComponent implements OnInit {
     );
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.hidePassword = true;
+  }
 
   ngOnDestroy() {
     this._spinnerSubscription.unsubscribe();
@@ -68,17 +71,16 @@ export class LoginComponent implements OnInit {
       usuario => {
         this.logger.log(`Usuario logueado correctamente (id: ${usuario.IdUsuario})`);
         if (usuario.Perfil.length > 1) { // Usuario con múltiples perfiles
-          this.cuadroDialogoService.seleccionPerfil(usuario).then(
-            res => {
-              if (res) {
-                this.authService.usuarioLogueado = res;
-                let redirect = this.authService.urlInicial ? this.authService.urlInicial : '';
-                this.navegacionService.navegar(redirect, true);
-              } else {
-                return; // El usuario ha cancelado la selección de perfil (y por lo tanto el login)
-              }
+          this.cuadroDialogoService.seleccionPerfil(usuario)
+          .then(res => {
+            if (res) {
+              this.authService.usuarioLogueado = res;
+              let redirect = this.authService.urlInicial ? this.authService.urlInicial : '';
+              this.navegacionService.navegar(redirect, true);
+            } else {
+              return; // El usuario ha cancelado la selección de perfil (y por lo tanto el login)
             }
-          );
+          });
         } else { // Usuario con un único perfil
           this.authService.usuarioLogueado = usuario;
           let redirect = this.authService.urlInicial ? this.authService.urlInicial : '';
@@ -91,7 +93,12 @@ export class LoginComponent implements OnInit {
           this.cuadroDialogoService.alerta(
             'Las credenciales introducidas son incorrectas.',
             'Vuelva a intentarlo o contacte con su personal clínico.'
-          );
+          ).then(res => {
+            this.loginForm.controls['usuario'].setValue(this.loginForm.get('usuario').value); // Se mantiene nombre de usuario introducido
+            this.loginForm.controls['clave'].setValue('');
+            this.hidePassword = true;
+            return;
+          });
         }
         this.errorHandler.handleError(error, 'login()');
       }

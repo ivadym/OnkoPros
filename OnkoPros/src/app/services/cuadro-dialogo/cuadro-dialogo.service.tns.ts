@@ -44,24 +44,22 @@ export class CuadroDialogoService {
       cancelButtonText: "Cancelar",
       actions: usuario.Perfil,
       cancelable: false // Solo Android
-    }).then(
-      res => {
-        switch(res) {
-          case "Administrador": {
-            usuario.Perfil = ["Administrador"];
-            return usuario;
-          } 
-          case "Profesional de la salud": {
-            usuario.Perfil = ["Profesional de la salud"];
-            return usuario;
-          } 
-          case "Paciente": {
-            usuario.Perfil = ["Paciente"];
-            return usuario; 
-          }
+    }).then(res => {
+      switch(res) {
+        case "Administrador": {
+          usuario.Perfil = ["Administrador"];
+          return usuario;
+        } 
+        case "Profesional de la salud": {
+          usuario.Perfil = ["Profesional de la salud"];
+          return usuario;
+        } 
+        case "Paciente": {
+          usuario.Perfil = ["Paciente"];
+          return usuario; 
         }
       }
-    );
+    });
   }
 
 }

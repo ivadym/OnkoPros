@@ -90,15 +90,13 @@ export class ItemsComponent implements OnInit {
       return this.cuadroDialogoService.advertencia(
         '¿Desea abandonar la entrevista actual sin finalizarla?', 
         'Se perderán los cambios no guardados.'
-      ).then(
-        res => {
-          if (res) {
-            return true;
-          } else {
-            return false;
-          }
+      ).then(res => {
+        if (res) {
+          return true;
+        } else {
+          return false;
         }
-      );
+      });
     } else {
       return true;
     }
@@ -186,12 +184,10 @@ export class ItemsComponent implements OnInit {
             this.cuadroDialogoService.alerta(
               'Atención, es necesario que siga las siguientes intrucciones:',
               item.Valores[i].Alerta
-            ).then(
-              res => {
-                this.extraerSiguienteItem(item.IdEntrevista);
-                return;
-              }
-            );
+            ).then(res => {
+              this.extraerSiguienteItem(item.IdEntrevista);
+              return;
+            });
           }
         }
         this.extraerSiguienteItem(item.IdEntrevista);
@@ -251,11 +247,9 @@ export class ItemsComponent implements OnInit {
     this.cuadroDialogoService.alerta(
       null,
       this.item.Tooltip
-    ).then(
-      res => {
-        return;
-      }
-    );
+    ).then(res => {
+      return;
+    });
   }
 
   /**
