@@ -3,6 +3,7 @@ import { NativeScriptModule } from 'nativescript-angular/nativescript.module';
 import { NativeScriptHttpClientModule } from 'nativescript-angular/http-client';
 
 import { AppComponent } from './app.component';
+
 import { AuthModule } from './modules/auth/auth.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { AppRoutingModule } from './app-routing.module';

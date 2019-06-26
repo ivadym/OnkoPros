@@ -1,20 +1,44 @@
-.modal-title {
-    color: #4D2A7B;
-    font-size: 22px;
+.dialog-titulo {
+    color:  #2A7B6F;
 }
 
-.btn-modal {
-    color: #4D2A7B;
-    background-color: rgba(77, 42, 123, 0.1);
-    border-radius: 5px;
+.dialog-nombre {
+    float: right;
 }
 
-.btn-modal:focus {
-    border-color: #4D2A7B;
+.dialog-alerta {
+    color: darkgreen;
+}
+
+.dialog-advertencia {
+    color: darkred;
+}
+
+.dialog-button, .dialog-perfil {
+    color: #2A7B6F;
+    background-color: transparent;
+    font-size: 18px;
+    font-weight: 400;
+    text-align: left;
+    outline: none;
+    padding: 10px;
     box-shadow: none;
+    border: none;
+    border-radius: 5px;
+    margin: 5px;
+    cursor: pointer;
 }
 
-.btn-modal:hover {
+.dialog-button:focus, .dialog-perfil:focus {
     color: white;
-    background-color: #4D2A7B;
+    background-color: #2A7B6F;
+}
+
+.dialog-button:hover, .dialog-perfil:hover {
+    color: white;
+    background-color: rgba(42, 123, 111, 0.9);
+}
+
+.dialog-item {
+    margin-bottom: 5px;
 }

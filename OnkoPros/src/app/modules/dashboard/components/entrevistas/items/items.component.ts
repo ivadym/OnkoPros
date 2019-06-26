@@ -90,13 +90,7 @@ export class ItemsComponent implements OnInit {
       return this.cuadroDialogoService.advertencia(
         '¿Desea abandonar la entrevista actual sin finalizarla?', 
         'Se perderán los cambios no guardados.'
-      ).then(res => {
-        if (res) {
-          return true;
-        } else {
-          return false;
-        }
-      });
+      );
     } else {
       return true;
     }

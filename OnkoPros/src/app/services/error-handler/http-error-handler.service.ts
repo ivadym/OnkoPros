@@ -52,22 +52,26 @@ export class HttpErrorHandlerService {
    * Trata el error HTTP 403 Forbidden
    */
   forbidden(): void {
+    this.authService.limpiarSesion();
     this.cuadroDialogoService.alerta(
       'Su sesión ha caducado.',
       'Si lo desea, puede volver a iniciar sesión.'
-    );
-    this.authService.limpiarSesion();
+    ).then(res => {
+      return;
+    });
   }
 
   /**
    * Trata el error HTTP 500 - Internal Server Error
    */
   serverError(): void {
+    this.navegacionService.navegar('/dashboard', true);
     this.cuadroDialogoService.alerta(
       'Se ha producido un error en el servidor.',
       'Vuelva a intentar la operación más adelante.'
-    );
-    this.navegacionService.navegar('/dashboard', true)
+    ).then(res => {
+      return;
+    });
   }
   
 }

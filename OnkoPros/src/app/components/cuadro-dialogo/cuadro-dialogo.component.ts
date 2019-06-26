@@ -1,31 +1,25 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit, Inject } from '@angular/core';
+import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 
-@Component({
-  selector: 'app-cuadro-dialogo',
-  templateUrl: './cuadro-dialogo.component.html',
-  styleUrls: ['./cuadro-dialogo.component.css'],
-  encapsulation: ViewEncapsulation.None,
-  styles: [`
-    .window-modal .modal-content {
-      border-color: #4D2A7B;
-      border-radius: 5px;
-    }
-    .backdrop-color {
-      background-color: rgba(42, 54, 123, 0.2);
-    }
-  `]
-})
-export class CuadroDialogoComponent implements OnInit {
-
+export interface DialogData {
   mensaje_1: string;
   mensaje_2: string;
   perfiles: string[];
   alerta: boolean;
+  
+}
+
+@Component({
+  selector: 'app-cuadro-dialogo',
+  templateUrl: './cuadro-dialogo.component.html',
+  styleUrls: ['./cuadro-dialogo.component.css']
+})
+export class CuadroDialogoComponent implements OnInit {
 
   constructor(
-    public modal: NgbActiveModal
-  ) { }
+    public dialogRef: MatDialogRef<CuadroDialogoComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData
+  ) {}
 
   ngOnInit() { }
 

@@ -1,37 +1,31 @@
-<div class="modal-header">
+<h2 fxShow fxHide.lt-sm mat-dialog-title class="dialog-titulo">
   <img src="./../../assets/logos/onkologikoa.ico">
-  <h1 class="modal-title display-4">
-    OnkoPros
-  </h1>
-</div>
-<div class="modal-body">
-  <p><strong>{{mensaje_1}}</strong></p>
-  <p *ngIf="alerta" class="text-success">
-    {{mensaje_2}}
+  <span class="dialog-nombre">OnkoPros</span>
+</h2>
+<mat-dialog-content>
+  <h3>{{data.mensaje_1}}</h3>
+  <p *ngIf="data.alerta" class="dialog-alerta">
+    {{data.mensaje_2}}
   </p>
-  <p *ngIf="!alerta" class="text-danger">
-    {{mensaje_2}}
+  <p *ngIf="!data.alerta" class="dialog-advertencia">
+    {{data.mensaje_2}}
   </p>
-</div>
-<div class="modal-footer">
-  <div class="container">
-    <div *ngIf="!perfiles" class="row justify-content-center">
-      <button *ngIf="alerta"ngbAutofocus type="button" class="btn btn-modal col-5 m-2" (click)="modal.close('Aceptar')">
-        Aceptar
-      </button>
-      <button *ngIf="!alerta" type="button" class="btn btn-modal col-5 m-2" (click)="modal.close('Aceptar')">
-        Aceptar
-      </button>
-      <button *ngIf="!alerta" ngbAutofocus type="button" class="btn btn-modal col-5 m-2" (click)="modal.dismiss('Cancelar')">
-        Cancelar
-      </button>
-    </div>
-    <div *ngIf="perfiles">
-      <div *ngFor="let perfil of perfiles" class="row justify-content-center">
-        <button type="button" class="btn btn-modal col-12 col-md-6 m-2" (click)="modal.close(perfil)">
-          {{perfil}}
-        </button>
-      </div>
-    </div>
+</mat-dialog-content>
+<mat-dialog-actions *ngIf="!data.perfiles" align="end">
+  <div *ngIf="data.alerta">
+    <button mat-button class="dialog-button" [mat-dialog-close]="true" cdkFocusInitial>Aceptar</button>
   </div>
-</div>
+  <div *ngIf="!data.alerta">
+    <button mat-button class="dialog-button" [mat-dialog-close]="false" cdkFocusInitial>Cancelar</button>
+    <button mat-button class="dialog-button" [mat-dialog-close]="true">Aceptar</button>
+  </div>
+</mat-dialog-actions>
+<mat-dialog-actions *ngIf="data.perfiles" align="center">
+  <mat-list>
+    <mat-list-item class="dialog-item" *ngFor="let perfil of data.perfiles; let i = index">
+      <button mat-button class="dialog-perfil" [mat-dialog-close]="perfil">
+        {{perfil}}
+      </button>
+    </mat-list-item>
+  </mat-list>
+</mat-dialog-actions>
