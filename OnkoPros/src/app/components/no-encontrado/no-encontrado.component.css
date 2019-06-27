@@ -1,16 +1,39 @@
-.notFound {
-    height: 100vh;
-    display: flex;
-    align-items: center;
+.not-found-card {
+    margin: 15% 5% 5% 5%;
 }
 
-.notFoundMensaje {
-    color: rgba(255, 0, 0, 0.75);
-    font-size: 22px;
-    font-weight: 600;
+.not-found-titulo {
+    color: #2A367B;
+    font-size: 24px;
+    font-weight: 500;
 }
 
-.btn {
+.not-found-contenido {
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.not-found-button {
+    color: #2A7B6F;
+    background-color: transparent;
+    font-size: 18px;
+    font-weight: 400;
+    text-align: left;
+    outline: none;
+    padding: 10px;
+    box-shadow: none;
+    border: none;
+    border-radius: 5px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.not-found-button:focus {
     color: white;
-    background-color: #2A367B;
+    background-color: #2A7B6F;
+}
+
+.not-found-button:hover {
+    color: white;
+    background-color: rgba(42, 123, 111, 0.9);
 }

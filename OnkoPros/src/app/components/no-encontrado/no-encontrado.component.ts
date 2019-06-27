@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NavegacionService } from '../../services/navegacion/navegacion.service';
 
 @Component({
   selector: 'app-no-encontrado',
@@ -7,8 +8,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NoEncontradoComponent implements OnInit {
 
-  constructor( ) { }
-
+  constructor(
+    private navegacionService: NavegacionService
+  ) { }
+  
   ngOnInit() { }
-
+  
+  /**
+   * Redirige al usuario a la página anterior
+   */
+  retroceder() {
+    this.navegacionService.retroceder();
+  }
+  
 }
