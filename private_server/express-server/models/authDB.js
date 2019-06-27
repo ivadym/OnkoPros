@@ -9,7 +9,7 @@ const { adaptarPerfilUsuario, adaptarSexo } = require('../helpers/adaptador');
 function comprobarCredenciales(pool, usuario, clave) {
     var query = `SELECT u.IdUsuario, up.IdPerfil, u.Usuario, u.Nombre, u.PrimerApellido, u.SegundoApellido, u.Sexo,  u.FechaNacimiento, u.Telefono, u.Email
                 FROM GEOP_USUARIO u INNER JOIN GEOP_USUARIO_PERFIL up ON up.IdUsuario=u.IdUsuario
-                WHERE u.Usuario=@usuario AND u.Clave=@clave AND up.Estado=1;`;
+                WHERE u.Usuario=@usuario COLLATE Modern_Spanish_CS_AS AND u.Clave=@clave COLLATE Modern_Spanish_CS_AS AND up.Estado=1;`;
     var result = [];
     
     return new Promise(function(resolve, reject) {
