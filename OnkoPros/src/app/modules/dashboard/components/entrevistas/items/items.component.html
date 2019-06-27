@@ -1,3 +1,4 @@
+<!--
 <div class="row row-item">
   <div *ngIf="item" class="col-sm-12 col-md-8 col-item">
     <div class="row row-header">
@@ -17,7 +18,7 @@
       </div>
     </div>
     <form (ngSubmit)="responder()">
-      <!-- RADIO BUTTON & CHECKBOX -->
+      RADIO BUTTON & CHECKBOX
       <div *ngIf="item.TipoItem === 'RB' || item.TipoItem === 'CB'" class="opciones-item">
         <div *ngFor="let val of item.Valores" class="row">
           <div class="col-10 p-1 custom-control custom-{{item.TipoItem === 'RB' ? 'radio' : 'checkbox'}}">
@@ -36,7 +37,7 @@
           </div>
         </div>
       </div>
-      <!-- SELECT BUTTON -->
+      SELECT BUTTON
       <div *ngIf="item.TipoItem === 'SB'" class="opciones-item">
         <ng-select [items]="item.Valores" class="custom"
           placeholder="Seleccione una de las opciones..."
@@ -69,3 +70,4 @@
     </form>
   </div>
 </div>
+-->

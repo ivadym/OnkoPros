@@ -6,7 +6,6 @@ export interface DialogData {
   mensaje_2: string;
   perfiles: string[];
   alerta: boolean;
-  
 }
 
 @Component({

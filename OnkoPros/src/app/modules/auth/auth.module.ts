@@ -7,7 +7,7 @@ import { LoginComponent } from './components/login/login.component';
 
 import { AuthRoutingModule } from './auth-routing.module';
 
-// Angular material
+// Componentes externos & Angular Material
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material';

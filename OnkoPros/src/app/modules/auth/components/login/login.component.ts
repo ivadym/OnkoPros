@@ -91,8 +91,8 @@ export class LoginComponent implements OnInit {
         this._changeDetectionRef.detectChanges();
         if (error.status === 403) {
           this.cuadroDialogoService.alerta(
-            'Las credenciales introducidas son incorrectas.',
-            'Vuelva a intentarlo o contacte con su personal clínico.'
+            'Las credenciales introducidas son incorrectas',
+            'Vuelva a intentarlo o contacte con su personal clínico'
           ).then(res => {
             this.loginForm.controls['usuario'].setValue(this.loginForm.get('usuario').value); // Se mantiene nombre de usuario introducido
             this.loginForm.controls['clave'].setValue('');

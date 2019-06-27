@@ -45,8 +45,8 @@ export class CuadroDialogoService {
     const dialogRef = this.dialog.open(CuadroDialogoComponent, {
       disableClose: true,
       data : { 
-        mensaje_1: 'Tiene asoaciados distintos perfiles a su cuenta de usuario.',
-        mensaje_2: 'Elija uno para iniciar sesión.',
+        mensaje_1: 'Tiene asoaciados distintos perfiles a su cuenta de usuario',
+        mensaje_2: 'Elija uno para iniciar sesión',
         perfiles: usuario.Perfil,
         alerta: true
       }

@@ -89,7 +89,7 @@ export class ItemsComponent implements OnInit {
       this.logger.log('Activado el guard asociado a canDeactivate')
       return this.cuadroDialogoService.advertencia(
         '¿Desea abandonar la entrevista actual sin finalizarla?', 
-        'Se perderán los cambios no guardados.'
+        'Se perderán los cambios no guardados'
       );
     } else {
       return true;

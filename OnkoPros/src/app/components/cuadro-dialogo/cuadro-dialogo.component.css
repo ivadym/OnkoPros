@@ -1,20 +1,17 @@
 .dialog-titulo {
-    color:  #2A7B6F;
-}
-
-.dialog-nombre {
-    float: right;
+    color: #2A367B;
+    margin-bottom: -5px;
 }
 
 .dialog-alerta {
-    color: darkgreen;
+    color: green;
 }
 
 .dialog-advertencia {
-    color: darkred;
+    color: red;
 }
 
-.dialog-button, .dialog-perfil {
+.dialog-button {
     color: #2A7B6F;
     background-color: transparent;
     font-size: 18px;
@@ -29,12 +26,12 @@
     cursor: pointer;
 }
 
-.dialog-button:focus, .dialog-perfil:focus {
+.dialog-button:focus {
     color: white;
     background-color: #2A7B6F;
 }
 
-.dialog-button:hover, .dialog-perfil:hover {
+.dialog-button:hover {
     color: white;
     background-color: rgba(42, 123, 111, 0.9);
 }

@@ -1,9 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { NgSelectModule } from '@ng-select/ng-select';
-import { ChartsModule } from 'ng2-charts';
 
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { InicioComponent } from './components/inicio/inicio.component';
@@ -16,6 +13,14 @@ import { ItemsComponent } from './components/entrevistas/items/items.component';
 import { ItemsFinComponent } from './components/entrevistas/items-fin/items-fin.component';
 
 import { DashboardRoutingModule } from './dashboard-routing.module';
+
+// Componentes externos & Angular Material
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [
@@ -32,9 +37,12 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
   imports: [
     CommonModule,
     FormsModule,
-    NgbModule,
-    NgSelectModule,
-    ChartsModule,
+    MatToolbarModule,
+    MatSidenavModule,
+    MatTabsModule,
+    MatMenuModule,
+    MatIconModule,
+    MatButtonModule,
     DashboardRoutingModule
   ]
 })

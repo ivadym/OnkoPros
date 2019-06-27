@@ -115,7 +115,7 @@ export class AuthService {
     if (regEx.test(url)) {
       this.cuadroDialogoService.advertencia(
         '¿Desea cerrar la sesión actual?',
-        'Se perderán los cambios no guardados.'
+        'Se perderán los cambios no guardados'
       ).then(res => {
         if (res) {
           this.limpiarSesion();

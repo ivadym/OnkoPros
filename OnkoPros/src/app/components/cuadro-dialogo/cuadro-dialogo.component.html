@@ -1,9 +1,7 @@
-<h2 fxShow fxHide.lt-sm mat-dialog-title class="dialog-titulo">
-  <img src="./../../assets/logos/onkologikoa.ico">
-  <span class="dialog-nombre">OnkoPros</span>
+<h2 mat-dialog-title class="dialog-titulo">
+  {{data.mensaje_1}}
 </h2>
 <mat-dialog-content>
-  <h3>{{data.mensaje_1}}</h3>
   <p *ngIf="data.alerta" class="dialog-alerta">
     {{data.mensaje_2}}
   </p>
@@ -20,10 +18,10 @@
     <button mat-button class="dialog-button" [mat-dialog-close]="true">Aceptar</button>
   </div>
 </mat-dialog-actions>
-<mat-dialog-actions *ngIf="data.perfiles" align="center">
+<mat-dialog-actions *ngIf="data.perfiles">
   <mat-list>
     <mat-list-item class="dialog-item" *ngFor="let perfil of data.perfiles; let i = index">
-      <button mat-button class="dialog-perfil" [mat-dialog-close]="perfil">
+      <button mat-button class="dialog-button" [mat-dialog-close]="perfil">
         {{perfil}}
       </button>
     </mat-list-item>
