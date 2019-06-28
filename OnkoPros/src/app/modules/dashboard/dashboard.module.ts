@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { InicioComponent } from './components/inicio/inicio.component';
@@ -17,10 +18,10 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
 // Componentes externos & Angular Material
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
 
 @NgModule({
   declarations: [
@@ -37,12 +38,13 @@ import { MatButtonModule } from '@angular/material/button';
   imports: [
     CommonModule,
     FormsModule,
+    FlexLayoutModule,
     MatToolbarModule,
     MatSidenavModule,
-    MatTabsModule,
-    MatMenuModule,
+    MatListModule,
     MatIconModule,
     MatButtonModule,
+    MatDividerModule,
     DashboardRoutingModule
   ]
 })

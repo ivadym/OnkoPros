@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { Entrevista } from '../../../../../classes/entrevista';
@@ -11,7 +11,6 @@ import { HttpErrorHandlerService } from '../../../../../services/error-handler/h
 @Component({
   selector: 'app-entrevistas-lista',
   templateUrl: './entrevistas-lista.component.html',
-  encapsulation: ViewEncapsulation.None,
   styleUrls: ['./entrevistas-lista.component.css']
 })
 export class EntrevistasListaComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ListViewEventData, PullToRefreshStyle } from "nativescript-ui-listview";
 import { RadListViewComponent } from "nativescript-ui-listview/angular";
 import { Color } from "tns-core-modules/color";
@@ -14,7 +14,6 @@ import { HttpErrorHandlerService } from '../../../../../services/error-handler/h
 @Component({
   selector: 'app-entrevistas-lista',
   templateUrl: './entrevistas-lista.component.html',
-  encapsulation: ViewEncapsulation.None,
   styleUrls: ['./entrevistas-lista.component.css']
 })
 export class EntrevistasListaComponent implements OnInit {

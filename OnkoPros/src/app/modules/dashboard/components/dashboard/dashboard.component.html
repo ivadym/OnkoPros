@@ -1,48 +1,49 @@
-<!--
-<nav class="navbar navbar-expand">
-  <div class="container">
-    <a class="navbar-brand text-center d-none d-md-block">
-      <img src="../../../../../assets/logos/onkologikoa.ico" class="d-inline-block align-top" alt="Logo Onkologikoa">
-      <h1 class="brand-title display-4">
-        OnkoPros
-      </h1>
-    </a>
-    <ul class="navbar-nav nav-fill w-100 mr-1 mr-md-5">
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-            Inicio
+<div class="dashboard-toolbar">
+  <mat-toolbar class="toolbar">
+    <button mat-button class="toolbar-logo" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <img src="../../../../../assets/logos/ok_blanco.ico" alt="Logo Onkologikoa" height="40">
+      <h1 fxShow fxHide.lt-sm>OnkoPros</h1>
+    </button>
+    <span class="toolbar-fill"></span>
+    <button mat-icon-button class="toolbar-menu" (click)="snav.toggle()">
+      <mat-icon class ="toolbar-icon">menu</mat-icon>
+    </button>
+  </mat-toolbar>
+  <mat-sidenav-container class="toolbar-sidenav-container">
+    <mat-sidenav #snav mode="over" position="end">
+      <mat-nav-list>
+        <a mat-list-item class="sidenav-item" routerLink="/dashboard" routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }" (click)="snav.toggle()">
+            <mat-icon class="sidenav-icon">home</mat-icon>
+            <p fxShow fxHide.lt-sm class="sidenav-txt">Inicio</p>
         </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/dashboard/entrevistas" routerLinkActive="active">
-          Entrevistas
+        <a mat-list-item class="sidenav-item" routerLink="/dashboard/diario" routerLinkActive="active"
+          [ngStyle]="{'pointer-events': 'none', 'opacity': '0.6'}" (click)="snav.toggle()">
+            <mat-icon class="sidenav-icon">history</mat-icon>
+            <p fxShow fxHide.lt-sm class="sidenav-txt">Diario</p>
         </a>
-      </li>
-    </ul>
-    <ul class="navbar-nav">
-      <li class="nav-item dropdown" ngbDropdown>
-        <div class="btn btn-dropdown"  routerLinkActive="active" id="dropdown" ngbDropdownToggle>
-            {{usuarioLogueado.Nombre | titlecase}} {{usuarioLogueado.PrimerApellido | titlecase}}
-          <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="dropdown">
-            <a class="dropdown-item" routerLink="/dashboard/perfil" routerLinkActive="active">
-              Perfil de usuario
-            </a>
-            <a class="dropdown-item" routerLink="/dashboard/notificaciones" routerLinkActive="active">
-              Notificaciones
-            </a>
-            <div class="dropdown-divider"></div>
-            <button class="btn btn-logout dropdown-item" (click)="logout()">
-              Cerrar sesión
-              <i class="fas fa-sign-out-alt ml-1"></i>
-            </button>
-          </div>
-        </div>
-      </li>
-    </ul>
-  </div>
-</nav>
-  
-<div class="container">
-  <router-outlet></router-outlet>
+        <a mat-list-item class="sidenav-item" routerLink="/dashboard/entrevistas" routerLinkActive="active" (click)="snav.toggle()">
+          <mat-icon class="sidenav-icon">assignment</mat-icon>
+          <p fxShow fxHide.lt-sm class="sidenav-txt">Entrevistas</p>
+        </a>
+        <a mat-list-item class="sidenav-item" routerLink="/dashboard/notificaciones" routerLinkActive="active"
+          [ngStyle]="{'pointer-events': 'none', 'opacity': '0.6'}" (click)="snav.toggle()">
+            <mat-icon class="sidenav-icon">chat</mat-icon>
+            <p fxShow fxHide.lt-sm class="sidenav-txt">Mensajes</p>
+        </a>
+        <a mat-list-item class="sidenav-item" routerLink="/dashboard/perfil" routerLinkActive="active" (click)="snav.toggle()">
+          <mat-icon class="sidenav-icon">account_circle</mat-icon>          
+          <p fxShow fxHide.lt-sm class="sidenav-txt">{{usuarioLogueado.Nombre | titlecase}} {{usuarioLogueado.PrimerApellido | titlecase}}</p>
+        </a>
+        <mat-divider class="sidenav-divider"></mat-divider>
+        <a mat-list-item class="sidenav-item" (click)="snav.toggle(); logout()">
+          <mat-icon class="sidenav-icon sidenav-icon-exit">exit_to_app</mat-icon>
+          <p fxShow fxHide.lt-sm class="sidenav-txt sidenav-txt-exit">Cerrar sesión</p>
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
 </div>
--->

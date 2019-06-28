@@ -1,51 +1,90 @@
-.brand-title {
-    color: #4D2A7B;
-    font-size: 22px;
+.dashboard-toolbar {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 
-a, .btn {
-    color: #2A367B;
-    font-weight: 600;
-    box-shadow: none;
+.toolbar {
+    background-color: #2A367B;
 }
 
-.dropdown-item {
-    color: #2A367B;
-    font-weight: normal;
+.toolbar-fill {
+    flex: 1 1 auto;
 }
 
-.nav-item > a:hover, .btn:hover {
-    color: #2A367B;
-    background-color:rgba(42, 54, 123, 0.1);
-    border-radius: 5px;
-}
-
-.active {
+.toolbar-logo {
     color: white;
-    background-color:#2A367B;
-    border-radius: 5px;
 }
 
-.dropdown-menu {
+.toolbar-logo img {
+    padding-top: 5%;
+}
+
+.toolbar-menu {
+    color: white;
+    text-align: left;
+    width: 50px;
+    height: 50px;
+    margin-right: 5px;
+}
+
+.toolbar-icon {
+    font-size: 50px;
+}
+
+::ng-deep .toolbar-logo .mat-button-focus-overlay, ::ng-deep .toolbar-menu .mat-button-focus-overlay { /* Hover */
+    background-color: transparent;
+}
+
+::ng-deep .toolbar-logo .mat-ripple-element, ::ng-deep .toolbar-menu .mat-ripple-element { /* Active (click) */
+    background-color: transparent;
+}
+
+.toolbar-sidenav-container {
+    flex: 1; /* Permite al contenido comportarse como un elemento scrollable */
+}
+
+.sidenav-icon {
     color: #2A367B;
-    left: auto !important;
-    right: 0px;
-    display: none;
-    margin-top: 0;
-    border-color: #2A367B;
-    border-radius: 5px;
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    margin: 10px;
 }
 
-.dropdown:hover > .dropdown-menu {
-    display: block;
-}
-
-.dropdown-item.active {
-    border-radius: 0px;
-}
-
-.dropdown-item:hover {
+.sidenav-txt {
     color: #2A367B;
-    background-color:rgba(42, 54, 123, 0.1);
-    border-radius: 0px;
+    font-size: 20px;
+    margin: 10px 10px 10px 20px;
+}
+
+.sidenav-icon-exit, .sidenav-txt-exit {
+    color: red;
+}
+
+.sidenav-divider {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.sidenav-item:focus { /* Focus por defecto deshabilitado */
+    background-color: transparent;
+}
+
+.sidenav-item.active .sidenav-icon, .sidenav-item.active .sidenav-txt {
+    color: #2A7B6F;
+    font-weight: 500;
+    background-color: transparent;
+}
+
+.sidenav-item:hover {
+    background-color: rgba(42, 123, 111, 0.1);
+}
+
+::ng-deep .sidenav-item:active .mat-ripple-element {
+    background-color: rgba(42, 123, 111, 0.1);
 }
