@@ -1,75 +1,40 @@
-<!-- 
-<div class="row inicio-component">
-  <div class="col-12">
-    <h1 class="bienvenida-header display-4 text-center">
-      Bienvenido <i>{{usuarioLogueado.Nombre | titlecase}} {{usuarioLogueado.PrimerApellido | titlecase}} {{usuarioLogueado.SegundoApellido | titlecase}}</i>
-    </h1>
-    <div class="row justify-content-center">
-      <div class="col-md-5">
-        <div class="card">
-          <div class="card-header display-4 text-center">
-            Entrevistas realizadas
-          </div>
-          <div class="card-body">
-            <canvas baseChart
-                    [datasets]="historialData"
-                    [labels]="historialLabels"
-                    [options]="historialOptions"
-                    [colors]="historialColors"
-                    [legend]="historialLegend"
-                    [chartType]="historialType"
-                    (chartHover)="historialHovered($event)"
-                    (chartClick)="historialClicked($event)">
-            </canvas>
-          </div>
-          <button class="card-footer btn" (click)="cambiarGrafica()">
-            Cambiar visualización
-          </button>
+<div class="inicio-container">
+  <div fxLayout="row wrap" fxLayoutAlign.lt-md="center">
+    <mat-card class="card" routerLink="/dashboard/diario" [ngStyle]="{'pointer-events': 'none', 'opacity': '0.5'}">
+      <mat-card-header>
+        <div mat-card-avatar class="card-avatar">
+          <mat-icon class="sidenav-icon">history</mat-icon>
         </div>
-      </div>
-      <div class="col-md-5">
-        <div class="card">
-          <div class="card-header display-4 text-center">
-            Preguntas respondidas
-          </div>
-          <div class="card-body">
-            <canvas baseChart
-                    [data]="preguntasData"
-                    [labels]="preguntasLabels"
-                    [colors]="preguntasColors"
-                    [chartType]="preguntasType"
-                    (chartHover)="preguntasHovered($event)"
-                    (chartClick)="preguntasClicked($event)">
-            </canvas>
-          </div>
-          <button class="card-footer btn" (click)="randomize()">
-            Actualizar
-          </button>
+        <mat-card-title>Diario</mat-card-title>
+        <mat-card-subtitle>Información y estadísticas sobre el periodo de seguimiento</mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
+    <mat-card class="card" routerLink="/dashboard/entrevistas">
+      <mat-card-header>
+        <div mat-card-avatar class="card-avatar">
+          <mat-icon class="sidenav-icon">assignment</mat-icon>
         </div>
-      </div>
-    </div>
-    <div class="row justify-content-center">
-      <div class="col-md-11">
-        <div class="card">
-          <div class="card-header display-4 text-center">
-            Síntomas
-          </div>
-          <div class="card-body">
-            <canvas baseChart
-                    [datasets]="sintomasData"
-                    [labels]="sintomasLabels"
-                    [colors]="sintomasColors"
-                    [chartType]="sintomasType"
-                    (chartHover)="sintomasHovered($event)"
-                    (chartClick)="sintomasClicked($event)">
-            </canvas>
-          </div>
-          <button class="card-footer btn" (click)="randomize_2()">
-            Actualizar
-          </button>
+        <mat-card-title>Entrevistas</mat-card-title>
+        <mat-card-subtitle>Lista de cuestionarios a realizar como parte del proceso de seguimiento</mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
+    <mat-card class="card" routerLink="/dashboard/notificaciones" [ngStyle]="{'pointer-events': 'none', 'opacity': '0.5'}">
+      <mat-card-header>
+        <div mat-card-avatar class="card-avatar">
+          <mat-icon class="sidenav-icon">chat</mat-icon>
         </div>
-      </div>
-    </div>
+        <mat-card-title>Mensajes</mat-card-title>
+        <mat-card-subtitle>Comunicación con el equipo médico durante el periodo de seguimiento</mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
+    <mat-card class="card" routerLink="/dashboard/perfil">
+      <mat-card-header>
+        <div mat-card-avatar class="card-avatar">
+          <mat-icon class="sidenav-icon">account_circle</mat-icon>
+        </div>
+        <mat-card-title>{{usuarioLogueado.Nombre | titlecase}} {{usuarioLogueado.PrimerApellido | titlecase}}</mat-card-title>
+        <mat-card-subtitle>Perfil de usuario</mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
   </div>
 </div>
--->

@@ -1,33 +1,21 @@
-.inicio-component {
-    margin-top: 0%;
-}
-
-.bienvenida-header {
-    color: #4D2A7B;
-    font-size: 22px;
-    padding: 5%;
+.inicio-container {
+    margin: 20px;
 }
 
 .card {
-    color: #4D2A7B;
+    color: #2A367B;
+    width: 250px;
+    outline: none;
     border-radius: 5px;
-    margin: 5%;
-}
-.card-header {
-    font-size: 18px;
-    font-weight: 450;
-    background-color: rgba(77, 42, 123, 0.1);
-    border-color: #4D2A7B;
+    margin: 10px;
+    cursor: pointer;
 }
 
-.card-footer {
-    color: #4D2A7B;
-    background-color: rgba(77, 42, 123, 0.1);
-    box-shadow: none;
-    border-top-color: #4D2A7B;
+.card:hover {
+    background-color: rgba(42, 54, 123, 0.01);
 }
 
-.card-footer:hover {
-    color: white;
-    background-color: #4D2A7B;
+.card-avatar {
+    color: #2A7B6F;
+    text-align: center;
 }

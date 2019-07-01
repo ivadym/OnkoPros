@@ -26,9 +26,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     private _changeDetectionRef: ChangeDetectorRef
 
   ) {
-    this.authService.usuarioLogueadoObservable.subscribe(
-      usuario => this.usuarioLogueado = usuario
-    );
+    this.usuarioLogueado = this.authService.usuarioLogueado;
   }
 
   ngOnInit() {
