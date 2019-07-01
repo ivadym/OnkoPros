@@ -1,8 +1,9 @@
 <div class="dashboard-toolbar">
   <mat-toolbar class="toolbar">
-    <button mat-button class="toolbar-logo" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-      <img src="../../../../../assets/logos/ok_blanco.ico" alt="Logo Onkologikoa" height="40">
-      <h1 fxShow fxHide.lt-sm>OnkoPros</h1>
+    <button mat-button class="toolbar-logo" routerLink="/dashboard" routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }" (click)="snav.opened ? snav.toggle() : null">
+        <img src="../../../../../assets/logos/ok_blanco.ico" alt="Logo Onkologikoa" height="40">
+        <h1 fxShow fxHide.lt-sm>OnkoPros</h1>
     </button>
     <span class="toolbar-fill"></span>
     <button mat-icon-button class="toolbar-menu" (click)="snav.toggle()">
@@ -23,7 +24,7 @@
             <p fxShow fxHide.lt-sm class="sidenav-txt">Diario</p>
         </a>
         <a mat-list-item class="sidenav-item" routerLink="/dashboard/entrevistas" routerLinkActive="active" (click)="snav.toggle()">
-          <mat-icon class="sidenav-icon">assignment</mat-icon>
+          <mat-icon matBadge="{{nEntrevistas}}" class="sidenav-icon">assignment</mat-icon>
           <p fxShow fxHide.lt-sm class="sidenav-txt">Entrevistas</p>
         </a>
         <a mat-list-item class="sidenav-item" routerLink="/dashboard/notificaciones" routerLinkActive="active"
@@ -43,7 +44,7 @@
       </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content>
-      <router-outlet></router-outlet>
+      <router-outlet (activate)="actualizarBadgeEntrevistas()"></router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>

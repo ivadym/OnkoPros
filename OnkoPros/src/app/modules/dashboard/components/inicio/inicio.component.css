@@ -17,5 +17,23 @@
 
 .card-avatar {
     color: #2A7B6F;
+    font-size: 26px;
     text-align: center;
+}
+
+.card-avatar .mat-badge-content {
+    color: white;
+    background-color: orange;
+    max-width: 20px;
+    max-height: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.card-title {
+    font-size: 20px;
+}
+
+.card-subtitle {
+    font-size: 15px;
 }

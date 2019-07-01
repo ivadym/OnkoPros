@@ -56,6 +56,17 @@
     margin: 10px;
 }
 
+.sidenav-icon .mat-badge-content {
+    color: white;
+    background-color: orange;
+    max-width: 30px;
+    max-height: 30px;
+    font-size: 14px;
+    font-weight: 500;
+    top: -8px;
+    right: -8px;
+}
+
 .sidenav-txt {
     color: #2A367B;
     font-size: 20px;

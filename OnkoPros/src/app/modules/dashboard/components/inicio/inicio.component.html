@@ -5,17 +5,17 @@
         <div mat-card-avatar class="card-avatar">
           <mat-icon class="sidenav-icon">history</mat-icon>
         </div>
-        <mat-card-title>Diario</mat-card-title>
-        <mat-card-subtitle>Información y estadísticas sobre el periodo de seguimiento</mat-card-subtitle>
+        <mat-card-title class="card-title">Diario</mat-card-title>
+        <mat-card-subtitle class="card-subtitle">Información y estadísticas sobre el periodo de seguimiento</mat-card-subtitle>
       </mat-card-header>
     </mat-card>
     <mat-card class="card" routerLink="/dashboard/entrevistas">
       <mat-card-header>
         <div mat-card-avatar class="card-avatar">
-          <mat-icon class="sidenav-icon">assignment</mat-icon>
+          <mat-icon matBadge="{{nEntrevistas}}" class="sidenav-icon">assignment</mat-icon>
         </div>
-        <mat-card-title>Entrevistas</mat-card-title>
-        <mat-card-subtitle>Lista de cuestionarios a realizar como parte del proceso de seguimiento</mat-card-subtitle>
+        <mat-card-title class="card-title">Entrevistas</mat-card-title>
+        <mat-card-subtitle class="card-subtitle">Lista de cuestionarios a realizar como parte del proceso de seguimiento</mat-card-subtitle>
       </mat-card-header>
     </mat-card>
     <mat-card class="card" routerLink="/dashboard/notificaciones" [ngStyle]="{'pointer-events': 'none', 'opacity': '0.5'}">
@@ -23,8 +23,8 @@
         <div mat-card-avatar class="card-avatar">
           <mat-icon class="sidenav-icon">chat</mat-icon>
         </div>
-        <mat-card-title>Mensajes</mat-card-title>
-        <mat-card-subtitle>Comunicación con el equipo médico durante el periodo de seguimiento</mat-card-subtitle>
+        <mat-card-title class="card-title">Mensajes</mat-card-title>
+        <mat-card-subtitle class="card-subtitle">Comunicación con el equipo médico durante el periodo de seguimiento</mat-card-subtitle>
       </mat-card-header>
     </mat-card>
     <mat-card class="card" routerLink="/dashboard/perfil">
@@ -32,8 +32,8 @@
         <div mat-card-avatar class="card-avatar">
           <mat-icon class="sidenav-icon">account_circle</mat-icon>
         </div>
-        <mat-card-title>{{usuarioLogueado.Nombre | titlecase}} {{usuarioLogueado.PrimerApellido | titlecase}}</mat-card-title>
-        <mat-card-subtitle>Perfil de usuario</mat-card-subtitle>
+        <mat-card-title class="card-title">{{usuarioLogueado.Nombre | titlecase}} {{usuarioLogueado.PrimerApellido | titlecase}}</mat-card-title>
+        <mat-card-subtitle class="card-subtitle">Perfil de usuario</mat-card-subtitle>
       </mat-card-header>
     </mat-card>
   </div>
