@@ -29,6 +29,8 @@ app.use(expressErrorLogger);
 // Tratamiento de los errores
 app.use(errorHandler.errorHandler);
 
-app.listen(config.app.port, function() {
+const server = app.listen(config.app.port, function() {
     logger.info('servidor.iniciado.puerto.' + config.app.port);
 });
+
+server.timeout = 5000;

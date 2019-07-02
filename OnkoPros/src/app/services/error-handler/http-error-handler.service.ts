@@ -54,8 +54,8 @@ export class HttpErrorHandlerService {
   forbidden(): void {
     this.authService.limpiarSesion();
     this.cuadroDialogoService.alerta(
-      'Su sesión ha caducado.',
-      'Si lo desea, puede volver a iniciar sesión.'
+      'Su sesión ha caducado',
+      'Si lo desea, puede volver a iniciar sesión'
     ).then(res => {
       return;
     });
@@ -67,8 +67,8 @@ export class HttpErrorHandlerService {
   serverError(): void {
     this.navegacionService.navegar('/dashboard', true);
     this.cuadroDialogoService.alerta(
-      'Se ha producido un error en el servidor.',
-      'Vuelva a intentar la operación más adelante.'
+      'Se ha producido un error en el servidor',
+      'Vuelva a intentar la operación más adelante'
     ).then(res => {
       return;
     });

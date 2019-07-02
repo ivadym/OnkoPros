@@ -29,6 +29,8 @@ app.use(expressErrorLogger);
 // Ruta no encontrada: tratamiento del error
 app.use(errorHandler.errorHandler);
 
-app.listen(config.app.port, function() { // Puerto definido por IIS de Windows
+const server =app.listen(config.app.port, function() { // Puerto definido por IIS de Windows
     logger.info('servidor.IIS.iniciado.puerto.' + config.app.port);
 });
+
+server.timeout = 5000;
