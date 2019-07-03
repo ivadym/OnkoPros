@@ -19,14 +19,14 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class EntrevistasService {
-
-  private _entrevistasURL = environment.production ? 'api/entrevistas' : 'http://172.27.6.220:8081/api/entrevistas';
+  
+  private _entrevistasURL = environment.production ? 'api/entrevistas' : 'https://172.27.6.220:8443/api/entrevistas';
   
   constructor(
     private http: HttpClient,
     private spinnerService: SpinnerService
   ) { }
-
+  
   /**
    * GET API URL de las entrevistas
    */

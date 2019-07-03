@@ -1,4 +1,6 @@
 const express = require('express');
+const https = require('https');
+const fs = require('fs');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
@@ -29,7 +31,14 @@ app.use(expressErrorLogger);
 // Tratamiento de los errores
 app.use(errorHandler.errorHandler);
 
-const server = app.listen(config.app.port, function() {
+var options = {
+    cert: fs.readFileSync(config.app.cert),
+    key: fs.readFileSync(config.app.key)
+};
+
+const server = https.createServer(options, app);
+
+server.listen(config.app.port, function() {
     logger.info('servidor.iniciado.puerto.' + config.app.port);
 });
 

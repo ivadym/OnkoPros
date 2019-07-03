@@ -15,10 +15,9 @@ function reenviar(req, res, next) {
             'authorization': req.headers.authorization
         },
         json: req.body,
-        ca: fs.readFileSync('C:/Users/vivanchuk/Documents/ws-OnkoPros/private_server/nginx/ssl/cert.pem'),
-        agentOptions: { checkServerIdentity: function() {} }
+        "rejectUnauthorized": false,
     };
-
+    
     if (req.method === 'POST') {
         request.post(options, function optionalCallback(error, response, body) {
             if (error) {
