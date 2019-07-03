@@ -5,7 +5,9 @@ const env = process.env.NODE_ENV || 'dev';
 const dev = {
     app: {
         port: process.env.PORT || 8080,
-        privateServerURL: process.env.PRIVATE_SERVER_URL
+        privateServerURL: process.env.PRIVATE_SERVER_URL,
+        cert: '../../certificados/OKImpetus.crt',
+        key: '../../certificados/OKImpetus.rsa'
     },
     logger: {
         activo: true, // true: Logs activos, false: Logs desactivados

@@ -4,7 +4,9 @@ const env = process.env.NODE_ENV || 'dev';
 
 const dev = {
     app: {
-        port: process.env.PORT || 8081
+        port: process.env.PORT || 8443,
+        cert: '../../certificados/OKImpetus.crt',
+        key: '../../certificados/OKImpetus.rsa'
     },
     db: {
         userName: process.env.DB_USER,
