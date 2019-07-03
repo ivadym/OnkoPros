@@ -6,8 +6,8 @@ const dev = {
     app: {
         port: process.env.PORT || 8080,
         privateServerURL: process.env.PRIVATE_SERVER_URL,
-        cert: 'C:/Users/vivanchuk/Documents/ws-OnkoPros/certificados/OKImpetus.crt',
-        key: 'C:/Users/vivanchuk/Documents/ws-OnkoPros/certificados/OKImpetus.rsa'
+        cert: '../../certificados/OKImpetus.crt',
+        key: '../../certificados/OKImpetus.rsa'
     },
     logger: {
         activo: true, // true: Logs activos, false: Logs desactivados
