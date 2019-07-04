@@ -1,19 +1,19 @@
-<mat-card class="not-found-card">
-  <mat-card-title class="not-found-titulo">
-    Página no encontrada...
-  </mat-card-title>
-  <mat-card-subtitle class="not-found-contenido">
-    <p>
-      Es posible que la página que esté buscando ya no exista o que haya introducido una URL incorrecta
-    </p>
-  </mat-card-subtitle>
-  <mat-card-actions>
-    <button mat-button type="button" class="not-found-button" (click)="retroceder()">
-      Volver
-    </button>
-    <button mat-button type="button" class="not-found-button" routerLink="/dashboard" autofocus>
-      Ir a la página de inicio
-    </button>
-  </mat-card-actions>  
-</mat-card>
+<div fxLayout="row wrap" fxLayoutAlign="center">
+  <mat-card class="not-found-card">
+    <mat-card-title class="not-found-titulo">
+      Página no encontrada...
+    </mat-card-title>
+    <mat-card-subtitle class="not-found-subtitulo">
+      <p>Es posible que la página que esté buscando ya no exista o que haya introducido una URL incorrecta</p>
+    </mat-card-subtitle>
+    <mat-card-actions align="end">
+      <button mat-button type="button" class="not-found-button" (click)="retroceder()">
+        Volver
+      </button>
+      <button mat-button type="button" class="not-found-button" routerLink="/dashboard" autofocus>
+        Página de inicio
+      </button>
+    </mat-card-actions>  
+  </mat-card>
+</div>
 
