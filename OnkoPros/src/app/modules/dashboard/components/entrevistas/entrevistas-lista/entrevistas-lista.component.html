@@ -1,58 +1,30 @@
-<!--
-
-<div class="row row-ent">
-  <div class="col-12 col-ent">
-    <div *ngFor="let entrevista of entrevistas" class="row justify-content-center">
-      <ng-template #popContent>
-        <div *ngIf="entrevista.Tooltip">{{entrevista.Tooltip}}</div>
-        <div class="popover-fecha-limite text-right">{{entrevista.FechaLimite | date: 'dd/MM/yyy'}}</div>
-      </ng-template>
-      <button class="btn d-none d-lg-block col-12 col-md-6 btn-entrevista p-2 m-1" popoverClass="popover" [ngbPopover]="popContent"
-        triggers="mouseenter:mouseleave" [placement]="['left', 'auto']" routerLink="/dashboard/entrevistas/{{entrevista.IdEntrevista}}">
-          <a class="ent-nombre">
-            {{entrevista.Titulo}}
-          </a>
-      </button>
-      <button class="btn d-md-block d-lg-none col-12 col-md-6 btn-entrevista p-2 m-1" popoverClass="popover" [ngbPopover]="popContent"
-      triggers="mouseenter:mouseleave" [placement]="['left', 'auto']" routerLink="/dashboard/entrevistas/{{entrevista.IdEntrevista}}">
-      <div class="row">
-        <div class="col-12">
-          <div class="row ent-nombre-sm">
-              <div class="col-12 text-left">
-                {{entrevista.Titulo}}
-              </div>
-            </div>
-            <div class="row ent-tooltip-sm">
-              <div class="col-12 text-left">
-                {{entrevista.Tooltip}}
-              </div>
-            </div>
-            <div class="row lim-tooltip-sm">
-              <div class="col-12 text-right">
-                {{entrevista.FechaLimite | date: 'dd/MM/yyy'}}
-              </div>
-            </div>
-          </div>
-      </div>
-    </button>
-    </div>
-    <div *ngIf="!entrevistasDisponibles">
-      <div class="row justify-content-center">
-        <div class="col-md-4 felicitacion-col">
-          <h1 class="msj-ent-finalizada display-4 text-center">
-            <i>¡Enhorabuena, está al día con las entrevistas!</i>
-          </h1>
+<div class="lista-container">
+  <mat-nav-list *ngIf="entrevistasDisponibles" fxLayout="row wrap" fxLayoutAlign="center">
+    <mat-card mat-list-item class="lista-card" *ngFor="let entrevista of entrevistas" routerLink="/dashboard/entrevistas/{{entrevista.IdEntrevista}}">
+      <mat-card-header>
+        <mat-card-title class="lista-titulo">{{entrevista.Titulo}}</mat-card-title>
+        <mat-card-subtitle class="lista-subtitulo">{{entrevista.Tooltip}}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content class="lista-fecha">
+        Fecha límite: {{entrevista.FechaLimite | date: 'dd/MM/yyyy'}}
+      </mat-card-content>
+    </mat-card>
+  </mat-nav-list>
+  <div *ngIf="!entrevistasDisponibles" fxLayoutAlign="center">
+    <mat-card class="no-lista-card">
+      <mat-card-header>
+        <div mat-card-avatar class="card-avatar">
+          <mat-icon class="no-lista-icon">tag_faces</mat-icon>
         </div>
-        <div class="col-md-4 img-col">
-          <img class="img-fluid" src="./../../../assets/imagenes/party.png" alt="Globos de celebración"/>
-        </div>
-      </div>
-      <div class="row justify-content-center">
-        <button class="col-md-8 btn btn-ent-ini" routerLink="/dashboard">
-          Volver a la pantalla de inicio
-        </button> 
-      </div>
-    </div> 
+        <mat-card-title class="lista-titulo">Está al día con los cuestionarios</mat-card-title>
+        <!-- TODO -->
+        <mat-card-subtitle *ngIf="null" class="lista-subtitulo">La próxima entrevista está prevista para el día:
+          <span class="lista-fecha">22/6/2019</span>
+        </mat-card-subtitle>
+        <mat-card-subtitle *ngIf="!null" class="lista-subtitulo">Actualmente no tiene entrevistas previstas para los próximos días
+        </mat-card-subtitle>
+        <!-- TODO -->
+      </mat-card-header>
+  </mat-card>
   </div>
 </div>
--->

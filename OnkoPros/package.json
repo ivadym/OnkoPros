@@ -33,7 +33,6 @@
     "nativescript-angular": "~7.2.0",
     "nativescript-checkbox": "^3.0.3",
     "nativescript-drop-down": "^5.0.0",
-    "nativescript-plugin-firebase": "^8.1.1",
     "nativescript-ui-listview": "^6.0.0",
     "nativescript-ui-sidedrawer": "^6.0.0",
     "ngx-logger": "^3.3.13",

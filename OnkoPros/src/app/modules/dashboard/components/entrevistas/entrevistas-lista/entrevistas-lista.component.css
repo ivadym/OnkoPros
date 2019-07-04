@@ -1,88 +1,44 @@
-.row-ent {
-    margin-top: 10%;
+.lista-container {
+    margin: 20px;
 }
 
-.col-ent {
-    margin: 0 auto;
-    padding: 5%;
-}
-
-.btn-entrevista {
-    color: #4D2A7B;
-    background-color: rgba(77, 42, 123, 0.1);
-    display: flex;
-    justify-content: center;
-    box-shadow: none;
+.lista-card {
+    color: #2A367B;
+    width: 80%;
+    outline: none;
     border-radius: 5px;
+    margin: 10px;
+    cursor: pointer;
 }
 
-.btn-entrevista:hover {
-    color: #4D2A7B;
-    background-color: transparent;
-    box-shadow: none;
+.lista-card:hover {
+    background-color: rgba(42, 54, 123, 0.01);
 }
 
-.popover {
-    font-size: 16px;
-}
-
-.popover-fecha-limite {
-    color: red;
-    font-size: 14px;
-    margin-top: 5px;
-}
-
-.ent-nombre {
+.lista-titulo {
     font-size: 20px;
 }
 
-.ent-nombre-sm {
-    color: #2A367B;
-    font-size: 18px;
+.lista-subtitulo {
+    font-size: 16px;
 }
 
-.ent-tooltip-sm {
-    color: #4D2A7B;
-    font-size: 14px;
-}
-
-.lim-tooltip-sm {
+.lista-fecha {
     color: red;
-    font-size: 12px;
+    font-size: 16px;
+    text-align: right;
 }
 
-/* Entervista finaliza CSS */
-
-.img-col, .felicitacion-col {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-bottom: 10%;
-}
-
-.img-fluid {
-    width: 50%;
-    height: auto;
-}
-
-.msj-ent-finalizada {
-    color: #4D2A7B;
-    font-size: 22px;
-    padding-bottom: 5%;
-    border-bottom: solid;
-    border-width: 1px;
-    border-color: #2A367B;
-}
-
-.btn-ent-ini {
-    color: #4D2A7B;
-    background-color: rgba(77, 42, 123, 0.1);
-    box-shadow: none;
+.no-lista-card {
+    color: #2A367B;
+    width: 80%;
+    outline: none;
     border-radius: 5px;
+    margin: 10px;
 }
 
-.btn-ent-ini:hover {
-    color: #4D2A7B;
-    background-color: transparent;
-    box-shadow: none;
+.no-lista-icon {
+    color: #2A7B6F;
+    font-size: 26px;
+    text-align: center;
 }
