@@ -23,7 +23,7 @@ const httpOptions = {
 })
 export class AuthService {
     
-  private _authURL = environment.production ? 'api/auth' : 'https://172.27.6.220:8443/api/auth';
+  private _authURL = environment.production ? 'api/auth' : 'https://172.27.6.220:443/api/auth';
   
   private _urlInicial: string; // URL de redirección
   private _usuarioSubject: BehaviorSubject<Usuario>;

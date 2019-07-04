@@ -12,7 +12,7 @@
 }
 
 .lista-card:hover {
-    background-color: rgba(42, 54, 123, 0.01);
+    background-color: rgba(42, 123, 111, 0.01);
 }
 
 .lista-titulo {
@@ -37,8 +37,11 @@
     margin: 10px;
 }
 
-.no-lista-icon {
+.no-lista-avatar {
     color: #2A7B6F;
-    font-size: 26px;
     text-align: center;
+}
+
+.no-lista-avatar .mat-icon {
+    font-size: 26px;
 }

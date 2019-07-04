@@ -1,5 +1,5 @@
 .inicio-container {
-    margin: 20px;
+    margin: 30px;
 }
 
 .card {
@@ -17,8 +17,11 @@
 
 .card-avatar {
     color: #2A7B6F;
-    font-size: 26px;
     text-align: center;
+}
+
+.card-avatar .mat-icon {
+    font-size: 26px;
 }
 
 .card-avatar .mat-badge-content {
@@ -30,10 +33,10 @@
     font-weight: 500;
 }
 
-.card-title {
+.card-titulo {
     font-size: 20px;
 }
 
-.card-subtitle {
+.card-subtitulo {
     font-size: 15px;
 }
