@@ -1,49 +1,50 @@
-.perfil-usuario {
+.perfil-container {
+    margin: 30px;
+}
+
+.perfil-card {
     color: #2A367B;
-    margin-top: 10%;
+    width: 600px;
+    outline: none;
+    border-radius: 5px;
+    margin: 10px;
 }
 
-.img-col {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 5%;
+.perfil-avatar {
+    color: #2A7B6F;
+    text-align: center;
 }
 
-.img-fluid {
-    width: 200px;
-    height: auto;
+.perfil-icon {
+    font-size: 28px;
 }
 
-.datos-col {
-    padding: 5%;
+.perfil-titulo {
+    font-size: 20px;
 }
 
-.usuario-header {
-    font-size: 22px;
-    padding-bottom: 5%;
-    border-bottom: solid;
-    border-width: 1px;
-}
-
-.rol-header {
-    color: #4D2A7B;
+.perfil-subtitulo {
     font-size: 16px;
 }
 
-.datos-usuario {
-    font-size: 14px;
+.perfil-lista {
+    padding: 10px;
 }
 
-.dato:hover {
-    background-color: rgba(77, 42, 123, 0.1);
-    border-radius: 5px;
+.perfil-lista-titulo {
+    font-size: 16px;
+    font-weight: 500;
 }
 
-.caracteristicas-usuario {
-    font-weight: 600;
+.perfil-lista-item {
+    color: #2A7B6F;
+    font-size: 16px;
 }
 
-.campos-usuario {
-    color: #4D2A7B;
+::ng-deep .perfil-lista-titulo .mat-figure, ::ng-deep .perfil-lista-item .mat-figure {
+    justify-content: flex-start !important;
+ }
+
+.perfil-lista-email {
+    word-break: break-word;
 }

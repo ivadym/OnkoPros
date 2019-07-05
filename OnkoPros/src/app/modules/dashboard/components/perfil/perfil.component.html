@@ -1,57 +1,26 @@
-<div class="row perfil-usuario">
-  <div class="col-md-4 img-col">
-    <img class="img-fluid" src="./../../../assets/imagenes/usuario.png" alt="Imagen de usuario"/>
-  </div> 
-  <div class="col-md-8 datos-col">
-    <h1 class="usuario-header display-4 text-center">
-      <i>{{usuarioLogueado.Nombre  | titlecase}} {{usuarioLogueado.PrimerApellido  | titlecase}} {{usuarioLogueado.SegundoApellido | titlecase}}</i>
-      <br>
-      <span class="rol-header display-4">
-        {{usuarioLogueado.Perfil[0]}}
-      </span>
-    </h1>
-    <div class="datos-usuario">
-      <div class="row dato p-1">
-        <div class="col-6 caracteristicas-usuario">
-          Nombre de usuario
-        </div>
-        <div class="col-6 campos-usuario">
-          {{usuarioLogueado.Usuario}}
-        </div>
+<div class="perfil-container"  fxLayoutAlign="center">
+  <mat-card class="perfil-card">
+    <mat-card-header>
+      <div mat-card-avatar class="perfil-avatar">
+        <mat-icon class="perfil-icon">account_circle</mat-icon>
       </div>
-      <div class="row dato p-1">
-        <div class="col-6 caracteristicas-usuario">
-          Sexo
-        </div>
-        <div class="col-6 campos-usuario">
-          {{usuarioLogueado.Sexo}}
-        </div>
-      </div>
-      <div class="row dato p-1">
-        <div class="col-6 caracteristicas-usuario">
-          Fecha de nacimiento
-        </div>
-        <div class="col-6 campos-usuario">
-          {{usuarioLogueado.FechaNacimiento | date: 'dd/MM/yyyy'}}
-        </div>
-      </div>
-      <div class="row dato p-1">
-        <div class="col-6 caracteristicas-usuario">
-          Número de teléfono
-        </div>
-        <div class="col-6 campos-usuario">
-          {{usuarioLogueado.Telefono}}
-        </div>
-      </div>
-      <div class="row dato p-1">
-        <div class="col-6 caracteristicas-usuario">
-          Correo electrónico
-        </div>
-        <div class="col-6 campos-usuario">
-          {{usuarioLogueado.Email}}
-        </div>
-      </div>
-    </div>
-  </div>
+      <mat-card-title class="perfil-titulo">{{usuarioLogueado.Nombre  | titlecase}} {{usuarioLogueado.PrimerApellido  | titlecase}} {{usuarioLogueado.SegundoApellido | titlecase}}</mat-card-title>
+      <mat-card-subtitle class="perfil-subtitulo">{{usuarioLogueado.Perfil[0]}}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-divider></mat-divider>
+    <mat-card-content class="perfil-lista">
+      <mat-grid-list cols="2" rowHeight="40px">
+        <mat-grid-tile class="perfil-lista-titulo">Usuario</mat-grid-tile>
+        <mat-grid-tile class="perfil-lista-item">{{usuarioLogueado.Usuario}}</mat-grid-tile>
+        <mat-grid-tile class="perfil-lista-titulo">Sexo</mat-grid-tile>
+        <mat-grid-tile class="perfil-lista-item">{{usuarioLogueado.Sexo}}</mat-grid-tile>
+        <mat-grid-tile class="perfil-lista-titulo">Fecha de nacimiento</mat-grid-tile>
+        <mat-grid-tile class="perfil-lista-item">{{usuarioLogueado.FechaNacimiento | date: 'dd/MM/yyyy'}}</mat-grid-tile>
+        <mat-grid-tile class="perfil-lista-titulo">Número de teléfono</mat-grid-tile>
+        <mat-grid-tile class="perfil-lista-item">{{usuarioLogueado.Telefono}}</mat-grid-tile>
+        <mat-grid-tile class="perfil-lista-titulo">Correo electrónico</mat-grid-tile>
+        <mat-grid-tile class="perfil-lista-item perfil-lista-email">{{usuarioLogueado.Email}}</mat-grid-tile>
+      </mat-grid-list>
+    </mat-card-content>
+  </mat-card>
 </div>
-  

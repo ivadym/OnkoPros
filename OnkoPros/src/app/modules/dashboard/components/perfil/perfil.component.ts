@@ -10,17 +10,17 @@ import { AuthService } from '../../../../services/auth/auth.service';
   styleUrls: ['./perfil.component.css']
 })
 export class PerfilComponent implements OnInit {
-
+  
   usuarioLogueado: Usuario;
-
+  
   constructor(
     private authService: AuthService
-    ) {
-      this.authService.usuarioLogueadoObservable.subscribe(
-        usuario => this.usuarioLogueado = usuario
-      );
+  ) {
+    this.authService.usuarioLogueadoObservable.subscribe(
+      usuario => this.usuarioLogueado = usuario
+    );
   }
-
+  
   ngOnInit() { }
 
 }
