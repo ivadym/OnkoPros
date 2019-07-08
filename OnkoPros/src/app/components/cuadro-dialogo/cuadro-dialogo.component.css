@@ -1,29 +1,29 @@
 .dialog-titulo {
     color: #2A367B;
+    font-size: 22px;
     margin-bottom: -5px;
 }
 
 .dialog-alerta {
     color: green;
+    font-size: 18px;
 }
 
 .dialog-advertencia {
     color: red;
+    font-size: 18px;
 }
 
 .dialog-button {
     color: #2A7B6F;
-    background-color: transparent;
     font-size: 18px;
     font-weight: 400;
-    text-align: left;
-    outline: none;
-    padding: 10px;
-    box-shadow: none;
-    border: none;
-    border-radius: 5px;
-    margin: 5px;
-    cursor: pointer;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+::ng-deep .dialog-button .mat-button-focus-overlay {
+    background-color: transparent;
 }
 
 .dialog-button:focus {
@@ -34,8 +34,4 @@
 .dialog-button:hover {
     color: white;
     background-color: rgba(42, 123, 111, 0.9);
-}
-
-.dialog-item {
-    margin-bottom: 5px;
 }

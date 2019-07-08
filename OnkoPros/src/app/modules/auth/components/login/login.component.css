@@ -19,7 +19,7 @@
 
 .login-campo {
     color: #2A367B;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 400;
     margin-bottom: 10px;
     width: 80%;
@@ -29,7 +29,7 @@
     color: #2A367B;
 }
 
-::ng-deep .login-campo .mat-form-field-label { /* Label del asterisco */
+::ng-deep .login-campo .mat-form-field-label { /* Label */
     color: #2A367B;
 }
 

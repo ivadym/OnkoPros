@@ -19,6 +19,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatListModule } from '@angular/material/list';
+import { MatButtonModule } from '@angular/material/button';
 
 import { httpInterceptorProviders } from './interceptors/http-interceptor-providers';
 
@@ -45,6 +46,7 @@ import { httpInterceptorProviders } from './interceptors/http-interceptor-provid
     MatCardModule,
     MatDialogModule,
     MatListModule,
+    MatButtonModule,
     AppRoutingModule
   ],
   providers: [

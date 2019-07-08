@@ -15,8 +15,8 @@
     text-align: center;
 }
 
-.perfil-icon {
-    font-size: 28px;
+.perfil-avatar .mat-icon {
+    font-size: 26px;
 }
 
 .perfil-titulo {

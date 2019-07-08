@@ -17,15 +17,18 @@
 
 .lista-titulo {
     font-size: 20px;
+    font-weight: 500;
 }
 
 .lista-subtitulo {
     font-size: 16px;
+    font-weight: 400;
 }
 
 .lista-fecha {
     color: red;
     font-size: 16px;
+    font-weight: 400;
     text-align: right;
 }
 
