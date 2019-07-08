@@ -3,8 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { Usuario } from '../../../../classes/usuario';
 
 import { AuthService } from '../../../../services/auth/auth.service';
-import { EntrevistasService } from 'src/app/services/entrevistas/entrevistas.service';
-import { CompartirService } from 'src/app/services/compartir/compartir.service';
+import { EntrevistasService } from '../../../../services/entrevistas/entrevistas.service';
+import { CompartirService } from '../../../../services/compartir/compartir.service';
 
 @Component({
   selector: 'app-dashboard',

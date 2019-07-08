@@ -1,39 +1,47 @@
-.row-instr {
-    margin-top: 10%;
+.instrucciones-container {
+    margin: 30px;
 }
 
-.instrucciones {
-    font-size: 22px;
-    font-weight: 350;
-    padding-top: 5%;
-    padding-bottom: 5%;
-}
-
-.col-bulb, .instr-1, .instr-2 {
-    color: #4D2A7B;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.instr-1 {
+.instrucciones-card {
     color: #2A367B;
-}
-
-.instr-2 {
-    color: rgba(42, 54, 123, 0.7);
-}
-
-.btn-instr {
-    color: #4D2A7B;
-    font-size: 20px;
-    background-color: rgba(77, 42, 123, 0.1);
-    box-shadow: none;
+    width: 600px;
+    outline: none;
     border-radius: 5px;
+    margin: 10px;
 }
 
-.btn-instr:hover {
-    color: #4D2A7B;
+.instrucciones-titulo {
+    font-size: 22px;
+}
+
+.instrucciones-content {
+    color: black;
+    opacity: 0.6;
+    font-size: 16px;
+    font-weight: 400;
+    margin: 15px;
+}
+
+.instrucciones-item {
+    margin-top: 15px;
+}
+
+.instrucciones-button {
+    color: #2A7B6F;
+    font-size: 18px;
+    padding: 5px;
+}
+
+::ng-deep .instrucciones-button .mat-button-focus-overlay {
     background-color: transparent;
-    box-shadow: none;
+}
+
+.instrucciones-button:focus {
+    color: white;
+    background-color: #2A7B6F;
+}
+
+.instrucciones-button:hover {
+    color: white;
+    background-color: rgba(42, 123, 111, 0.9);
 }

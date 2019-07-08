@@ -76,7 +76,7 @@
 
 /* SB: Botón seleccionar */
 
-.ng-select.custom ::ng-deep .ng-select-container  {
+.ng-select.custom ::ng-deep .ng-select-container {
     color: #2A367B;
     font-size: 20px;
     box-shadow: none;
@@ -89,7 +89,7 @@
     color: #2A367B;
 }
 
-.ng-select.custom ::ng-deep .ng-option.ng-option-selected{ /* Color de fonde de la pción marcada */
+.ng-select.custom ::ng-deep .ng-option.ng-option-selected { /* Color de fonde de la opción marcada */
     color: #2A367B;
     background-color: rgba(0, 128, 0, 0.1);
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -17,11 +17,13 @@ import { HttpErrorHandlerService } from '../../../../../services/error-handler/h
 })
 export class EntrevistasInstruccionesComponent implements OnInit {
 
+  @ViewChild("buttonRef") buttonRef;
+
   spinner: boolean = false;
   private _spinnerSubscription: Subscription;
 
   entrevista: Entrevista;
-
+  
   constructor(
     private route: ActivatedRoute,
     private entrevistasService: EntrevistasService,
@@ -34,11 +36,15 @@ export class EntrevistasInstruccionesComponent implements OnInit {
       estado => this.spinner = estado
     );
   }
-
+  
   ngOnInit() {
     this.extraerEntrevista(+this.route.snapshot.paramMap.get('id'));
   }
-
+  
+  ngAfterViewInit() {
+    this.buttonRef ? this.buttonRef.focus() : null;
+  }
+  
   ngOnDestroy() {
     this._spinnerSubscription.unsubscribe();
   }
@@ -60,6 +66,13 @@ export class EntrevistasInstruccionesComponent implements OnInit {
         this.errorHandler.handleError(error, `extraerEntrevistaEntrevista(id: ${id})`);
       }
     );
+  }
+  
+  /**
+   * Redirige al usuario a la página anterior
+   */
+  retroceder() {
+    this.navegacionService.retroceder();
   }
 
 }

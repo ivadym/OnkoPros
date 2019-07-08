@@ -3,7 +3,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Usuario } from '../../../../classes/usuario';
 
 import { AuthService } from '../../../../services/auth/auth.service';
-import { CompartirService } from 'src/app/services/compartir/compartir.service';
+import { CompartirService } from '../../../../services/compartir/compartir.service';
 
 @Component({
   selector: 'app-inicio',

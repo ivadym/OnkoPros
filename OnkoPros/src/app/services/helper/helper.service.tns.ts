@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Valor } from 'src/app/classes/valor';
+import { Valor } from '../../classes/valor';
 
 @Injectable({
   providedIn: 'root'
