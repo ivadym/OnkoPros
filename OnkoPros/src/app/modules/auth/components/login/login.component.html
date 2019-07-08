@@ -4,7 +4,7 @@
     Bienvenido a OnkoPros
   </mat-card-title>
   <mat-card-content>
-    <form [formGroup]="loginForm" (ngSubmit)="login()" #form="ngForm">
+    <form #form="ngForm" [formGroup]="loginForm" (ngSubmit)="login()">
       <div>
         <mat-form-field class="login-campo" appearance="outline">
           <mat-label class="login-label">Usuario</mat-label>

@@ -1,41 +1,53 @@
-.row-item {
-    color: #4D2A7B;
-    margin-top: 10%;
+.fin-container {
+    margin: 30px;
 }
 
-.col-item {
-    padding: 5%;
-}
-
-.fa-flag-checkered {
+.fin-card {
     color: #2A367B;
-}
-
-.msj-ent-finalizada {
-    font-size: 22px;
-    padding-bottom: 5%;
-    border-bottom: solid;
-    border-width: 1px;
-    border-color: #2A367B;
-}
-
-.img-col, .felicitacion-col {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-bottom: 5%;
-}
-
-.btn-ent-fin {
-    color: #4D2A7B;
-    background-color: rgba(77, 42, 123, 0.1);
-    box-shadow: none;
+    width: 600px;
+    outline: none;
     border-radius: 5px;
-    margin-bottom: 5%;
+    margin: 10px;
 }
 
-.btn-ent-fin:hover {
-    color: #4D2A7B;
+.fin-titulo {
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.fin-subtitulo {
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.fin-avatar {
+    color: #2A7B6F;
+    text-align: center;
+}
+
+.fin-avatar .mat-icon {
+    font-size: 26px;
+}
+
+.fin-button {
+    color: #2A7B6F;
+    font-size: 18px;
+    font-weight: 400;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border-radius: 5px;
+}
+
+::ng-deep .fin-button .mat-button-focus-overlay {
     background-color: transparent;
-    box-shadow: none;
+}
+
+.fin-button:focus {
+    color: white;
+    background-color: #2A7B6F;
+}
+
+.fin-button:hover {
+    color: white;
+    background-color: rgba(42, 123, 111, 0.9);
 }

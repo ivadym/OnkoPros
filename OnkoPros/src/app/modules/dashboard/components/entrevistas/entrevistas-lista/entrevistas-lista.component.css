@@ -34,10 +34,10 @@
 
 .no-lista-card {
     color: #2A367B;
-    width: 80%;
+    width: 600px;
     outline: none;
     border-radius: 5px;
-    margin: 10px;
+    margin: 20px 10px 10px 10px;
 }
 
 .no-lista-avatar {

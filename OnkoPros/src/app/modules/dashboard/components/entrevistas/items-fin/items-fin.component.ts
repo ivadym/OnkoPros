@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CompartirService } from '../../../../../services/compartir/compartir.service';
 
 @Component({
   selector: 'app-items-fin',
@@ -6,9 +7,17 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./items-fin.component.css']
 })
 export class ItemsFinComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() { }
+  
+  nEntrevistas: string = "";
+  
+  constructor(
+    private compartirService: CompartirService
+  ) { }
+  
+  ngOnInit() {
+    this.compartirService.changeEmitted$.subscribe(data => {
+      this.nEntrevistas = data;
+    });
+  }
 
 }
