@@ -24,6 +24,11 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 import { MatDividerModule } from '@angular/material/divider';
 
 @NgModule({
@@ -50,6 +55,11 @@ import { MatDividerModule } from '@angular/material/divider';
     MatBadgeModule,
     MatIconModule,
     MatButtonModule,
+    MatTooltipModule,
+    MatRadioModule,
+    MatCheckboxModule,
+    MatSelectModule,
+    MatInputModule,
     MatDividerModule,
     DashboardRoutingModule
   ]

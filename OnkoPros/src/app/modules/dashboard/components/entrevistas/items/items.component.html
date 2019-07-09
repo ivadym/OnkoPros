@@ -1,3 +1,61 @@
+<div class="item-container" fxLayoutAlign="center">
+  <mat-card class="item-card">
+    <mat-card-header>
+      <mat-card-title class="item-titulo">{{item?.Titulo}}</mat-card-title>
+      <mat-card-subtitle class="item-subtitulo">{{item?.Subtitulo}}</mat-card-subtitle>
+      <mat-icon *ngIf="item?.Tooltip" class="item-tooltip" matTooltipClass="tooltip-custom" matTooltip={{item?.Tooltip}} 
+        matTooltipPosition="above">help</mat-icon>
+    </mat-card-header>
+    <form #form="ngForm" (ngSubmit)="responder()">
+      <mat-card-content class="item-card-content">
+        <!-- RADIO BUTTON -->
+        <mat-radio-group *ngIf="item?.TipoItem === 'RB'" class="item-radio-group" [(ngModel)]="valoresSeleccionados[0]"
+          name="radio-val" [disabled]="spinner">
+            <div *ngFor="let val of item.Valores">
+              <div fxLayout="row" fxLayoutAlign="space-between center">
+                <mat-radio-button class="item-radio-button" [value]="val" [checked]="val.Seleccionado">
+                  <div class="item-radio-titulo">{{val.Titulo}}</div>
+                </mat-radio-button>
+                <div *ngIf="val.VisibleValor" class="item-radio-valor">
+                  {{val.Valor}}
+                </div>
+              </div>
+              <div *ngIf="val.CajaTexto && valoresSeleccionados?.includes(val)">
+                <mat-form-field class="item-caja-texto">
+                  <textarea matInput placeholder="Elabore su propio comentario" name="valor-personalizado" #message maxlength="255"
+                    autocomplete="off" [(ngModel)]="valoresSeleccionados[valoresSeleccionados.indexOf(val)].ValorTexto"
+                    matTextareaAutosize autofocus>
+                  </textarea>
+                  <mat-hint align="end">{{message.value.length}} / 255</mat-hint>
+                </mat-form-field>
+              </div>
+            </div>
+        </mat-radio-group> 
+        
+
+        <!-- CHECKBOX -->
+
+
+
+        <!-- SELECT BUTTON -->
+
+
+        
+      </mat-card-content>
+      <mat-card-actions align="center">
+        <button mat-button type="submit" class="item-button" [disabled]="!valoresSeleccionados[0]">
+          Responder
+        </button>
+      </mat-card-actions>
+    </form>
+  </mat-card>
+</div>
+
+
+
+
+
+
 <!--
 <div class="row row-item">
   <div *ngIf="item" class="col-sm-12 col-md-8 col-item">

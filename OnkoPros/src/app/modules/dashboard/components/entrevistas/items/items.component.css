@@ -1,228 +1,145 @@
-.row-item {
-    color: #4D2A7B;
-    margin-top: 10%;
+.item-container {
+    margin: 30px;
 }
 
-.col-item {
-    margin: 0 auto;
-    padding: 5%;
-}
+/* CARD */
 
-.row-header {
-    padding-bottom: 5%;
-}
-
-.titulo-item {
+.item-card {
     color: #2A367B;
-    font-size: 24px;
-    font-weight: 500;
-}
-
-.titulo-item-2 {
-    color: #2A7B6F;
-    font-size: 22px;
-}
-
-.info-circle {
-    position: relative;
-    color: blue;
-    font-size: 28px;
-}
-
-.info-circle-child {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 50%;
-    margin: -15% 0 0 -35%;
-}
-
-.info-circle-sm {
-    color: blue;
-    font-size: 28px;
-    box-shadow: none;
-    margin: 0 0 0 5%;
-    width: 100%;
-    text-align: right;
-}
-
-.opciones-item {
-    color: #2A367B;
-    font-size: 20px;
-    padding-bottom: 10%;
-}
-
-/* Caja de texto */
-
-.opcion-caja-texto {
-    color: #2A367B;
-    font-style: normal;
-    background-color: rgba(77, 42, 123, 0.1); 
-    width: 100%;
-    border: none;
-    border-radius: 5px;
+    width: 600px;
     outline: none;
-    padding: 1%;
+    border-radius: 5px;
+    margin: 10px;
 }
 
-.opcion-caja-texto-sb {
-    padding-top: 1%;
+.item-card-content {
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
-.opcion-caja-texto::placeholder {
-    color: rgba(42, 54, 123, 0.6);
-    font-style: italic;
+::ng-deep .mat-card-header-text {
+    width: 100%;
 }
 
-/* SB: Botón seleccionar */
-
-.ng-select.custom ::ng-deep .ng-select-container {
-    color: #2A367B;
+.item-titulo {
     font-size: 20px;
-    box-shadow: none;
-    border-color: #2A367B;
-    border-width: 1px;
-    border-radius: 5px;
+    font-weight: 500;
 }
 
-.ng-select.custom ::ng-deep .ng-option {
+.item-subtitulo {
+    font-size: 16px;
+    font-weight: 400;
+}
+
+/* TOOLTIP */
+
+.item-tooltip {
     color: #2A367B;
+    font-size: 30px;
+    cursor: pointer;
 }
 
-.ng-select.custom ::ng-deep .ng-option.ng-option-selected { /* Color de fonde de la opción marcada */
-    color: #2A367B;
-    background-color: rgba(0, 128, 0, 0.1);
+::ng-deep .tooltip-custom {
+    color: white;
+    background-color: #2A7B6F;
+    font-size: 16px;
+    border-radius: 5px;
 }
 
-.ng-select.custom ::ng-deep .ng-option.ng-option-marked { /* Color de fondo hoover */
-    background-color: rgba(77, 42, 123, 0.1);
+/* RADIO BUTTON */
+
+.item-radio-group {
+    font-size: 16px;
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
 }
 
-.ng-select.custom ::ng-deep .ng-dropdown-panel {
-    margin-top: 1px;
+.item-radio-button {
+    margin: 5px;
+}
+
+::ng-deep .item-radio-button.mat-radio-checked {
+    color: #2A7B6F;
+    font-weight: 500;
+}
+
+::ng-deep .item-radio-button .mat-radio-outer-circle {
     border-color: #2A367B;
-    border: solid;
-    border-width: 1px;
-    border-radius: 5px;
 }
 
-.ng-select-val {
-    color: red !important;
+::ng-deep .item-radio-button.mat-accent .mat-radio-inner-circle {
+    background-color: #2A7B6F;
 }
 
-/* Botón responder */
-
-.btn-responder {
-    color: white;
-    background-color: #4D2A7B;
-    box-shadow: none;
-    border-radius: 5px;
+::ng-deep .item-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
+    border-color: #2A7B6F; 
 }
 
-.btn-responder:hover {
-    color: white;
-    background-color: rgba(77, 42, 123, 0.95);
+::ng-deep .item-radio-button.mat-accent .mat-radio-ripple .mat-ripple-element {
+    background-color: #2A7B6F !important;
 }
 
-/* RB: Radio button & CB: Checkbox */
-
-/* Estilos de los valores por defecto */
-
-.custom-control {
-    color: rgba(0, 0, 0, 0.6);
+.item-radio-titulo {
+    white-space: normal;
 }
 
-.custom-control-label {
-    margin-left: 10%;
-}
-
-.custom-control-label-val {
-    position: relative;
-}
-
-.custom-control-label-val-content {
+.item-radio-valor {
     color: red;
-    text-align: right;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 50%;
-    margin: -15% 0 0 -25%;
 }
 
-input[type="radio"] + label:before, input[type="checkbox"] + label:before {
-    border-color: rgba(42, 54, 123, 0.6);
-    background-color: rgba(42, 54, 123, 0.1);
-    box-shadow: none;
-    top: 50%;
-    margin-top: -9px;
+.item-caja-texto {
+    color: black;
+    margin-left: 33px;
+    width: 90%;
 }
 
-input[type="radio"]:not(.filled-in) + label:after, input[type="checkbox"]:not(.filled-in) + label:after {
-    top: 50%;
-    margin-top: -9px;
+::ng-deep .item-caja-texto .mat-form-field-label {
+    color: rgba(42, 54, 123, 0.5) !important;
 }
 
-/* Estilos de los valores al pasar por ellos */
-
-label:hover {
-    cursor: pointer; 
+::ng-deep .item-caja-texto.mat-focused .mat-form-field-label {
+    color: #2A367B !important;
 }
 
-.custom-control:hover {
-    color: rgba(0, 128, 0, 1.0);
-    font-weight: 500;
+::ng-deep .item-caja-texto .mat-form-field-underline {
+    background-color: #2A367B !important;
 }
 
-input[type="radio"]:hover + label:before, input[type="checkbox"]:hover + label:before {
-    background-color: rgba(0, 128, 0, 0.1);
-    border-color: green;
+::ng-deep .item-caja-texto .mat-hint {
+    color: black;
 }
 
-/* Estilo de los valores seleccionados */
 
-input[type="radio"]:checked + label, input[type="checkbox"]:checked + label {
-    color: #2A367B;
-    font-weight: 500;
-}
 
-input[type="radio"]:checked + label:before, input[type="checkbox"]:checked + label:before {
-    background-color: #2A367B;
-    border-color: #2A367B;
-}
 
-/* Estilos al pasar por los valores ya seleccionados */
 
-input[type="checkbox"]:checked:hover + label {
-    color: rgba(42, 54, 123, 0.8);
-    font-weight: 500;
-}
 
-input[type="checkbox"]:checked:hover + label:before {
-    background-color: rgba(42, 54, 123, 0.8);
-    border-color: rgba(42, 54, 123, 0.8);
-}
 
-/* Pagination */
 
-ngb-pagination ::ng-deep .page-item .page-link {
-    font-size: 20px;
-    color: #2A367B;
-    border: none;
-    box-shadow: none;
-}
 
-ngb-pagination ::ng-deep .page-item.active .page-link {
+/* BOTÓN RESPONDER */
+
+.item-button {
     color: white;
-    background-color: #2A367B;
-    border-color: #2A367B;
+    background-color: #2A7B6F;
+    font-size: 18px;
+    font-weight: 400;
+    padding-top: 2px;
+    padding-bottom: 2px;
     border-radius: 5px;
+    width: 93%;
 }
 
-ngb-pagination ::ng-deep .page-item.disabled .page-link {
-    color: rgba(42, 54, 123, 0.25);
+.item-button:hover {
+    background-color: rgba(42, 123, 111, 0.9);
 }
 
-ngb-pagination ::ng-deep .page-item:hover .page-link {
-    border-radius: 5px;
+.item-button:disabled {
+    color: white;
+    cursor: not-allowed;
+}
+
+:disabled {
+    opacity: 0.5;
 }
