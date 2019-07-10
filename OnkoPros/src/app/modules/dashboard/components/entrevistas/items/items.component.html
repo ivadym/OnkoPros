@@ -9,12 +9,15 @@
     <form #form="ngForm" (ngSubmit)="responder()">
       <mat-card-content class="item-card-content">
         <!-- RADIO BUTTON -->
-        <mat-radio-group *ngIf="item?.TipoItem === 'RB'" class="item-radio-group" [(ngModel)]="valoresSeleccionados[0]"
-          name="radio-val" [disabled]="spinner">
+        <mat-radio-group *ngIf="item?.TipoItem === 'RB'" class="item-radio-group"
+          [disabled]="spinner">
             <div *ngFor="let val of item.Valores">
               <div fxLayout="row" fxLayoutAlign="space-between center">
-                <mat-radio-button class="item-radio-button" [value]="val" [checked]="val.Seleccionado">
-                  <div class="item-radio-titulo">{{val.Titulo}}</div>
+                <mat-radio-button class="item-radio-button"
+                  [value]="val"
+                  (change)="setValor(val)"
+                  [checked]="val.Seleccionado">
+                    <div class="item-radio-titulo">{{val.Titulo}}</div>
                 </mat-radio-button>
                 <div *ngIf="val.VisibleValor" class="item-radio-valor">
                   {{val.Valor}}
@@ -22,38 +25,58 @@
               </div>
               <div *ngIf="val.CajaTexto && valoresSeleccionados?.includes(val)">
                 <mat-form-field class="item-caja-texto">
-                  <textarea matInput placeholder="Elabore su propio comentario" name="valor-personalizado" #message maxlength="255"
-                    autocomplete="off" [(ngModel)]="valoresSeleccionados[valoresSeleccionados.indexOf(val)].ValorTexto"
-                    matTextareaAutosize autofocus>
+                  <textarea #cajaTexto matInput matTextareaAutosize autofocus name="valor-personalizado" 
+                    placeholder="Elabore su propio comentario"
+                    [(ngModel)]="valoresSeleccionados[valoresSeleccionados.indexOf(val)].ValorTexto"
+                    autocomplete="off"
+                    maxlength="255">
                   </textarea>
-                  <mat-hint align="end">{{message.value.length}} / 255</mat-hint>
+                  <mat-hint align="end">{{cajaTexto.value.length}} / 255</mat-hint>
                 </mat-form-field>
               </div>
             </div>
         </mat-radio-group> 
-        
-
         <!-- CHECKBOX -->
-
-
-
+        <div *ngIf="item?.TipoItem === 'CB'" class="item-checkbox-group">
+          <div *ngFor="let val of item.Valores">
+            <div fxLayout="row" fxLayoutAlign="space-between center">
+              <mat-checkbox class="item-checkbox"
+                (change)="setValor(val)"
+                [checked]="val.Seleccionado"
+                [disabled]="spinner">
+                  <div class="item-checkbox-titulo">{{val.Titulo}}</div>
+              </mat-checkbox>
+              <div *ngIf="val.VisibleValor" class="item-checkbox-valor">
+                {{val.Valor}}
+              </div>
+            </div>
+            <div *ngIf="val.CajaTexto && valoresSeleccionados?.includes(val)">
+              <mat-form-field class="item-caja-texto item-caja-texto-cb">
+                <textarea #cajaTexto matInput matTextareaAutosize autofocus name="valor-personalizado" 
+                  placeholder="Elabore su propio comentario"
+                  [(ngModel)]="valoresSeleccionados[valoresSeleccionados.indexOf(val)].ValorTexto"
+                  autocomplete="off"
+                  maxlength="255">
+                </textarea>
+                <mat-hint align="end">{{cajaTexto.value.length}} / 255</mat-hint>
+              </mat-form-field>
+            </div>
+          </div>
+        </div> 
         <!-- SELECT BUTTON -->
 
 
         
       </mat-card-content>
+      <!-- BOTÓN RESPONDER -->
       <mat-card-actions align="center">
-        <button mat-button type="submit" class="item-button" [disabled]="!valoresSeleccionados[0]">
+        <button mat-button type="submit" class="item-button" [disabled]="!valoresSeleccionados[0] || spinner">
           Responder
         </button>
       </mat-card-actions>
     </form>
   </mat-card>
 </div>
-
-
-
-
 
 
 <!--
