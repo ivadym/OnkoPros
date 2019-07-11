@@ -1,17 +1,18 @@
 .dialog-titulo {
     color: #2A367B;
-    font-size: 22px;
-    margin-bottom: -5px;
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 5px;
 }
 
 .dialog-alerta {
     color: green;
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .dialog-advertencia {
     color: red;
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .dialog-button {

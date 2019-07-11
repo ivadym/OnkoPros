@@ -61,7 +61,7 @@
 }
 
 .item-radio-button, .item-checkbox {
-    margin: 5px;
+    margin: 1px;
 }
 
 ::ng-deep .item-radio-button.mat-radio-checked, ::ng-deep .item-checkbox.mat-checkbox-checked,
@@ -105,7 +105,7 @@
 }
   
 ::ng-deep .mat-option-text.mat-option-text {
-  white-space: normal;
+    white-space: normal;
 }
 
 /* SELECT PANEL */
@@ -135,12 +135,12 @@
 
 .item-caja-texto {
     color: black;
-    margin-left: 33px;
+    margin-left: 29px;
     width: 90%;
 }
 
 .item-caja-texto-cb {
-    margin-left: 30px;
+    margin-left: 25px;
 }
 
 .item-caja-texto-sb {
@@ -164,6 +164,8 @@
 ::ng-deep .item-caja-texto .mat-hint {
     color: black;
 }
+
+/* PAGINATOR */
 
 /* BOTÓN RESPONDER */
 

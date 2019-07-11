@@ -4,11 +4,13 @@
 
 .card {
     color: #2A367B;
-    width: 250px;
+    width: 300px;
     outline: none;
     border-radius: 5px;
     margin: 10px;
     cursor: pointer;
+    padding-right: 0px;
+    padding-bottom: 0px;
 }
 
 .card:hover {

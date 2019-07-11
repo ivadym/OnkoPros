@@ -89,20 +89,20 @@
           </mat-form-field>
         </div>
       </mat-card-content>
-      <!-- PAGINATOR -->
-      <ngb-pagination
-        [collectionSize]="idItemsRespondidos.length"
-        [pageSize]="1"
-        [maxSize]="6"
-        [rotate]="true"
-        [ellipses]="true"
-        [boundaryLinks]="true"
-        [(page)]="paginaSeleccionada"
-        (pageChange)="extraerItemRespondido()"
-        [disabled]="spinner">
-      </ngb-pagination>
-      <!-- BOTÓN RESPONDER -->
       <mat-card-actions align="center">
+        <!-- PAGINATOR -->
+        <ngb-pagination
+          [collectionSize]="idItemsRespondidos.length"
+          [pageSize]="1"
+          [maxSize]="6"
+          [rotate]="true"
+          [ellipses]="true"
+          [boundaryLinks]="true"
+          [(page)]="paginaSeleccionada"
+          (pageChange)="extraerItemRespondido()"
+          [disabled]="spinner">
+        </ngb-pagination>
+        <!-- BOTÓN RESPONDER -->
         <button mat-button type="submit" class="item-button" [disabled]="!valoresSeleccionados[0] || spinner">
           Responder
         </button>
