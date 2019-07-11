@@ -129,32 +129,36 @@ export class ItemsComponent implements OnInit {
    * Extrae el item asociado a un ID específico
    */
   extraerItemRespondido(): void {
-    var idEntrevista = this.item.IdEntrevista;
-    if (this.paginaSeleccionada >= this.idItemsRespondidos.length ) { // Seleccionado el último ítem extraído (no contestado aún)
-      this.limpiarContexto();
-      this.extraerSiguienteItem(idEntrevista);
-    } else {
-      var idItemSoclicitado = this.idItemsRespondidos[this.paginaSeleccionada - 1];
-      var idUltimoItem = this.idItemsRespondidos[this.idItemsRespondidos.length - 1];
-      this.limpiarContexto();
-      this.entrevistasService.getItemRespondido(idEntrevista, idItemSoclicitado).subscribe(
-        datos => {
-          this.logger.log(`Item respondido extraído correctamente (id: ${datos.item.IdItem})`);
-          this.item = datos.item;
-          datos.idItemsRespondidos.push(idUltimoItem); // Mantener último contexto
-          this.idItemsRespondidos = datos.idItemsRespondidos;
-          this.paginaSeleccionada = this.idItemsRespondidos.indexOf(datos.item.IdItem) + 1;
-          
-          this.actualizarSeleccionDefecto(datos.item.Valores);
-          
-          if (datos.item.TipoItem === 'SB') {
-            this.actualizarTituloValores(datos.item.Valores);
+    if(this.item) {
+      var idEntrevista = this.item.IdEntrevista;
+      if (this.paginaSeleccionada >= this.idItemsRespondidos.length) { // Seleccionado el último ítem extraído (no contestado aún)
+        this.limpiarContexto();
+        this.extraerSiguienteItem(idEntrevista);
+      } else {
+        var idItemSoclicitado = this.idItemsRespondidos[this.paginaSeleccionada - 1];
+        var idUltimoItem = this.idItemsRespondidos[this.idItemsRespondidos.length - 1];
+        this.limpiarContexto();
+        this.entrevistasService.getItemRespondido(idEntrevista, idItemSoclicitado).subscribe(
+          datos => {
+            this.logger.log(`Item respondido extraído correctamente (id: ${datos.item.IdItem})`);
+            this.item = datos.item;
+            datos.idItemsRespondidos.push(idUltimoItem); // Mantener último contexto
+            this.idItemsRespondidos = datos.idItemsRespondidos;
+            this.paginaSeleccionada = this.idItemsRespondidos.indexOf(datos.item.IdItem) + 1;
+            
+            this.actualizarSeleccionDefecto(datos.item.Valores);
+            
+            if (datos.item.TipoItem === 'SB') {
+              this.actualizarTituloValores(datos.item.Valores);
+            }
+          },
+          error => {
+            this.errorHandler.handleError(error, `getItemRespondido(${idEntrevista}, ${idItemSoclicitado})`);
           }
-        },
-        error => {
-          this.errorHandler.handleError(error, `getItemRespondido(${idEntrevista}, ${idItemSoclicitado})`);
-        }
-      )
+        )
+      }
+    } else {
+      return;
     }
   }
 

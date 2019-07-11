@@ -41,6 +41,10 @@
     color: rgba(42, 54, 123, 0.5);
 }
 
+.login-campo-pass {
+    cursor: pointer;
+}
+
 .login-label {
     font-size: 16px;
 }
@@ -57,6 +61,7 @@
     padding: 10px;
     border-radius: 5px;
     width: 80%;
+    outline: none;
 }
 
 .login-button:hover {

@@ -19,7 +19,9 @@
         <mat-form-field class="login-campo" appearance="outline">
           <mat-label class="login-label">Clave</mat-label>
           <input matInput placeholder="Clave de usuario" formControlName="clave" required [type]="hidePassword ? 'password' : 'text'">
-          <mat-icon matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          <mat-icon matSuffix class="login-campo-pass" (click)="hidePassword = !hidePassword">
+            {{hidePassword ? 'visibility_off' : 'visibility'}}
+          </mat-icon>
           <mat-error *ngIf="clave.invalid && (clave.dirty || clave.touched) && clave.errors.required">
             Debe introducir una clave de usuario
           </mat-error>

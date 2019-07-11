@@ -13,13 +13,10 @@
     </mat-card-header>
     <mat-card-actions align="end">
       <div *ngIf="nEntrevistas">
-          <button mat-button class="fin-button" routerLink="/dashboard">Página de Inicio</button>
-          <button mat-button class="fin-button" routerLink="/dashboard/entrevistas" autofocus>
-            Realizar otra entrevista
-          </button>
-      </div>
-      <div *ngIf="!nEntrevistas">
-        <button mat-button class="fin-button" routerLink="/dashboard" autofocus>Página de Inicio</button>
+        <button mat-button class="fin-button" routerLink="/dashboard">Página de Inicio</button>
+        <button mat-button class="fin-button" routerLink="/dashboard/entrevistas" autofocus>
+          Realizar otra entrevista
+        </button>
       </div>
     </mat-card-actions>
   </mat-card>

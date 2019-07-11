@@ -30,6 +30,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatDividerModule } from '@angular/material/divider';
+import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -61,6 +62,7 @@ import { MatDividerModule } from '@angular/material/divider';
     MatSelectModule,
     MatInputModule,
     MatDividerModule,
+    NgbPaginationModule,
     DashboardRoutingModule
   ]
 })
