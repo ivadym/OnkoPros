@@ -46,20 +46,26 @@
     border-radius: 5px;
 }
 
-/* RADIO BUTTON & CHECKBOX */
+/* RADIO BUTTON & CHECKBOX & SELECT BUTTON */
 
-.item-radio-group, .item-checkbox-group {
+.item-radio-group, .item-checkbox-group, .item-select-group {
     font-size: 16px;
     display: flex;
     flex-direction: column;
     margin: 10px;
 }
 
+.item-select-group {
+    margin-left: 15px;
+    width: 90%;
+}
+
 .item-radio-button, .item-checkbox {
     margin: 5px;
 }
 
-::ng-deep .item-radio-button.mat-radio-checked, ::ng-deep .item-checkbox.mat-checkbox-checked {
+::ng-deep .item-radio-button.mat-radio-checked, ::ng-deep .item-checkbox.mat-checkbox-checked,
+::ng-deep .item-select .mat-select-value .mat-select-value-text {
     color: #2A7B6F;
     font-weight: 500;
 }
@@ -84,11 +90,48 @@
     white-space: normal;
 }
 
-.item-radio-valor, .item-checkbox-valor {
+.item-select-titulo {
+    color: #2A367B;
+}
+
+.item-radio-valor, .item-checkbox-valor, .item-select-valor {
     color: red;
 }
 
-/* CAJA TEXTO */
+/* SELECT WRAP WORKAROUNG */
+
+::ng-deep .mat-select-panel mat-option.mat-option {
+    height: unset;
+}
+  
+::ng-deep .mat-option-text.mat-option-text {
+  white-space: normal;
+}
+
+/* SELECT PANEL */
+
+::ng-deep .item-select-group .mat-select-arrow {
+    color: #2A367B;
+}
+
+::ng-deep .mat-select-panel .mat-option.mat-active {
+    background-color: rgba(42, 123, 111, 0.1);
+}
+
+::ng-deep .mat-select-panel .mat-option.mat-active.mat-selected {
+    background-color: rgba(42, 123, 111, 0.1);
+}
+
+::ng-deep .mat-select-panel .mat-option.mat-selected .item-select-titulo {
+    color: #2A7B6F;
+    font-weight: 500;
+}
+
+::ng-deep .mat-select-panel .mat-option:hover {
+    background-color: rgba(42, 123, 111, 0.1) !important;
+}
+
+/* CAJA TEXTO & SELECT BUTTON FORM FIELD*/
 
 .item-caja-texto {
     color: black;
@@ -100,31 +143,27 @@
     margin-left: 30px;
 }
 
-::ng-deep .item-caja-texto .mat-form-field-label {
+.item-caja-texto-sb {
+    font-size: 16px;
+    margin-left: 15px;
+    width: 90%;
+}
+
+::ng-deep .item-caja-texto .mat-form-field-label, ::ng-deep .item-select-group .mat-form-field-label {
     color: rgba(42, 54, 123, 0.5) !important;
 }
 
-::ng-deep .item-caja-texto.mat-focused .mat-form-field-label {
+::ng-deep .item-caja-texto.mat-focused .mat-form-field-label, ::ng-deep .item-select-group.mat-focused .mat-form-field-label {
     color: #2A367B !important;
 }
 
-::ng-deep .item-caja-texto .mat-form-field-underline {
+::ng-deep .item-caja-texto .mat-form-field-underline, ::ng-deep .item-select-group .mat-form-field-underline {
     background-color: #2A367B !important;
 }
 
 ::ng-deep .item-caja-texto .mat-hint {
     color: black;
 }
-
-
-
-
-
-
-
-
-
-
 
 /* BOTÓN RESPONDER */
 

@@ -23,17 +23,15 @@
                   {{val.Valor}}
                 </div>
               </div>
-              <div *ngIf="val.CajaTexto && valoresSeleccionados?.includes(val)">
-                <mat-form-field class="item-caja-texto">
-                  <textarea #cajaTexto matInput matTextareaAutosize autofocus name="valor-personalizado" 
-                    placeholder="Elabore su propio comentario"
-                    [(ngModel)]="valoresSeleccionados[valoresSeleccionados.indexOf(val)].ValorTexto"
-                    autocomplete="off"
-                    maxlength="255">
-                  </textarea>
-                  <mat-hint align="end">{{cajaTexto.value.length}} / 255</mat-hint>
-                </mat-form-field>
-              </div>
+              <mat-form-field *ngIf="val.CajaTexto && valoresSeleccionados?.includes(val)" class="item-caja-texto">
+                <textarea #cajaTexto matInput matTextareaAutosize autofocus name="valor-personalizado" 
+                  placeholder="Elabore su propio comentario"
+                  [(ngModel)]="valoresSeleccionados[valoresSeleccionados.indexOf(val)].ValorTexto"
+                  autocomplete="off"
+                  maxlength="255">
+                </textarea>
+                <mat-hint align="end">{{cajaTexto.value.length}} / 255</mat-hint>
+              </mat-form-field>
             </div>
         </mat-radio-group> 
         <!-- CHECKBOX -->
@@ -50,8 +48,8 @@
                 {{val.Valor}}
               </div>
             </div>
-            <div *ngIf="val.CajaTexto && valoresSeleccionados?.includes(val)">
-              <mat-form-field class="item-caja-texto item-caja-texto-cb">
+            <mat-form-field *ngIf="val.CajaTexto && valoresSeleccionados?.includes(val)"
+              class="item-caja-texto item-caja-texto-cb">
                 <textarea #cajaTexto matInput matTextareaAutosize autofocus name="valor-personalizado" 
                   placeholder="Elabore su propio comentario"
                   [(ngModel)]="valoresSeleccionados[valoresSeleccionados.indexOf(val)].ValorTexto"
@@ -59,14 +57,37 @@
                   maxlength="255">
                 </textarea>
                 <mat-hint align="end">{{cajaTexto.value.length}} / 255</mat-hint>
-              </mat-form-field>
-            </div>
+            </mat-form-field>
           </div>
-        </div> 
+        </div>
         <!-- SELECT BUTTON -->
-
-
-        
+        <div *ngIf="item?.TipoItem === 'SB'">
+          <mat-form-field class="item-select-group">
+            <mat-label>Seleccione una de las opciones</mat-label>
+            <mat-select class="item-select"
+              [(value)]="valoresSeleccionados[0]"
+              (selectionChange)="autofocus()"
+              [disabled]="spinner">
+                <mat-option *ngFor="let val of item.Valores" [value]="val">
+                  <div fxLayout="row" fxLayoutAlign="space-between center">
+                      <div class="item-select-titulo">{{val.Titulo}}</div>
+                    <div *ngIf="val.VisibleValor" class="item-select-valor">
+                      {{val.Valor}}
+                    </div>
+                  </div>
+                </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field *ngIf="valoresSeleccionados[0]?.CajaTexto" class="item-caja-texto item-caja-texto-sb">
+            <textarea #cajaTexto matInput matTextareaAutosize autofocus name="valor-personalizado" 
+              placeholder="Elabore su propio comentario"
+              [(ngModel)]="valoresSeleccionados[0].ValorTexto"
+              autocomplete="off"
+              maxlength="255">
+            </textarea>
+            <mat-hint align="end">{{cajaTexto.value.length}} / 255</mat-hint>
+          </mat-form-field>
+        </div>
       </mat-card-content>
       <!-- BOTÓN RESPONDER -->
       <mat-card-actions align="center">
@@ -80,75 +101,7 @@
 
 
 <!--
-<div class="row row-item">
-  <div *ngIf="item" class="col-sm-12 col-md-8 col-item">
-    <div class="row row-header">
-      <div class="col-md-12 col-lg-11">
-        <button *ngIf="item.Tooltip" class="d-sm-block d-lg-none btn info-circle-sm" (click)="mostrarTooltip()">
-          <i class="fas fa-info-circle"></i>
-        </button>
-        <div class="titulo-item">{{item.Titulo}}</div>
-        <div *ngIf="item?.Subtitulo" class="titulo-item-2">{{item.Subtitulo}}</div>        
-      </div>
-      <ng-template #popContent>
-        {{item.Tooltip}}
-      </ng-template>
-      <div *ngIf="item.Tooltip" class="d-none d-lg-block col-lg-1 info-circle" [ngbPopover]="popContent" triggers="mouseenter:mouseleave"
-        [placement]="['right', 'auto']">
-          <i class="fas fa-info-circle info-circle-child"></i>
-      </div>
-    </div>
-    <form (ngSubmit)="responder()">
-      RADIO BUTTON & CHECKBOX
-      <div *ngIf="item.TipoItem === 'RB' || item.TipoItem === 'CB'" class="opciones-item">
-        <div *ngFor="let val of item.Valores" class="row">
-          <div class="col-10 p-1 custom-control custom-{{item.TipoItem === 'RB' ? 'radio' : 'checkbox'}}">
-            <input type="{{item.TipoItem === 'RB' ? 'radio' : 'checkbox'}}" name="valor" id="{{val.IdValor}}"
-              class="custom-control-input" (click)="setValor(val)" [checked]="val.Seleccionado">
-            <label class="custom-control-label" for="{{val.IdValor}}">
-              {{val.Titulo}}
-            </label>
-          </div>
-          <div *ngIf="val.VisibleValor" class="col-2 p-1 custom-control-label-val">
-            <div class="custom-control-label-val-content">{{val.Valor}}</div>
-          </div>
-          <div *ngIf="val.CajaTexto && valoresSeleccionados?.includes(val)" class="col-12">
-            <input #cajaTexto class="opcion-caja-texto" name="valorPersonalizado" placeholder="Elabore su propia respuesta"
-              [(ngModel)]="valoresSeleccionados[valoresSeleccionados.indexOf(val)].ValorTexto" autocomplete="off">
-          </div>
-        </div>
-      </div>
-      SELECT BUTTON
-      <div *ngIf="item.TipoItem === 'SB'" class="opciones-item">
-        <ng-select [items]="item.Valores" class="custom"
-          placeholder="Seleccione una de las opciones..."
-          notFoundText="Respuesta no encontrada..."
-          [clearable]="false"
-          bindLabel="Titulo"
-          (change)="autofocus()"
-          [(ngModel)]="valoresSeleccionados[0]"
-          name="valorSeleccionado"
-          autofocus>
-          <ng-template ng-label-tmp ng-option-tmp let-val="item">
-            {{val.Titulo}} <a *ngIf="val.VisibleValor" class="ng-select-val">({{val.Valor}})</a>
-          </ng-template>
-        </ng-select>
-        <div *ngIf="valoresSeleccionados[0]?.CajaTexto" class="opcion-caja-texto-sb">
-          <input #cajaTexto class="opcion-caja-texto" name="valorPersonalizado" placeholder="Elabore su propia respuesta"
-            [(ngModel)]="valoresSeleccionados[0].ValorTexto" autocomplete="off">
-        </div>
-      </div>
-      <div class="row justify-content-center">
-        <ngb-pagination [collectionSize]="idItemsRespondidos.length" [pageSize]="1" [maxSize]="6" [rotate]="true" [ellipses]="true"
-          [boundaryLinks]="true" [(page)]="paginaSeleccionada" (pageChange)="extraerItemRespondido()">
-        </ngb-pagination>
-      </div>
-      <div class="row">
-        <button type="submit" class="btn btn-responder col-12" [disabled]="!valoresSeleccionados[0]">
-          Responder
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
+  <ngb-pagination [collectionSize]="idItemsRespondidos.length" [pageSize]="1" [maxSize]="6" [rotate]="true" [ellipses]="true"
+    [boundaryLinks]="true" [(page)]="paginaSeleccionada" (pageChange)="extraerItemRespondido()">
+  </ngb-pagination>
 -->
