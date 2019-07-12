@@ -15,6 +15,7 @@ import { EntrevistasListaComponent } from './components/entrevistas/entrevistas-
 import { EntrevistasInstruccionesComponent } from './components/entrevistas/entrevistas-instrucciones/entrevistas-instrucciones.component';
 import { ItemsComponent } from './components/entrevistas/items/items.component';
 import { ItemsFinComponent } from './components/entrevistas/items-fin/items-fin.component';
+import { ControlComponent } from './components/control/control.component';
 
 import { DashboardRoutingModule } from './dashboard-routing.module';
 
@@ -28,7 +29,8 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
     EntrevistasListaComponent,
     EntrevistasInstruccionesComponent,
     ItemsComponent,
-    ItemsFinComponent
+    ItemsFinComponent,
+    ControlComponent
   ],
   imports: [
     NativeScriptCommonModule,
