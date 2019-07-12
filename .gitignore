@@ -2,6 +2,7 @@
 
 # misc
 /certificados
+/private_server_prod
 
 # System Files
 .DS_Store
