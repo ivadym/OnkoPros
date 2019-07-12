@@ -3,7 +3,7 @@ const TYPES = require('tedious').TYPES;
 
 const entrevistaData = require('../models/entrevistasDB')
 const valorData = require('../models/valorDB');
-const { extraerIdEntrevistaUsuario, extraerIdEntrevistaItem, extraerOrden, comprobarReglaAgrupacion } = require('../helpers/helperDB');
+const { extraerIdEntrevistaUsuario, extraerIdEntrevistaItem, extraerOrden } = require('../helpers/helperDB');
 
 /**
  * Devuelve la siguiente pregunta disponible asociada a un usuario y a una entrevista determinados
@@ -296,11 +296,7 @@ function finalizarItemAgrupacion(pool, idEntrevistaUsuario, itemAgrupacion) {
                     request.addParameter('orden', TYPES.VarChar, orden);
                 
                     request.on('requestCompleted', function() {
-                        return comprobarReglaAgrupacion(pool, idEntrevistaUsuario, itemAgrupacion.IdItem)
-                        .then(res => {
-                            resolve(res); // Devuelve null
-                        })
-                        .catch(error => reject(error)); // Catch de promises anidadas
+                        resolve(null);
                     });
                     
                     connection.execSql(request);

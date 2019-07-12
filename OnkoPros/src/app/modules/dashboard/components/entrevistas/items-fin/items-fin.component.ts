@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { CompartirService } from '../../../../../services/compartir/compartir.service';
+import { Component, OnInit, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-items-fin',
@@ -8,16 +7,14 @@ import { CompartirService } from '../../../../../services/compartir/compartir.se
 })
 export class ItemsFinComponent implements OnInit {
   
-  nEntrevistas: string = "";
+  @ViewChild("buttonRef") buttonRef;
   
-  constructor(
-    private compartirService: CompartirService
-  ) { }
+  constructor() { }
   
-  ngOnInit() {
-    this.compartirService.changeEmitted$.subscribe(data => {
-      this.nEntrevistas = data;
-    });
+  ngOnInit() { }
+  
+  ngAfterViewInit() {
+    this.buttonRef ? this.buttonRef.focus() : null;
   }
 
 }
