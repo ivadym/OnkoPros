@@ -9,9 +9,11 @@ import { EntrevistasListaComponent } from './components/entrevistas/entrevistas-
 import { EntrevistasInstruccionesComponent } from './components/entrevistas/entrevistas-instrucciones/entrevistas-instrucciones.component';
 import { ItemsComponent } from './components/entrevistas/items/items.component';
 import { ItemsFinComponent } from './components/entrevistas/items-fin/items-fin.component';
+import { ControlComponent } from './components/control/control.component';
 
 import { AuthGuard } from '../../guards/auth/auth.guard';
 import { CanDeactivateGuard } from '../../guards/can-deactivate.guard';
+import { ProfesionalGuard } from 'src/app/guards/profesional/profesional.guard';
 
 export const dashboardRoutes: Routes = [
   {
@@ -26,6 +28,11 @@ export const dashboardRoutes: Routes = [
           {
             path: '',
             component: InicioComponent
+          },
+          {
+            path: 'control',
+            component: ControlComponent,
+            canActivate: [ProfesionalGuard]
           },
           {
             path: 'perfil',
