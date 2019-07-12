@@ -47,7 +47,7 @@
           <Label text="Entrevistas" textWrap="true"></Label>
         </StackLayout>
       </StackLayout>
-      <StackLayout col="2" rows="*, *" class="nav" [nsRouterLink]="['/dashboard/notificaciones']" nsRouterLinkActive="active">
+      <StackLayout [isEnabled]="false" style="opacity: 0.3px;" col="2" rows="*, *" class="nav" [nsRouterLink]="['/dashboard/notificaciones']" nsRouterLinkActive="active">
         <StackLayout row="0" class="nav-feature">
           <Label class="fas" text="&#xf7f5;"></Label>
         </StackLayout>

@@ -12,11 +12,6 @@
     margin: 10px;
 }
 
-.item-card-content {
-    margin-top: 10px;
-    margin-bottom: 20px;
-}
-
 ::ng-deep .mat-card-header-text {
     width: 100%;
 }
@@ -29,6 +24,15 @@
 .item-subtitulo {
     font-size: 16px;
     font-weight: 400;
+}
+
+.item-card-content {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.item-card-actions {
+    margin-bottom: 0px;
 }
 
 /* TOOLTIP */
@@ -165,7 +169,33 @@
     color: black;
 }
 
-/* PAGINATOR */
+/* PAGINATION */
+
+ngb-pagination ::ng-deep .page-item .page-link {
+    font-size: 18px;
+    color: #2A367B;
+    border: none;
+    box-shadow: none;
+}
+
+ngb-pagination ::ng-deep .page-item:hover .page-link {
+    background-color: rgba(42, 123, 111, 0.1);
+    border-radius: 5px;
+}
+
+ngb-pagination ::ng-deep .page-item.active .page-link {
+    color: white;
+    background-color: #2A367B;
+    border-radius: 5px;
+}
+
+ngb-pagination ::ng-deep .page-item.disabled .page-link {
+    color: rgba(42, 54, 123, 0.25);
+}
+
+ngb-pagination ::ng-deep .page-item.disabled:hover .page-link {
+    background-color: transparent;
+}
 
 /* BOTÓN RESPONDER */
 
