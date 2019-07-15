@@ -1,5 +1,14 @@
 <div class="inicio-container">
   <div fxLayout="row wrap" fxLayoutAlign.lt-md="center">
+    <mat-card *ngIf="usuarioLogueado.Perfil[0] === 'Profesional de la salud'" class="card" routerLink="/dashboard/control">
+      <mat-card-header>
+        <div mat-card-avatar class="card-avatar">
+          <mat-icon>dashboard</mat-icon>
+        </div>
+        <mat-card-title class="card-titulo">Panel de Control</mat-card-title>
+        <mat-card-subtitle class="card-subtitulo">Interfaz gráfica que permite gestionar a los distintos usuarios y sus asiganciones</mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
     <mat-card class="card" routerLink="/dashboard/diario" [ngStyle]="{'pointer-events': 'none', 'opacity': '0.5'}">
       <mat-card-header>
         <div mat-card-avatar class="card-avatar">
@@ -24,7 +33,7 @@
           <mat-icon>chat</mat-icon>
         </div>
         <mat-card-title class="card-titulo">Mensajes</mat-card-title>
-        <mat-card-subtitle class="card-subtitulo">Comunicación con el equipo médico durante el periodo de seguimiento</mat-card-subtitle>
+        <mat-card-subtitle class="card-subtitulo">Comunicación entr el paciente y el clínico a lo largo del periodo de seguimiento</mat-card-subtitle>
       </mat-card-header>
     </mat-card>
     <mat-card class="card" routerLink="/dashboard/perfil">

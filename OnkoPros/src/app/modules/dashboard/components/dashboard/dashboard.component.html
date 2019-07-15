@@ -18,6 +18,11 @@
             <mat-icon class="sidenav-icon">home</mat-icon>
             <p fxShow fxHide.lt-sm class="sidenav-txt">Inicio</p>
         </a>
+        <a *ngIf="usuarioLogueado.Perfil[0] === 'Profesional de la salud'" mat-list-item class="sidenav-item"
+          routerLink="/dashboard/control" routerLinkActive="active" (click)="snav.toggle()">
+            <mat-icon class="sidenav-icon">dashboard</mat-icon>
+            <p fxShow fxHide.lt-sm class="sidenav-txt">Panel de Control</p>
+        </a>
         <a mat-list-item class="sidenav-item" routerLink="/dashboard/diario" routerLinkActive="active"
           [ngStyle]="{'pointer-events': 'none', 'opacity': '0.5'}" (click)="snav.toggle()">
             <mat-icon class="sidenav-icon">history</mat-icon>
