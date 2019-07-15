@@ -22,7 +22,7 @@ export class ProfesionalGuard implements CanActivate {
     if(this.authService.usuarioLogueado.Perfil[0] === 'Profesional de la salud') {
       return true;
     } else {
-      this.navegacionService.navegar('/dashboard', false);
+      this.navegacionService.navegar('/404', false);
     }
   }
   
