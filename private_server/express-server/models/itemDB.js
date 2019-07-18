@@ -138,9 +138,7 @@ function extraerContextoItemSiguiente(pool, idEntrevistaUsuario, opts) {
                                     if (ctx) { // Item hijo extraído
                                         resolve(ctx);
                                     } else { // No hay más item hijos
-                                        
                                         // TODO: Sustituir null por el ID padre de la agrupación (si lo hay)
-                                        
                                         return finalizarItemAgrupacion(pool, idEntrevistaUsuario, null, siguienteItem.IdItem)
                                         .then(res => {
                                             
@@ -415,9 +413,7 @@ function actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item) {
                             .catch(error => reject(error)); // Catch de promises anidadas
                         }
                     } else if (item.IdAgrupacion) { // No hay más items - AGRUPACIÓN
-                        
                         // TODO: Sustituir null por el ID padre de la agrupación (si lo hay)
-                        
                         return finalizarItemAgrupacion(pool, idEntrevistaUsuario, null, item.IdAgrupacion)
                         .then(res => {
                             
