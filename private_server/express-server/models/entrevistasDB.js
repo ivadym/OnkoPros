@@ -24,11 +24,11 @@ function extraerEntrevistas(pool, idUsuario, idPerfil) {
                         connection.release();
                     }
                 });
-
+                
                 request.addParameter('idUsuario', TYPES.Int, idUsuario);
                 request.addParameter('idPerfil', TYPES.Int, idPerfil);
                 request.addParameter('fechaActual', TYPES.Date, new Date());
-
+                
                 request.on('row', function(columns) {
                     var rowObject = {};
                     columns.forEach(function(column) {
@@ -40,7 +40,7 @@ function extraerEntrevistas(pool, idUsuario, idPerfil) {
                 request.on('requestCompleted', function() {
                     resolve(result);
                 });
-
+                
                 connection.execSql(request);
             }
         });
@@ -96,7 +96,7 @@ function extraerEntrevista(pool, idUsuario, idPerfil, idEntrevista) {
 /**
  * Actualiza el estado de la entrevista (en progreso)
  */
-function actualizarEstadoEntrevista(pool, idEntrevistaUsuario, item) {
+function actualizarEstadoEntrevista(pool, idEntrevistaUsuario) {
     var query = `UPDATE OP_ENTREVISTA
                 SET Estado=10
                 WHERE IdEntrevistaUsuario=@idEntrevistaUsuario AND (Estado BETWEEN 0 AND 1);`;
@@ -117,9 +117,9 @@ function actualizarEstadoEntrevista(pool, idEntrevistaUsuario, item) {
                 request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
                 
                 request.on('requestCompleted', function() {
-                    resolve(item);
+                    resolve(true);
                 });
-
+                
                 connection.execSql(request);
             }
         });
@@ -150,7 +150,7 @@ function finalizarEntrevista(pool, idEntrevistaUsuario) {
                 request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
                 
                 request.on('requestCompleted', function() {
-                    resolve(null);
+                    resolve(true);
                 });
                 
                 connection.execSql(request);

@@ -31,7 +31,7 @@ function generarJWT(req, res, next) {
 };
 
 /**
- * Verifica el JWT asociado a un determinado cliente
+ * Verifica el JWT proveniente del cliente
  */
 function verificarJWT(req, res, next) {
   logger.info(req.headers['id'] + ' > jwtController.verificarJWT');

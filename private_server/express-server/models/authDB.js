@@ -24,10 +24,10 @@ function comprobarCredenciales(pool, usuario, clave) {
                         connection.release();
                     }
                 });
-
+                
                 request.addParameter('usuario', TYPES.VarChar, usuario);
                 request.addParameter('clave', TYPES.VarChar, clave);
-
+                
                 request.on('row', function(columns) {
                     var rowObject = {};
                     columns.forEach(function(column) {
@@ -46,7 +46,7 @@ function comprobarCredenciales(pool, usuario, clave) {
                         resolve(null);
                     }
                 });
-
+                
                 connection.execSql(request);
             }
         });

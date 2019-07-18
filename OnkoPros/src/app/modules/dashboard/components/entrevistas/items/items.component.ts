@@ -129,7 +129,7 @@ export class ItemsComponent implements OnInit {
    * Extrae el item asociado a un ID específico
    */
   extraerItemRespondido(): void {
-    if(this.item) {
+    if (this.item) {
       var idEntrevista = this.item.IdEntrevista;
       if (this.paginaSeleccionada >= this.idItemsRespondidos.length) { // Seleccionado el último ítem extraído (no contestado aún)
         this.limpiarContexto();
@@ -172,7 +172,7 @@ export class ItemsComponent implements OnInit {
     } else { // Enviado nuevo item/valor
       observableItemValor = this.entrevistasService.postItem(item);
     }
-     
+    
     this.limpiarContexto();
     observableItemValor.subscribe(
       item => {
@@ -183,12 +183,23 @@ export class ItemsComponent implements OnInit {
               'Atención, es necesario que siga las siguientes intrucciones:',
               item.Valores[i].Alerta
             ).then(res => {
-              this.extraerSiguienteItem(item.IdEntrevista);
-              return;
+              if (item.Fin) {
+                this.logger.log(`No quedan items asociados a la entrevista con id: ${item.IdEntrevista}) (enviarItem())`);
+                this.navegacionService.navegar(`/dashboard/entrevistas/${item.IdEntrevista}/fin`, true);
+                return;
+              } else {
+                this.extraerSiguienteItem(item.IdEntrevista);
+                return;
+              }
             });
           }
         }
-        this.extraerSiguienteItem(item.IdEntrevista);
+        if (item.Fin) {
+          this.logger.log(`No quedan items asociados a la entrevista con id: ${item.IdEntrevista}) (enviarItem())`);
+          this.navegacionService.navegar(`/dashboard/entrevistas/${item.IdEntrevista}/fin`, true);
+        } else {
+          this.extraerSiguienteItem(item.IdEntrevista);
+        }
       },
       error => {
         this.errorHandler.handleError(error, `enviarItem(${item.IdItem})`);

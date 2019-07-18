@@ -1,4 +1,5 @@
 const authData = require('../models/authDB');
+
 const { conexionPool } = require('../helpers/conexionPool');
 const { logger } = require('../helpers/logger');
 
@@ -29,7 +30,7 @@ function autenticacion(req, res, next) {
         var err = new Error(error.message ? error.message : error);
         err.statusCode = 500; // HTTP 500 Internal Server Error
         next(err);
-    })
+    });
 };
 
 module.exports = { autenticacion }

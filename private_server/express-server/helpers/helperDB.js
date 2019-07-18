@@ -91,7 +91,7 @@ function extraerIdEntrevistaItem(pool, idEntrevistaUsuario, idItem) {
  * Extrae el siguiente orden de respuesta correspondiente a la tupla enterevista/usuario
  */
 function extraerOrden(pool, idEntrevistaUsuario) {
-    var query = `SELECT ISNULL(MAX(CAST(Orden AS numeric)), 0)+1 FROM OP_ENTREVISTA_ITEM op_ei
+    var query = `SELECT ISNULL(MAX(CAST(op_ei.Orden AS numeric)), 0)+1 FROM OP_ENTREVISTA_ITEM op_ei
                 WHERE op_ei.IdEntrevistaUsuario=@idEntrevistaUsuario AND op_ei.Estado>0;`;
     var result = [];
     
@@ -117,11 +117,11 @@ function extraerOrden(pool, idEntrevistaUsuario) {
                     });
                     result.push(rowObject);
                 });
-
+                
                 request.on('requestCompleted', function() {
                     resolve(result[0]);
                 });
-
+                
                 connection.execSql(request);
             }
         });
@@ -231,4 +231,4 @@ function ejecutarProcedimientoAgrupacion(pool, idEntrevistaUsuario, idAgrupacion
     });
 }
 
-module.exports = { extraerIdEntrevistaUsuario, extraerIdEntrevistaItem, extraerOrden, comprobarReglaAgrupacion };
+module.exports = { extraerIdEntrevistaUsuario, extraerIdEntrevistaItem, extraerOrden };

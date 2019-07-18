@@ -3,7 +3,7 @@ const { conexionPool } = require('../helpers/conexionPool');
 const { logger } = require('../helpers/logger');
 
 /**
- * Devuelve las entrevistas disponibles actualmente
+ * Devuelve las entrevistas disponibles actualmente (asociadas al usuario logueado)
  */
 function getEntrevistas(req, res, next) {
     logger.info(req.idUsuario + ' > entrevistasController.getEntrevistas');
@@ -22,7 +22,7 @@ function getEntrevistas(req, res, next) {
         var err = new Error(error.message ? error.message : error);
         err.statusCode = 500; // HTTP 500 Internal Server Error
         next(err);
-    })
+    });
 };
 
 /**
@@ -48,7 +48,7 @@ function getEntrevista(req, res, next) {
         var err = new Error(error.message ? error.message : error);
         err.statusCode = 500; // HTTP 500 Internal Server Error
         next(err);
-    })
+    });
 };
 
 module.exports = { getEntrevistas, getEntrevista }

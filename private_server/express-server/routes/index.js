@@ -10,6 +10,7 @@ router.post('/api/auth', authController.autenticacion, jwtController.generarJWT)
 
 router.get('/api/entrevistas', jwtController.verificarJWT, entrevistasController.getEntrevistas);
 router.get('/api/entrevistas/:idEntrevista', jwtController.verificarJWT, entrevistasController.getEntrevista);
+
 router.get('/api/entrevistas/:idEntrevista/items', jwtController.verificarJWT, itemController.getSiguienteItem);
 router.post('/api/entrevistas/:idEntrevista/items', jwtController.verificarJWT, itemController.setItem);
 router.get('/api/entrevistas/:idEntrevista/items/:idItem', jwtController.verificarJWT, itemController.getItemRespondido);

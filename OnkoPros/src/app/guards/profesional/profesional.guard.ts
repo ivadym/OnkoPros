@@ -19,7 +19,7 @@ export class ProfesionalGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> | Promise<boolean> | boolean {
-    if(this.authService.usuarioLogueado.Perfil[0] === 'Profesional de la salud') {
+    if (this.authService.usuarioLogueado.Perfil[0] === 'Profesional de la salud') {
       return true;
     } else {
       this.navegacionService.navegar('/404', false);

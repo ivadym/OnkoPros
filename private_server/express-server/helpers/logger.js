@@ -16,7 +16,7 @@ const timestampFormat = 'DD/MM/YYYY HH:mm:ss:SSS'
  * Filtra los logs a mostrar/escribir por nivel
  */
 const filtrarLogs = winston.format((info, opts) => {
-    if(config.logger.activo) {
+    if (config.logger.activo) {
         if (config.logger.filtroUnico) {
             if (opts === 'console') {
                 if (config.logger.levelConsole === info.level) {
@@ -80,7 +80,7 @@ const logger = winston.createLogger({
 });
 
 /**
- * Express logger (peticiones HTTP)
+ * Express logger (peticiones HTTPS)
  */
 const expressLogger = expressWinston.logger({
     level: 'info',
@@ -92,7 +92,7 @@ const expressLogger = expressWinston.logger({
 });
 
 /**
- * Express error logger (peticiones HTTP/accesos BBDD)
+ * Express error logger (peticiones HTTPS/accesos BBDD)
  */
 const expressErrorLogger = expressWinston.errorLogger({
     level: 'error',

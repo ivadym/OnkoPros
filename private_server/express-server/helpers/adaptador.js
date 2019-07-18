@@ -20,7 +20,7 @@ function adaptarPerfilUsuario(usuarios) {
 }
 
 /**
- * Adapta el perfil de usuario a su estructura en la BBDD
+ * Adapta el perfil de usuario a las estructura en la BBDD
  */
 function adaptarPerfilSql(perfil) {
     switch (perfil) {

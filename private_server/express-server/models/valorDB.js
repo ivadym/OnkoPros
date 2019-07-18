@@ -50,6 +50,48 @@ function extraerValores(pool, item) {
 }
 
 /**
+ * Almacenar los valores contestados por el usuario
+ */
+function almacenarValor(pool, idEntrevistaItem, item, index) {
+    var query = `INSERT INTO OP_ENTREVISTA_ITEM_VALOR (IdEntrevistaItemValor, IdEntrevistaItem, IdValor, Estado, ValorTexto)
+                VALUES ((SELECT ISNULL(MAX(IdEntrevistaItemValor), 0)+1 FROM OP_ENTREVISTA_ITEM_VALOR), @idEntrevistaItem, @idValor, 1, @valorTexto);`;
+    
+    return new Promise(function(resolve, reject) {
+        pool.acquire(function (err, connection) {
+            if (err) {
+                reject(err);
+            } else {
+                var request = new Request(query, function(err, rowCount, rows) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        connection.release();
+                    }
+                });
+                
+                request.addParameter('idEntrevistaItem', TYPES.Int, idEntrevistaItem);
+                request.addParameter('idValor', TYPES.Int, item.Valores[index].IdValor);
+                request.addParameter('valorTexto', TYPES.NVarChar, item.Valores[index].ValorTexto);
+                
+                request.on('requestCompleted', function() {
+                    if (item.Valores[++index]) {
+                        return almacenarValor(pool, idEntrevistaItem, item, index)
+                        .then(res => {
+                            resolve(res);
+                        })
+                        .catch(error => reject(error)); // Catch de promises anidadas
+                    } else {
+                        resolve(item);
+                    }
+                });
+                
+                connection.execSql(request);
+            }
+        });
+    });
+}
+
+/**
  * Devuelve un array con los valores contestados anteriormente
  */
 function extraerIdValoresRespondidos(pool, idEntrevistaItem) {
@@ -95,51 +137,9 @@ function extraerIdValoresRespondidos(pool, idEntrevistaItem) {
 }
 
 /**
- * Almacenar los valores contestados por el usuario
- */
-function almacenarValor(pool, idEntrevistaItem, item, index) {
-    var query = `INSERT INTO OP_ENTREVISTA_ITEM_VALOR (IdEntrevistaItemValor, IdEntrevistaItem, IdValor, Estado, ValorTexto)
-                VALUES ((SELECT ISNULL(MAX(IdEntrevistaItemValor), 0)+1 FROM OP_ENTREVISTA_ITEM_VALOR), @idEntrevistaItem, @idValor, 1, @valorTexto);`;
-
-    return new Promise(function(resolve, reject) {
-        pool.acquire(function (err, connection) {
-            if (err) {
-                reject(err);
-            } else {
-                var request = new Request(query, function(err, rowCount, rows) {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        connection.release();
-                    }
-                });
-
-                request.addParameter('idEntrevistaItem', TYPES.Int, idEntrevistaItem);
-                request.addParameter('idValor', TYPES.Int, item.Valores[index].IdValor);
-                request.addParameter('valorTexto', TYPES.NVarChar, item.Valores[index].ValorTexto);
-                
-                request.on('requestCompleted', function() {
-                    if (item.Valores[++index]) {
-                        return almacenarValor(pool, idEntrevistaItem, item, index)
-                        .then(res => {
-                            resolve(res);
-                        })
-                        .catch(error => reject(error)); // Catch de promises anidadas
-                    } else {
-                        resolve(item);
-                    }
-                });
-
-                connection.execSql(request);
-            }
-        });
-    });
-}
-
-/**
  * Elimina los valores contestados previamente por el usuario
  */
-function eliminarValores(pool, idEntrevistaItem, item) {
+function eliminarValor(pool, idEntrevistaItem, item) {
     var query = `DELETE op_eiv
                 FROM OP_ENTREVISTA_ITEM_VALOR op_eiv
                 WHERE op_eiv.IdEntrevistaItem=@idEntrevistaItem AND op_eiv.Estado=1;`;
@@ -169,4 +169,4 @@ function eliminarValores(pool, idEntrevistaItem, item) {
     });
 }
 
-module.exports = { extraerValores, extraerIdValoresRespondidos, almacenarValor, eliminarValores }
+module.exports = { extraerValores, almacenarValor, extraerIdValoresRespondidos, eliminarValor }
