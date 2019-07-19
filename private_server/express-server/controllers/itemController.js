@@ -17,36 +17,33 @@ function getSiguienteItem(req, res, next) {
         return itemData.extraerContextoItemSiguiente(pool, idEntrevistaUsuario, {'op': true})
         .then(ctx => {
             if (ctx) {
-                if (ctx.IdSiguienteItem) {
-                    return itemData.extraerItem(pool, req.params['idEntrevista'], ctx.IdSiguienteAgrupacion, ctx.IdSiguienteItem)
-                    .then(item => {
-                        return itemData.extraerIdItemsRespondidos(pool, idEntrevistaUsuario)
-                        .then(idItemsRespondidos => {
+                return itemData.extraerIdItemsRespondidos(pool, idEntrevistaUsuario)
+                .then(idItemsRespondidos => {
+                    if (ctx.IdSiguienteItem && !idItemsRespondidos.includes(ctx.IdSiguienteItem)) {
+                        return itemData.extraerItem(pool, req.params['idEntrevista'], ctx.IdSiguienteAgrupacion, ctx.IdSiguienteItem)
+                        .then(item => {
                             res.status(200).json({
                                 item: item,
                                 idItemsRespondidos: idItemsRespondidos
                             });
                         });
-                    });
-                } else {
-                    return itemData.extraerContextoItemSiguiente(pool, idEntrevistaUsuario, {'item': true})
-                    .then(ctx => {
-                        if (ctx) {
-                            return itemData.extraerItem(pool, req.params['idEntrevista'], ctx.IdSiguienteAgrupacion, ctx.IdSiguienteItem)
-                            .then(item => {
-                                return itemData.extraerIdItemsRespondidos(pool, idEntrevistaUsuario)
-                                .then(idItemsRespondidos => {
+                    } else {
+                        return itemData.extraerContextoItemSiguiente(pool, idEntrevistaUsuario, {'item': true})
+                        .then(ctx => {
+                            if (ctx) {
+                                return itemData.extraerItem(pool, req.params['idEntrevista'], ctx.IdSiguienteAgrupacion, ctx.IdSiguienteItem)
+                                .then(item => {
                                     res.status(200).json({
                                         item: item,
                                         idItemsRespondidos: idItemsRespondidos
                                     });
                                 });
-                            });
-                        } else {
-                            res.status(200).json(null); // Entrevista finalizada
-                        }
-                    });
-                }
+                            } else {
+                                res.status(200).json(null); // Entrevista finalizada
+                            }
+                        });
+                    }
+                });
             } else {
                 logger.error(req.idUsuario + ' > itemController.getsiguienteItem.404');
                 var err = new Error('Error al extraer un item de una entrevista no encontrada');

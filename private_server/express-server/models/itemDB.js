@@ -136,7 +136,7 @@ function extraerContextoItemSiguiente(pool, idEntrevistaUsuario, opts) {
                         var siguienteItem = result[0];
                         if (siguienteItem) {
                             if (siguienteItem.EsAgrupacion) { // Es agrupación
-                                return extraerContextoItemHijo(pool, idEntrevistaUsuario, siguienteItem.IdItem)
+                                return extraerContextoItemHijo(pool, idEntrevistaUsuario, siguienteItem.IdItem, false)
                                 .then(ctx => {
                                     if (ctx) { // Item hijo extraído
                                         resolve(ctx);
@@ -179,13 +179,22 @@ function extraerContextoItemSiguiente(pool, idEntrevistaUsuario, opts) {
 /**
  * Extrae los item hijos asociados a una agrupación
  */
-function extraerContextoItemHijo(pool, idEntrevistaUsuario, idAgrupacion) {
-    var query = `SELECT TOP 1 i.IdItem, i.EsAgrupacion FROM
+function extraerContextoItemHijo(pool, idEntrevistaUsuario, idAgrupacion, update) {
+    var query = ``;
+    var result = [];
+    
+    if (update) {
+        query = `SELECT TOP 1 i.IdItem, i.EsAgrupacion FROM
+                GEOP_ITEM_AGRUPACION ia INNER JOIN GEOP_ITEM i on i.idItem=ia.IdItem
+                WHERE ia.IdAgrupacion=@idAgrupacion AND ia.Estado=1 AND i.Estado=1
+                ORDER BY CAST(ia.Orden AS numeric) ASC;`;     
+    } else {
+        query = `SELECT TOP 1 i.IdItem, i.EsAgrupacion FROM
                 GEOP_ITEM_AGRUPACION ia INNER JOIN GEOP_ITEM i on i.idItem=ia.IdItem
                 WHERE ia.IdAgrupacion=@idAgrupacion AND ia.Estado=1 AND i.Estado=1
                 AND (i.IdItem NOT IN (SELECT op_ei.IdItem FROM OP_ENTREVISTA_ITEM op_ei WHERE op_ei.Estado>0 AND op_ei.IdEntrevistaUsuario=@idEntrevistaUsuario))
-                ORDER BY CAST(ia.Orden AS numeric) ASC;`;
-    var result = [];
+                ORDER BY CAST(ia.Orden AS numeric) ASC;`; 
+    }
     
     return new Promise(function(resolve, reject) {
         pool.acquire(function (err, connection) {
@@ -217,7 +226,7 @@ function extraerContextoItemHijo(pool, idEntrevistaUsuario, idAgrupacion) {
                         if (itemHijo.EsAgrupacion) { // Item hijo es a su vez agrupación
                             return actualizarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, idAgrupacion)
                             .then(res => {
-                                return extraerContextoItemHijo(pool, idEntrevistaUsuario, itemHijo.IdItem)
+                                return extraerContextoItemHijo(pool, idEntrevistaUsuario, itemHijo.IdItem, update)
                                 .then(ctx => {
                                     if (ctx) { // Quedan items hijos
                                         resolve({
@@ -227,7 +236,7 @@ function extraerContextoItemHijo(pool, idEntrevistaUsuario, idAgrupacion) {
                                     } else { // No quedan más items hijos
                                         return finalizarItemAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, itemHijo.IdItem)
                                         .then(res => { // Continúa el flujo principal
-                                            return extraerContextoItemHijo(pool, idEntrevistaUsuario, idAgrupacion)
+                                            return extraerContextoItemHijo(pool, idEntrevistaUsuario, idAgrupacion, update)
                                             .then(res => {
                                                 resolve(res);
                                             });
@@ -332,7 +341,7 @@ function almacenarItem(pool, idUsuario, idPerfil, item) {
                                 .then(item => {
                                     return entrevistaData.actualizarEstadoEntrevista(pool, idEntrevistaUsuario)
                                     .then(res => {
-                                        return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item)
+                                        return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, false)
                                         .then(item => {
                                             resolve(item);
                                         });
@@ -354,7 +363,7 @@ function almacenarItem(pool, idUsuario, idPerfil, item) {
 /**
  * Extrae el siguiente item a presentar al usuario
  */
-function actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item) {
+function actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, update) {
     var query = ``;
     var result = [];
     
@@ -399,7 +408,7 @@ function actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item) {
                     var siguienteItem = result[0];
                     if (siguienteItem) { // Item extraído
                         if (siguienteItem.EsAgrupacion) { // Es agrupación
-                            return extraerContextoItemHijo(pool, idEntrevistaUsuario, siguienteItem.IdItem)
+                            return extraerContextoItemHijo(pool, idEntrevistaUsuario, siguienteItem.IdItem, update)
                             .then(ctx => {
                                 return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, ctx.IdSiguienteAgrupacion, ctx.IdSiguienteItem)
                                 .then(res => {
@@ -601,7 +610,7 @@ function actualizarItem(pool, idUsuario, idPerfil, item) {
                                     
                                     // TODO: Comprobar regla
                                     
-                                    return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item)
+                                    return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, true)
                                     .then(item => {
                                         resolve(item);
                                     });
