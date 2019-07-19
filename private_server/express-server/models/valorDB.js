@@ -95,7 +95,7 @@ function almacenarValor(pool, idEntrevistaItem, item, index) {
 /**
  * Devuelve un array con los valores contestados anteriormente
  */
-function extraerIdValoresRespondidos(pool, idEntrevistaItem) {
+function extraerIdValoresSeleccionados(pool, idEntrevistaItem) {
     var query = `SELECT eiv.IdValor, eiv.ValorTexto
                 FROM OP_ENTREVISTA_ITEM_VALOR eiv WHERE eiv.IdEntrevistaItem=@idEntrevistaItem AND eiv.Estado=1;`;
     var result = [];
@@ -130,7 +130,7 @@ function extraerIdValoresRespondidos(pool, idEntrevistaItem) {
                         reject('Error en la obtención de los valores respondidos previamente por el usuario');
                     }
                 });
-
+                
                 connection.execSql(request);
             }
         });
@@ -144,7 +144,7 @@ function eliminarValor(pool, idEntrevistaItem, item) {
     var query = `DELETE op_eiv
                 FROM OP_ENTREVISTA_ITEM_VALOR op_eiv
                 WHERE op_eiv.IdEntrevistaItem=@idEntrevistaItem AND op_eiv.Estado=1;`;
-
+    
     return new Promise(function(resolve, reject) {
         pool.acquire(function (err, connection) {
             if (err) {
@@ -157,17 +157,17 @@ function eliminarValor(pool, idEntrevistaItem, item) {
                         connection.release();
                     }
                 });
-
+                
                 request.addParameter('idEntrevistaItem', TYPES.Int, idEntrevistaItem);
                 
                 request.on('requestCompleted', function() {
                     resolve(item);
                 });
-
+                
                 connection.execSql(request);
             }
         });
     });
 }
 
-module.exports = { extraerValores, almacenarValor, extraerIdValoresRespondidos, eliminarValor }
+module.exports = { extraerValores, almacenarValor, extraerIdValoresSeleccionados, eliminarValor }

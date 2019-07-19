@@ -129,6 +129,85 @@ function extraerOrden(pool, idEntrevistaUsuario) {
 }
 
 /**
+ * Actualiza el siguiente item a extraer por el usuario
+ */
+function guardarContextoSiguienteItem(pool, idEntrevistaUsuario, idSiguienteAgrupacion, idSiguienteItem) {
+    var query = `UPDATE OP_ENTREVISTA
+                SET IdSiguienteAgrupacion=@idSiguienteAgrupacion, IdSiguienteItem=@idSiguienteItem
+                WHERE IdEntrevistaUsuario=@idEntrevistaUsuario;`;
+    var result = [];
+    
+    return new Promise(function(resolve, reject) {
+        pool.acquire(function (err, connection) {
+            if (err) {
+                reject(err);
+            } else {
+                var request = new Request(query, function(err, rowCount, rows) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        connection.release();
+                    }
+                });
+                
+                request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
+                request.addParameter('idSiguienteAgrupacion', TYPES.Int, idSiguienteAgrupacion);
+                request.addParameter('idSiguienteItem', TYPES.Int, idSiguienteItem);
+                
+                request.on('row', function(columns) {
+                    var rowObject = {};
+                    columns.forEach(function(column) {
+                        rowObject[column.metadata.colName] = column.value;
+                    });
+                    result.push(rowObject);
+                });
+                
+                request.on('requestCompleted', function() {
+                    resolve(true);
+                });
+                
+                connection.execSql(request);
+            }
+        });
+    });
+}
+
+/**
+ * Actualiza el contexto del item padre de agrupación
+ */
+function actualizarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, idPadre) {
+    var query = `UPDATE OP_ENTREVISTA
+                SET IdSiguienteAgrupacionPadre=@idPadre
+                WHERE IdEntrevistaUsuario=@idEntrevistaUsuario;`;
+    var result = [];
+    
+    return new Promise(function(resolve, reject) {
+        pool.acquire(function (err, connection) {
+            if (err) {
+                reject(err);
+            } else {
+                var request = new Request(query, function(err, rowCount, rows) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        connection.release();
+                    }
+                });
+                
+                request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
+                request.addParameter('idPadre', TYPES.Int, idPadre);
+                
+                request.on('requestCompleted', function() {
+                    resolve(true);
+                });
+                
+                connection.execSql(request);
+            }
+        });
+    });
+}
+
+/**
  * Extrae las reglas a ejecutar asociadas a una agrupación y ejecuta los procedimientos almacenados correspondientes
  */
 function comprobarReglaAgrupacion(pool, idEntrevistaUsuario, idAgrupacion) {
@@ -231,4 +310,7 @@ function ejecutarProcedimientoAgrupacion(pool, idEntrevistaUsuario, idAgrupacion
     });
 }
 
-module.exports = { extraerIdEntrevistaUsuario, extraerIdEntrevistaItem, extraerOrden };
+module.exports = {
+    extraerIdEntrevistaUsuario, extraerIdEntrevistaItem, extraerOrden, guardarContextoSiguienteItem,
+    actualizarContextoSiguienteAgrupacionPadre
+};

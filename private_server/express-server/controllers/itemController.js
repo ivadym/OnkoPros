@@ -87,7 +87,7 @@ function setItem(req, res, next) {
  */
 function getItemRespondido(req, res, next) {
     logger.info(req.idUsuario + ' > itemController.getItemRespondido');
-
+    
     var pool = conexionPool();
     extraerIdEntrevistaUsuario(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista'])
     .then(idEntrevistaUsuario => {

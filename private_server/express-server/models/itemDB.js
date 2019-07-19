@@ -1,9 +1,12 @@
 const Request = require('tedious').Request;
 const TYPES = require('tedious').TYPES;
 
-const entrevistaData = require('../models/entrevistasDB')
+const entrevistaData = require('../models/entrevistasDB');
 const valorData = require('../models/valorDB');
-const { extraerIdEntrevistaUsuario, extraerIdEntrevistaItem, extraerOrden } = require('../helpers/helperDB');
+const {
+    extraerIdEntrevistaUsuario, extraerIdEntrevistaItem, extraerOrden, guardarContextoSiguienteItem,
+    actualizarContextoSiguienteAgrupacionPadre
+} = require('../helpers/helperDB');
 
 /**
  * Devuelve la siguiente pregunta asociada a un usuario y a una entrevista determinados
@@ -65,7 +68,7 @@ function extraerContextoItemSiguiente(pool, idEntrevistaUsuario, opts) {
     if (opts['op']) { // Contexto obtenido a partir de la tabla OP_ENTREVISTA
         query = `SELECT op_e.IdSiguienteAgrupacion, op_e.IdSiguienteItem FROM OP_ENTREVISTA op_e
                 WHERE op_e.IdEntrevistaUsuario=@identrevistaUsuario;`;
-                
+        
         return new Promise(function(resolve, reject) {
             pool.acquire(function (err, connection) {
                 if (err) {
@@ -138,7 +141,6 @@ function extraerContextoItemSiguiente(pool, idEntrevistaUsuario, opts) {
                                     if (ctx) { // Item hijo extraído
                                         resolve(ctx);
                                     } else { // No hay más item hijos
-                                        // TODO: Sustituir null por el ID padre de la agrupación (si lo hay)
                                         return finalizarItemAgrupacion(pool, idEntrevistaUsuario, null, siguienteItem.IdItem)
                                         .then(res => {
                                             
@@ -161,10 +163,7 @@ function extraerContextoItemSiguiente(pool, idEntrevistaUsuario, opts) {
                         } else {
                             return entrevistaData.finalizarEntrevista(pool, idEntrevistaUsuario)
                             .then(res => {
-                                return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, null, null)
-                                .then(res => {
-                                    resolve(null);
-                                });
+                                resolve(null);
                             })
                             .catch(error => reject(error)); // Catch de promises anidadas
                         }
@@ -216,22 +215,25 @@ function extraerContextoItemHijo(pool, idEntrevistaUsuario, idAgrupacion) {
                     var itemHijo = result[0];
                     if (itemHijo) {
                         if (itemHijo.EsAgrupacion) { // Item hijo es a su vez agrupación
-                            return extraerContextoItemHijo(pool, idEntrevistaUsuario, itemHijo.IdItem)
-                            .then(ctx => {
-                                if (ctx) { // Quedan items hijos
-                                    resolve({
-                                        IdSiguienteAgrupacion: itemHijo.IdItem,
-                                        IdSiguienteItem: ctx.IdSiguienteItem
-                                    });
-                                } else { // No quedan más items hijos
-                                    return finalizarItemAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, itemHijo.IdItem)
-                                    .then(res => { // Continúa el flujo principal
-                                        return extraerContextoItemHijo(pool, idEntrevistaUsuario, idAgrupacion)
-                                        .then(res => {
-                                            resolve(res);
+                            return actualizarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, idAgrupacion)
+                            .then(res => {
+                                return extraerContextoItemHijo(pool, idEntrevistaUsuario, itemHijo.IdItem)
+                                .then(ctx => {
+                                    if (ctx) { // Quedan items hijos
+                                        resolve({
+                                            IdSiguienteAgrupacion: itemHijo.IdItem,
+                                            IdSiguienteItem: ctx.IdSiguienteItem
                                         });
-                                    });
-                                }
+                                    } else { // No quedan más items hijos
+                                        return finalizarItemAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, itemHijo.IdItem)
+                                        .then(res => { // Continúa el flujo principal
+                                            return extraerContextoItemHijo(pool, idEntrevistaUsuario, idAgrupacion)
+                                            .then(res => {
+                                                resolve(res);
+                                            });
+                                        });
+                                    }
+                                });
                             })
                             .catch(error => reject(error)); // Catch de promises anidadas
                         } else { // Item hijo no es agrupación
@@ -413,73 +415,22 @@ function actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item) {
                             .catch(error => reject(error)); // Catch de promises anidadas
                         }
                     } else if (item.IdAgrupacion) { // No hay más items - AGRUPACIÓN
-                        // TODO: Sustituir null por el ID padre de la agrupación (si lo hay)
                         return finalizarItemAgrupacion(pool, idEntrevistaUsuario, null, item.IdAgrupacion)
                         .then(res => {
                             
                             // TODO: Comprobar regla
                             
-                            return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, null, null)
-                            .then(res => {
-                                resolve(item);
-                            });
+                            resolve(item);
                         })
                         .catch(error => reject(error)); // Catch de promises anidadas
                     } else if (!item.IdAgrupacion) { // No hay más items - ENTREVISTA
                         return entrevistaData.finalizarEntrevista(pool, idEntrevistaUsuario)
                         .then(res => {
-                            return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, null, null)
-                            .then(res => {
-                                item.Fin = true;
-                                resolve(item);
-                            });
+                            item.Fin = true;
+                            resolve(item);
                         })
                         .catch(error => reject(error)); // Catch de promises anidadas
                     }
-                });
-                
-                connection.execSql(request);
-            }
-        });
-    });
-}
-
-/**
- * Actualiza el siguiente item a extraer por el usuario
- */
-function guardarContextoSiguienteItem(pool, idEntrevistaUsuario, idSiguienteAgrupacion, idSiguienteItem) {
-    var query = `UPDATE OP_ENTREVISTA
-                SET IdSiguienteAgrupacion=@idSiguienteAgrupacion, IdSiguienteItem=@idSiguienteItem
-                WHERE IdEntrevistaUsuario=@idEntrevistaUsuario;`;
-    var result = [];
-    
-    return new Promise(function(resolve, reject) {
-        pool.acquire(function (err, connection) {
-            if (err) {
-                reject(err);
-            } else {
-                var request = new Request(query, function(err, rowCount, rows) {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        connection.release();
-                    }
-                });
-                
-                request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
-                request.addParameter('idSiguienteAgrupacion', TYPES.Int, idSiguienteAgrupacion);
-                request.addParameter('idSiguienteItem', TYPES.Int, idSiguienteItem);
-                
-                request.on('row', function(columns) {
-                    var rowObject = {};
-                    columns.forEach(function(column) {
-                        rowObject[column.metadata.colName] = column.value;
-                    });
-                    result.push(rowObject);
-                });
-                
-                request.on('requestCompleted', function() {
-                    resolve(true);
                 });
                 
                 connection.execSql(request);
@@ -492,8 +443,17 @@ function guardarContextoSiguienteItem(pool, idEntrevistaUsuario, idSiguienteAgru
  * Finaliza el item agrupación correspondiente a un usuario determinado
  */
 function finalizarItemAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, idItem) {
-    var query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdAgrupacion, IdItem, Estado, Orden)
+    var query = ``;
+    
+    if (idAgrupacion) {
+        query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdAgrupacion, IdItem, Estado, Orden)
                 VALUES ((SELECT ISNULL(MAX(IdEntrevistaItem), 0)+1 FROM OP_ENTREVISTA_ITEM), @idEntrevistaUsuario, @idAgrupacion, @idItem, 2, @orden);`;
+    } else {
+        query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdAgrupacion, IdItem, Estado, Orden)
+                VALUES ((SELECT ISNULL(MAX(IdEntrevistaItem), 0)+1 FROM OP_ENTREVISTA_ITEM), @idEntrevistaUsuario,
+                (SELECT op_e.IdSiguienteAgrupacionPadre FROM OP_ENTREVISTA op_e WHERE op_e.IdEntrevistaUsuario=@idEntrevistaUsuario),
+                @idItem, 2, @orden);`;
+    }
     
     return new Promise(function(resolve, reject) {
         return extraerOrden(pool, idEntrevistaUsuario)
@@ -516,7 +476,14 @@ function finalizarItemAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, idItem
                     request.addParameter('orden', TYPES.VarChar, orden);
                     
                     request.on('requestCompleted', function() {
-                        resolve(true);
+                        return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, null, null)
+                        .then(res => {
+                            return actualizarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, null)
+                            .then(res => {
+                                resolve(res);
+                            });
+                        })
+                        .catch(error => reject(error)); // Catch de promises anidadas
                     });
                     
                     connection.execSql(request);
@@ -564,31 +531,33 @@ function extraerItemRespondido(pool, idEntrevistaUsuario, idItem) {
                     });
                     
                     request.on('requestCompleted', function() {
-                        if (result[0]) {
-                            return valorData.extraerValores(pool, result[0]) // Devuelve los valores del item correspondiente
+                        var itemAnterior = result[0];
+                        if (itemAnterior) {
+                            return valorData.extraerValores(pool, itemAnterior)
                             .then(valores => {
-                                return valorData.extraerIdValoresRespondidos(pool, idEntrevistaItem)
-                                .then(valoresRespondidos => {
+                                return valorData.extraerIdValoresSeleccionados(pool, idEntrevistaItem) // Valores respondidos
+                                .then(valoresSeleccionados => {
                                     for (var i = 0; i < valores.length; i++) {
                                         valores[i].Seleccionado = false;
                                         valores[i].ValorTexto = null;
-                                        for (var j = 0; j < valoresRespondidos.length; j++) {
-                                            if (valores[i].IdValor === valoresRespondidos[j].IdValor) { // Valor seleccionado previamente
+                                        for (var j = 0; j < valoresSeleccionados.length; j++) {
+                                            if (valores[i].IdValor === valoresSeleccionados[j].IdValor) { // Valor seleccionado previamente
                                                 valores[i].Seleccionado = true;
-                                                valores[i].ValorTexto = valoresRespondidos[j].ValorTexto;
+                                                valores[i].ValorTexto = valoresSeleccionados[j].ValorTexto;
                                             }
                                         }
                                     }
-                                    result[0].Valores = valores;
-                                    resolve(result[0]); // Envío del item
-                                })
+                                    
+                                    itemAnterior.Valores = valores;
+                                    resolve(itemAnterior); // Envío del item
+                                });
                             })
                             .catch(error => reject(error)); // Catch de promises anidadas
                         } else {
                             reject('Error en la obtención del item respondido previamente por el usuario')
                         }
                     });
-    
+                    
                     connection.execSql(request);
                 }
             });
@@ -629,8 +598,14 @@ function actualizarItem(pool, idUsuario, idPerfil, item) {
                             .then(item => {
                                 return valorData.almacenarValor(pool, idEntrevistaItem, item, 0) // Se almacenan los valores actualizados
                                 .then(item => {
-                                    resolve(item);
-                                })
+                                    
+                                    // TODO: Comprobar regla
+                                    
+                                    return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item)
+                                    .then(item => {
+                                        resolve(item);
+                                    });
+                                });
                             })
                             .catch(error => reject(error)); // Catch de promises anidadas
                         });
@@ -644,4 +619,6 @@ function actualizarItem(pool, idUsuario, idPerfil, item) {
     });
 }
 
-module.exports = { extraerItem, extraerContextoItemSiguiente, extraerIdItemsRespondidos, almacenarItem, extraerItemRespondido, actualizarItem }
+module.exports = {
+    extraerItem, extraerContextoItemSiguiente, extraerIdItemsRespondidos, almacenarItem, extraerItemRespondido, actualizarItem
+}

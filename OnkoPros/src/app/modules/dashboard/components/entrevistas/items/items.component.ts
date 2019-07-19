@@ -173,7 +173,6 @@ export class ItemsComponent implements OnInit {
       observableItemValor = this.entrevistasService.postItem(item);
     }
     
-    this.limpiarContexto();
     observableItemValor.subscribe(
       item => {
         this.logger.log(`Item enviado correctamente (id: ${item.IdItem})`);
@@ -185,19 +184,28 @@ export class ItemsComponent implements OnInit {
             ).then(res => {
               if (item.Fin) {
                 this.logger.log(`No quedan items asociados a la entrevista con id: ${item.IdEntrevista}) (enviarItem())`);
+                this.limpiarContexto();
                 this.navegacionService.navegar(`/dashboard/entrevistas/${item.IdEntrevista}/fin`, true);
-                return;
+              } else if (this.idItemsRespondidos.slice(0, this.idItemsRespondidos.length - 2).includes(item.IdItem)) {
+                this.paginaSeleccionada = this.idItemsRespondidos.indexOf(item.IdItem) + 2;
+                this.extraerItemRespondido();
               } else {
+                this.limpiarContexto();
                 this.extraerSiguienteItem(item.IdEntrevista);
-                return;
               }
+              return;
             });
           }
         }
         if (item.Fin) {
           this.logger.log(`No quedan items asociados a la entrevista con id: ${item.IdEntrevista}) (enviarItem())`);
+          this.limpiarContexto();
           this.navegacionService.navegar(`/dashboard/entrevistas/${item.IdEntrevista}/fin`, true);
+        } else if (this.idItemsRespondidos.slice(0, this.idItemsRespondidos.length - 2).includes(item.IdItem)) {
+          this.paginaSeleccionada = this.idItemsRespondidos.indexOf(item.IdItem) + 2;
+          this.extraerItemRespondido();
         } else {
+          this.limpiarContexto();
           this.extraerSiguienteItem(item.IdEntrevista);
         }
       },
