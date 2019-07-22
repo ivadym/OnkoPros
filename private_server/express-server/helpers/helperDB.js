@@ -154,14 +154,6 @@ function guardarContextoSiguienteItem(pool, idEntrevistaUsuario, idSiguienteAgru
                 request.addParameter('idSiguienteAgrupacion', TYPES.Int, idSiguienteAgrupacion);
                 request.addParameter('idSiguienteItem', TYPES.Int, idSiguienteItem);
                 
-                request.on('row', function(columns) {
-                    var rowObject = {};
-                    columns.forEach(function(column) {
-                        rowObject[column.metadata.colName] = column.value;
-                    });
-                    result.push(rowObject);
-                });
-                
                 request.on('requestCompleted', function() {
                     resolve(true);
                 });
@@ -211,7 +203,7 @@ function actualizarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, i
  * Extrae las reglas a ejecutar asociadas a una agrupación y ejecuta los procedimientos almacenados correspondientes
  */
 function comprobarReglaAgrupacion(pool, idEntrevistaUsuario, idAgrupacion) {
-    var query = `SELECT r.IdRegla, r.ProcedimientoSQL, r.IdAgrupacionSalto, r.UmbralSalto
+    var query = `SELECT r.IdRegla, r.ProcedimientoSQL, r.IdAgrupacionSalto, r.IdItemSalto, r.UmbralSalto
                 FROM GEOP_ITEM_REGLA ir
                 INNER JOIN GEOP_REGLA r ON r.IdRegla=ir.IdRegla
                 WHERE ir.IdItem=@idAgrupacion AND ir.Estado=1 AND r.Estado=1
@@ -289,18 +281,27 @@ function ejecutarProcedimientoAgrupacion(pool, idEntrevistaUsuario, idAgrupacion
                 });
                 
                 request.on('requestCompleted', function() {
-                    if (regla[index].UmbralSalto && result >= regla[index].UmbralSalto) {
-                        // TODO: Añadir una nueva agrupación a la entrevista en curso con ID: regla[index].IdAgrupacionSalto
+                    var ctx = null;
+                    
+                    if (regla[index].IdItemSalto && regla[index].UmbralSalto && result >= regla[index].UmbralSalto) {
+                        ctx = {
+                            IdSiguienteAgrupacion: regla[index].IdAgrupacionSalto,
+                            IdSiguienteItem: regla[index].IdItemSalto
+                        };
                     }
-
+                    
                     if (regla[++index]) { // Quedan más reglas asociadas a una agrupación
                         return ejecutarProcedimientoAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, regla, index)
                         .then(res => {
-                            resolve(res);
+                            if (res) {
+                                resolve(res);
+                            } else {
+                                resolve(ctx);
+                            }
                         })
                         .catch(error => reject(error)); // Catch de promises anidadas
                     } else {
-                        resolve(null);
+                        resolve(ctx);
                     }
                 });
                 
@@ -312,5 +313,5 @@ function ejecutarProcedimientoAgrupacion(pool, idEntrevistaUsuario, idAgrupacion
 
 module.exports = {
     extraerIdEntrevistaUsuario, extraerIdEntrevistaItem, extraerOrden, guardarContextoSiguienteItem,
-    actualizarContextoSiguienteAgrupacionPadre
+    actualizarContextoSiguienteAgrupacionPadre, comprobarReglaAgrupacion
 };
