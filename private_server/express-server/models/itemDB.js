@@ -454,49 +454,58 @@ function actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, update
 function finalizarItemAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, idItem) {
     var query = ``;
     
-    if (idAgrupacion) {
-        query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdAgrupacion, IdItem, Estado, Orden)
-                VALUES ((SELECT ISNULL(MAX(IdEntrevistaItem), 0)+1 FROM OP_ENTREVISTA_ITEM), @idEntrevistaUsuario, @idAgrupacion, @idItem, 2, @orden);`;
-    } else {
-        query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdAgrupacion, IdItem, Estado, Orden)
-                VALUES ((SELECT ISNULL(MAX(IdEntrevistaItem), 0)+1 FROM OP_ENTREVISTA_ITEM), @idEntrevistaUsuario,
-                (SELECT op_e.IdSiguienteAgrupacionPadre FROM OP_ENTREVISTA op_e WHERE op_e.IdEntrevistaUsuario=@idEntrevistaUsuario),
-                @idItem, 2, @orden);`;
-    }
-    
     return new Promise(function(resolve, reject) {
-        return extraerOrden(pool, idEntrevistaUsuario)
-        .then(orden => {
-            pool.acquire(function (err, connection) {
-                if (err) {
-                    reject(err);
+        return actualizarAgrupacionRespondida(pool, idEntrevistaUsuario, idItem)
+        .then(res => {
+            if (res) { // Agrupación finalizada anteriormente, se realiza únicamente el update
+                query = ``;
+            } else {
+                if (idAgrupacion) {
+                query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdAgrupacion, IdItem, Estado, Orden)
+                        VALUES ((SELECT ISNULL(MAX(IdEntrevistaItem), 0)+1 FROM OP_ENTREVISTA_ITEM), @idEntrevistaUsuario, @idAgrupacion, @idItem, 2, @orden);`;
                 } else {
-                    var request = new Request(query, function(err, rowCount, rows) {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            connection.release();
-                        }
-                    });
-                    
-                    request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
-                    request.addParameter('idAgrupacion', TYPES.Int, idAgrupacion);
-                    request.addParameter('idItem', TYPES.Int, idItem);
-                    request.addParameter('orden', TYPES.VarChar, orden);
-                    
-                    request.on('requestCompleted', function() {
-                        return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, null, null)
-                        .then(res => {
-                            return actualizarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, null)
-                            .then(res => {
-                                resolve(res);
-                            });
-                        })
-                        .catch(error => reject(error)); // Catch de promises anidadas
-                    });
-                    
-                    connection.execSql(request);
+                query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdAgrupacion, IdItem, Estado, Orden)
+                        VALUES ((SELECT ISNULL(MAX(IdEntrevistaItem), 0)+1 FROM OP_ENTREVISTA_ITEM), @idEntrevistaUsuario,
+                        (SELECT op_e.IdSiguienteAgrupacionPadre FROM OP_ENTREVISTA op_e WHERE op_e.IdEntrevistaUsuario=@idEntrevistaUsuario),
+                        @idItem, 2, @orden);`;
                 }
+            }
+            return extraerOrden(pool, idEntrevistaUsuario)
+            .then(orden => {
+                pool.acquire(function (err, connection) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        var request = new Request(query, function(err, rowCount, rows) {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                connection.release();
+                            }
+                        });
+                        
+                        request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
+                        request.addParameter('idAgrupacion', TYPES.Int, idAgrupacion);
+                        request.addParameter('idItem', TYPES.Int, idItem);
+                        request.addParameter('orden', TYPES.VarChar, orden);
+                        
+                        request.on('requestCompleted', function() {
+                            
+                            // TODO: Comprobar regla
+                            
+                            return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, null, null)
+                            .then(res => {
+                                return actualizarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, null)
+                                .then(res => {
+                                    resolve(res);
+                                });
+                            })
+                            .catch(error => reject(error)); // Catch de promises anidadas
+                        });
+                        
+                        connection.execSql(request);
+                    }
+                });
             });
         })
         .catch(error => reject(error)); // Catch de promises anidadas
@@ -576,6 +585,64 @@ function extraerItemRespondido(pool, idEntrevistaUsuario, idItem) {
 }
 
 /**
+ * Actualiza la agrupación respondida previamente
+ */
+function actualizarAgrupacionRespondida(pool, idEntrevistaUsuario, idAgrupacion, anidada) {
+    var query = `UPDATE OP_ENTREVISTA_ITEM
+                SET FechaRegistro=GETDATE()
+                OUTPUT inserted.IdAgrupacion
+                WHERE IdEntrevistaUsuario=@idEntrevistaUsuario AND IdItem=@idAgrupacion;`;            
+    var result = [];
+    
+    return new Promise(function(resolve, reject) {
+        pool.acquire(function (err, connection) {
+            if (err) {
+                reject(err);
+            } else {
+                var request = new Request(query, function(err, rowCount, rows) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        connection.release();
+                    }
+                });
+                
+                request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
+                request.addParameter('idAgrupacion', TYPES.Int, idAgrupacion);
+                
+                request.on('row', function(columns) {
+                    var rowObject = {};
+                    columns.forEach(function(column) {
+                        rowObject[column.metadata.colName] = column.value;
+                    });
+                    result.push(rowObject);
+                });
+                
+                request.on('requestCompleted', function() {
+                    idAgrupacion = result[0] ? result[0].IdAgrupacion : null;
+                    if (idAgrupacion) { // Agrupación anidada
+                        
+                        // TODO: Comprobar regla
+                        
+                        return actualizarAgrupacionRespondida(pool, idEntrevistaUsuario, idAgrupacion, true)
+                        .then(res => {
+                            resolve(res);
+                        })
+                        .catch(error => reject(error)); // Catch de promises anidadas
+                    } else if (anidada) {
+                        resolve(true);
+                    } else {
+                        resolve(false);
+                    }
+                });
+                
+                connection.execSql(request);
+            }
+        });
+    });
+}
+
+/**
  * Actualiza la respuesta del usuario en la BBDD
  */
 function actualizarItem(pool, idUsuario, idPerfil, item) {
@@ -607,12 +674,15 @@ function actualizarItem(pool, idUsuario, idPerfil, item) {
                             .then(item => {
                                 return valorData.almacenarValor(pool, idEntrevistaItem, item, 0) // Se almacenan los valores actualizados
                                 .then(item => {
-                                    
-                                    // TODO: Comprobar regla
-                                    
-                                    return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, true)
-                                    .then(item => {
-                                        resolve(item);
+                                    return actualizarAgrupacionRespondida(pool, idEntrevistaUsuario, item.IdAgrupacion, false)
+                                    .then(res => {
+                                        
+                                        // TODO: Comprobar reglas
+                                        
+                                        return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, true)
+                                        .then(item => {
+                                            resolve(item);
+                                        });
                                     });
                                 });
                             })

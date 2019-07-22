@@ -154,14 +154,6 @@ function guardarContextoSiguienteItem(pool, idEntrevistaUsuario, idSiguienteAgru
                 request.addParameter('idSiguienteAgrupacion', TYPES.Int, idSiguienteAgrupacion);
                 request.addParameter('idSiguienteItem', TYPES.Int, idSiguienteItem);
                 
-                request.on('row', function(columns) {
-                    var rowObject = {};
-                    columns.forEach(function(column) {
-                        rowObject[column.metadata.colName] = column.value;
-                    });
-                    result.push(rowObject);
-                });
-                
                 request.on('requestCompleted', function() {
                     resolve(true);
                 });
