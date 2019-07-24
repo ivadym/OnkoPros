@@ -285,6 +285,7 @@ function ejecutarProcedimientoAgrupacion(pool, idEntrevistaUsuario, idAgrupacion
                     
                     if (regla[index].IdItemSalto && regla[index].UmbralSalto && result >= regla[index].UmbralSalto) {
                         ctx = {
+                            idRegla: regla[index].IdRegla,
                             IdSiguienteAgrupacion: regla[index].IdAgrupacionSalto,
                             IdSiguienteItem: regla[index].IdItemSalto
                         };
