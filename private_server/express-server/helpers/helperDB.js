@@ -167,7 +167,7 @@ function guardarContextoSiguienteItem(pool, idEntrevistaUsuario, idSiguienteAgru
 /**
  * Actualiza el contexto del item padre de agrupación
  */
-function actualizarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, idPadre) {
+function guardarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, idPadre) {
     var query = `UPDATE OP_ENTREVISTA
                 SET IdSiguienteAgrupacionPadre=@idPadre
                 WHERE IdEntrevistaUsuario=@idEntrevistaUsuario;`;
@@ -313,5 +313,5 @@ function ejecutarProcedimientoAgrupacion(pool, idEntrevistaUsuario, idAgrupacion
 
 module.exports = {
     extraerIdEntrevistaUsuario, extraerIdEntrevistaItem, extraerOrden, guardarContextoSiguienteItem,
-    actualizarContextoSiguienteAgrupacionPadre, comprobarReglaAgrupacion
+    guardarContextoSiguienteAgrupacionPadre, comprobarReglaAgrupacion
 };

@@ -170,4 +170,44 @@ function eliminarValor(pool, idEntrevistaItem, item) {
     });
 }
 
-module.exports = { extraerValores, almacenarValor, extraerIdValoresSeleccionados, eliminarValor }
+/**
+ * Elimina los valores contestados previamente por el usuario
+ */
+function eliminarValores(pool, ids, index) {
+    var query = `DELETE op_eiv
+                FROM OP_ENTREVISTA_ITEM_VALOR op_eiv
+                WHERE op_eiv.IdEntrevistaItem=@idEntrevistaItem AND op_eiv.Estado>0;`;
+    
+    return new Promise(function(resolve, reject) {
+        pool.acquire(function (err, connection) {
+            if (err) {
+                reject(err);
+            } else {
+                var request = new Request(query, function(err, rowCount, rows) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        connection.release();
+                    }
+                });
+                
+                request.addParameter('idEntrevistaItem', TYPES.Int, ids[index]);
+                
+                request.on('requestCompleted', function() {
+                    if (ids[++index]) {
+                        return eliminarValores(pool, ids, index)
+                        .then(res => {
+                            resolve(res);
+                        })
+                    } else {
+                        resolve(true);
+                    }
+                });
+                
+                connection.execSql(request);
+            }
+        });
+    });
+}
+
+module.exports = { extraerValores, almacenarValor, extraerIdValoresSeleccionados, eliminarValor, eliminarValores }

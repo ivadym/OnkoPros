@@ -5,7 +5,7 @@ const entrevistaData = require('../models/entrevistasDB');
 const valorData = require('../models/valorDB');
 const {
     extraerIdEntrevistaUsuario, extraerIdEntrevistaItem, extraerOrden, guardarContextoSiguienteItem,
-    actualizarContextoSiguienteAgrupacionPadre, comprobarReglaAgrupacion
+    guardarContextoSiguienteAgrupacionPadre, comprobarReglaAgrupacion
 } = require('../helpers/helperDB');
 
 /**
@@ -221,7 +221,7 @@ function extraerContextoItemHijo(pool, idEntrevistaUsuario, idAgrupacion, update
                     var itemHijo = result[0];
                     if (itemHijo) {
                         if (itemHijo.EsAgrupacion) { // Item hijo es a su vez agrupación
-                            return actualizarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, idAgrupacion)
+                            return guardarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, idAgrupacion)
                             .then(res => {
                                 return extraerContextoItemHijo(pool, idEntrevistaUsuario, itemHijo.IdItem, update)
                                 .then(ctx => {
@@ -234,8 +234,8 @@ function extraerContextoItemHijo(pool, idEntrevistaUsuario, idAgrupacion, update
                                         return finalizarItemAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, itemHijo.IdItem)
                                         .then(res => { // Continúa el flujo principal
                                             return extraerContextoItemHijo(pool, idEntrevistaUsuario, idAgrupacion, update)
-                                            .then(res => {
-                                                resolve(res);
+                                            .then(ctx => {
+                                                resolve(ctx);
                                             });
                                         });
                                     }
@@ -486,7 +486,7 @@ function finalizarItemAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, idItem
                         request.on('requestCompleted', function() {
                             return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, null, null)
                             .then(res => {
-                                return actualizarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, null)
+                                return guardarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, null)
                                 .then(res => {
                                     resolve(res);
                                 });
@@ -563,7 +563,7 @@ function extraerItemRespondido(pool, idEntrevistaUsuario, idItem) {
                             })
                             .catch(error => reject(error)); // Catch de promises anidadas
                         } else {
-                            reject('Error en la obtención del item respondido previamente por el usuario')
+                            reject('Error en la obtención del item respondido previamente por el usuario');
                         }
                     });
                     
@@ -680,6 +680,82 @@ function actualizarItem(pool, idUsuario, idPerfil, item) {
             });
         })
         .catch(error => reject(error)); // Catch de promises anidadas
+    });
+}
+
+/**
+ * Devuelve un array de los items contestados anteriormente
+ */
+function extraerIdItemsRespondidosOrdenSiguiente(pool, idEntrevistaUsuario, idItem) {
+    var query = `SELECT op_ei.IdEntrevistaItem
+                FROM OP_ENTREVISTA_ITEM op_ei
+                WHERE op_ei.IdEntrevistaUsuario=@idEntrevistaUsuario AND op_ei.Orden> (SELECT op_ei.Orden FROM OP_ENTREVISTA_ITEM op_ei WHERE op_ei.IdEntrevistaUsuario=@idEntrevistaUsuario AND op_ei.IdItem=@idItem);`;
+    var result = [];
+    
+    return new Promise(function(resolve, reject) {
+        pool.acquire(function (err, connection) {
+            if (err) {
+                reject(err);
+            } else {
+                var request = new Request(query, function(err, rowCount, rows) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        connection.release();
+                    }
+                });
+                
+                request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
+                request.addParameter('idItem', TYPES.Int, idItem);
+                
+                request.on('row', function(columns) {
+                    var rowObject = {};
+                    columns.forEach(function(column) {
+                        rowObject = column.value; // Solo guardo los IdItem en el array
+                    });
+                    result.push(rowObject);
+                });
+                
+                request.on('requestCompleted', function() {
+                    resolve(result);
+                });
+                
+                connection.execSql(request);
+            }
+        });
+    });
+}
+
+/**
+ * Elimina el item especificado y previamente contestado
+ */
+function eliminarItems(pool, idEntrevistaItem) {
+    var query = `DELETE op_ei
+                FROM OP_ENTREVISTA_ITEM op_ei
+                WHERE op_ei.IdEntrevistaItem>=@idEntrevistaItem AND op_ei.Estado>0;`;
+    
+    return new Promise(function(resolve, reject) {
+        pool.acquire(function (err, connection) {
+            if (err) {
+                reject(err);
+            } else {
+                var request = new Request(query, function(err, rowCount, rows) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        connection.release();
+                    }
+                });
+                
+                request.addParameter('idEntrevistaItem', TYPES.Int, idEntrevistaItem);
+                
+                request.on('requestCompleted', function() {
+                    resolve(true);
+                });
+                
+                connection.execSql(request);
+            }
+        });
     });
 }
 
