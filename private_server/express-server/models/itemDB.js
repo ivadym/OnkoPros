@@ -346,9 +346,19 @@ function almacenarItem(pool, idUsuario, idPerfil, item) {
                                 .then(item => {
                                     return entrevistaData.actualizarEstadoEntrevista(pool, idEntrevistaUsuario)
                                     .then(res => {
-                                        return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, false)
-                                        .then(item => {
-                                            resolve(item);
+                                        return comprobarRegla(pool, idEntrevistaUsuario, item.IdItem)
+                                        .then(ctx => {
+                                            if(ctx && ctx.IdSiguienteItem) {
+                                                return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, ctx.IdSiguienteAgrupacion, ctx.IdSiguienteItem)
+                                                .then(res => {
+                                                    resolve(item);
+                                                });
+                                            } else {
+                                                return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, false)
+                                                .then(item => {
+                                                    resolve(item);
+                                                });
+                                            }
                                         });
                                     });
                                 });

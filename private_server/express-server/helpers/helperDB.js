@@ -285,7 +285,7 @@ function ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, regla, index) 
                     
                     if (regla[index].IdItemSalto && regla[index].UmbralSalto && result >= regla[index].UmbralSalto) {
                         ctx = {
-                            idRegla: regla[index].IdRegla,
+                            IdRegla: regla[index].IdRegla,
                             IdSiguienteAgrupacion: regla[index].IdAgrupacionSalto,
                             IdSiguienteItem: regla[index].IdItemSalto
                         };
