@@ -202,11 +202,11 @@ function guardarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, idPa
 /**
  * Extrae las reglas a ejecutar asociadas a una agrupación y ejecuta los procedimientos almacenados correspondientes
  */
-function comprobarReglaAgrupacion(pool, idEntrevistaUsuario, idAgrupacion) {
+function comprobarRegla(pool, idEntrevistaUsuario, idItem) {
     var query = `SELECT r.IdRegla, r.ProcedimientoSQL, r.IdAgrupacionSalto, r.IdItemSalto, r.UmbralSalto
                 FROM GEOP_ITEM_REGLA ir
                 INNER JOIN GEOP_REGLA r ON r.IdRegla=ir.IdRegla
-                WHERE ir.IdItem=@idAgrupacion AND ir.Estado=1 AND r.Estado=1
+                WHERE ir.IdItem=@idItem AND ir.Estado=1 AND r.Estado=1
                 ORDER BY CAST(ir.Orden AS numeric) ASC;`;
     var result = [];
     
@@ -223,7 +223,7 @@ function comprobarReglaAgrupacion(pool, idEntrevistaUsuario, idAgrupacion) {
                     }
                 });
                 
-                request.addParameter('idAgrupacion', TYPES.Int, idAgrupacion);
+                request.addParameter('idItem', TYPES.Int, idItem);
                 
                 request.on('row', function(columns) {
                     var rowObject = {};
@@ -235,7 +235,7 @@ function comprobarReglaAgrupacion(pool, idEntrevistaUsuario, idAgrupacion) {
                 
                 request.on('requestCompleted', function() {
                     if (result[0]) {
-                        return ejecutarProcedimientoAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, result, 0)
+                        return ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, result, 0)
                         .then(res => {
                             resolve(res);
                         })
@@ -254,7 +254,7 @@ function comprobarReglaAgrupacion(pool, idEntrevistaUsuario, idAgrupacion) {
 /**
  * Ejecuta un procedimiento almacenado asociado a una regla determinada
  */
-function ejecutarProcedimientoAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, regla, index) {
+function ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, regla, index) {
     var procedimiento = regla[index].ProcedimientoSQL;
     var result = null;
     
@@ -273,7 +273,7 @@ function ejecutarProcedimientoAgrupacion(pool, idEntrevistaUsuario, idAgrupacion
                 
                 request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
                 request.addParameter('idRegla', TYPES.Int, regla[index].IdRegla);
-                request.addParameter('idAgrupacion', TYPES.Int, idAgrupacion);
+                request.addParameter('idItem', TYPES.Int, idItem);
                 request.addOutputParameter('resultado', TYPES.Numeric, -2, {"precision": 18, "scale": 2});
                 
                 request.on('returnValue', function(parameterName, value, metadata) {
@@ -292,7 +292,7 @@ function ejecutarProcedimientoAgrupacion(pool, idEntrevistaUsuario, idAgrupacion
                     }
                     
                     if (regla[++index]) { // Quedan más reglas asociadas a una agrupación
-                        return ejecutarProcedimientoAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, regla, index)
+                        return ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, regla, index)
                         .then(res => {
                             if (res) {
                                 resolve(res);
@@ -314,5 +314,5 @@ function ejecutarProcedimientoAgrupacion(pool, idEntrevistaUsuario, idAgrupacion
 
 module.exports = {
     extraerIdEntrevistaUsuario, extraerIdEntrevistaItem, extraerOrden, guardarContextoSiguienteItem,
-    guardarContextoSiguienteAgrupacionPadre, comprobarReglaAgrupacion
+    guardarContextoSiguienteAgrupacionPadre, comprobarRegla
 };

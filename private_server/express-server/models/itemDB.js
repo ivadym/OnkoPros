@@ -5,7 +5,7 @@ const entrevistaData = require('../models/entrevistasDB');
 const valorData = require('../models/valorDB');
 const {
     extraerIdEntrevistaUsuario, extraerIdEntrevistaItem, extraerOrden, guardarContextoSiguienteItem,
-    guardarContextoSiguienteAgrupacionPadre, comprobarReglaAgrupacion
+    guardarContextoSiguienteAgrupacionPadre, comprobarRegla
 } = require('../helpers/helperDB');
 
 /**
@@ -142,18 +142,15 @@ function extraerContextoItemSiguiente(pool, idEntrevistaUsuario, opts) {
                                         resolve(ctx);
                                     } else { // No hay más item hijos
                                         return finalizarItemAgrupacion(pool, idEntrevistaUsuario, null, siguienteItem.IdItem)
-                                        .then(res => {
-                                            return comprobarReglaAgrupacion(pool, idEntrevistaUsuario, siguienteItem.IdItem)
-                                            .then(ctx => {
-                                                if (ctx && ctx.IdSiguienteItem) {
+                                        .then(ctx => {
+                                            if (ctx && ctx.IdSiguienteItem) {
+                                                resolve(ctx);
+                                            } else {
+                                                return extraerContextoItemSiguiente(pool, idEntrevistaUsuario, opts)
+                                                .then(ctx => {
                                                     resolve(ctx);
-                                                } else {
-                                                    return extraerContextoItemSiguiente(pool, idEntrevistaUsuario, opts)
-                                                    .then(ctx => {
-                                                        resolve(ctx);
-                                                    });
-                                                }
-                                            });
+                                                });
+                                            }
                                         });
                                     }
                                 })
@@ -239,18 +236,15 @@ function extraerContextoItemHijo(pool, idEntrevistaUsuario, idAgrupacion, update
                                         });
                                     } else { // No quedan más items hijos
                                         return finalizarItemAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, itemHijo.IdItem)
-                                        .then(res => { // Continúa el flujo principal
-                                            return comprobarReglaAgrupacion(pool, idEntrevistaUsuario, itemHijo.IdItem)
-                                            .then(ctx => {
-                                                if(ctx && ctx.IdSiguienteItem) {
+                                        .then(ctx => { // Continúa el flujo principal
+                                            if(ctx && ctx.IdSiguienteItem) {
+                                                resolve(ctx);
+                                            } else {
+                                                return extraerContextoItemHijo(pool, idEntrevistaUsuario, idAgrupacion, update)
+                                                .then(ctx => {
                                                     resolve(ctx);
-                                                } else {
-                                                    return extraerContextoItemHijo(pool, idEntrevistaUsuario, idAgrupacion, update)
-                                                    .then(ctx => {
-                                                        resolve(ctx);
-                                                    });
-                                                }
-                                            });
+                                                });
+                                            }
                                         });
                                     }
                                 });
@@ -439,18 +433,15 @@ function actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, update
                         }
                     } else if (item.IdAgrupacion) { // No hay más items - AGRUPACIÓN
                         return finalizarItemAgrupacion(pool, idEntrevistaUsuario, null, item.IdAgrupacion)
-                        .then(res => {
-                            return comprobarReglaAgrupacion(pool, idEntrevistaUsuario, item.IdAgrupacion)
-                            .then(ctx => {
-                                if(ctx && ctx.IdSiguienteItem) {
-                                    return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, ctx.IdSiguienteAgrupacion, ctx.IdSiguienteItem)
-                                    .then(res => {
-                                        resolve(item);
-                                    });
-                                } else {
+                        .then(ctx => {
+                            if(ctx && ctx.IdSiguienteItem) {
+                                return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, ctx.IdSiguienteAgrupacion, ctx.IdSiguienteItem)
+                                .then(res => {
                                     resolve(item);
-                                }
-                            });
+                                });
+                            } else {
+                                resolve(item);
+                            }
                         })
                         .catch(error => reject(error)); // Catch de promises anidadas
                     } else if (!item.IdAgrupacion) { // No hay más items - ENTREVISTA
@@ -511,12 +502,19 @@ function finalizarItemAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, idItem
                         request.addParameter('orden', TYPES.VarChar, orden);
                         
                         request.on('requestCompleted', function() {
-                            return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, null, null)
-                            .then(res => {
-                                return guardarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, null)
-                                .then(res => {
-                                    resolve(res);
-                                });
+                            return comprobarRegla(pool, idEntrevistaUsuario, idItem)
+                            .then(ctx => {
+                                if (ctx && ctx.IdSiguienteItem) {
+                                    resolve(ctx);
+                                } else {
+                                    return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, null, null)
+                                    .then(res => {
+                                        return guardarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, null)
+                                        .then(res => {
+                                            resolve(res);
+                                        });
+                                    });
+                                }
                             })
                             .catch(error => reject(error)); // Catch de promises anidadas
                         });
