@@ -174,39 +174,40 @@ export class ItemsComponent implements OnInit {
     }
     
     observableItemValor.subscribe(
-      item => {
-        this.logger.log(`Item enviado correctamente (id: ${item.IdItem})`);
-        for (var i = 0; i < item.Valores.length; i++) {
-          if (item.Valores[i].Alerta) {
+      datos => {
+        this.logger.log(`Item enviado correctamente (id: ${datos.item.IdItem})`);
+        this.idItemsRespondidos = datos.idItemsRespondidos ? datos.idItemsRespondidos : this.idItemsRespondidos;
+        for (var i = 0; i < datos.item.Valores.length; i++) {
+          if (datos.item.Valores[i].Alerta) {
             this.cuadroDialogoService.alerta(
               'Atención, es necesario que siga las siguientes intrucciones:',
-              item.Valores[i].Alerta
+              datos.item.Valores[i].Alerta
             ).then(res => {
-              if (item.Fin) {
-                this.logger.log(`No quedan items asociados a la entrevista con id: ${item.IdEntrevista}) (enviarItem())`);
+              if (datos.item.Fin) {
+                this.logger.log(`No quedan items asociados a la entrevista con id: ${datos.item.IdEntrevista}) (enviarItem())`);
                 this.limpiarContexto();
-                this.navegacionService.navegar(`/dashboard/entrevistas/${item.IdEntrevista}/fin`, true);
-              } else if (this.idItemsRespondidos.slice(0, this.idItemsRespondidos.length - 2).includes(item.IdItem)) {
-                this.paginaSeleccionada = this.idItemsRespondidos.indexOf(item.IdItem) + 2;
+                this.navegacionService.navegar(`/dashboard/entrevistas/${datos.item.IdEntrevista}/fin`, true);
+              } else if (this.idItemsRespondidos.slice(0, this.idItemsRespondidos.length - 2).includes(datos.item.IdItem)) {
+                this.paginaSeleccionada = this.idItemsRespondidos.indexOf(datos.item.IdItem) + 2;
                 this.extraerItemRespondido();
               } else {
                 this.limpiarContexto();
-                this.extraerSiguienteItem(item.IdEntrevista);
+                this.extraerSiguienteItem(datos.item.IdEntrevista);
               }
               return;
             });
           }
         }
-        if (item.Fin) {
-          this.logger.log(`No quedan items asociados a la entrevista con id: ${item.IdEntrevista}) (enviarItem())`);
+        if (datos.item.Fin) {
+          this.logger.log(`No quedan items asociados a la entrevista con id: ${datos.item.IdEntrevista}) (enviarItem())`);
           this.limpiarContexto();
-          this.navegacionService.navegar(`/dashboard/entrevistas/${item.IdEntrevista}/fin`, true);
-        } else if (this.idItemsRespondidos.slice(0, this.idItemsRespondidos.length - 2).includes(item.IdItem)) {
-          this.paginaSeleccionada = this.idItemsRespondidos.indexOf(item.IdItem) + 2;
+          this.navegacionService.navegar(`/dashboard/entrevistas/${datos.item.IdEntrevista}/fin`, true);
+        } else if (this.idItemsRespondidos.slice(0, this.idItemsRespondidos.length - 2).includes(datos.item.IdItem)) {
+          this.paginaSeleccionada = this.idItemsRespondidos.indexOf(datos.item.IdItem) + 2;
           this.extraerItemRespondido();
         } else {
           this.limpiarContexto();
-          this.extraerSiguienteItem(item.IdEntrevista);
+          this.extraerSiguienteItem(datos.item.IdEntrevista);
         }
       },
       error => {

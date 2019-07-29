@@ -668,51 +668,80 @@ function actualizarAgrupacionRespondida(pool, idEntrevistaUsuario, idAgrupacion,
 /**
  * Actualiza la respuesta del usuario en la BBDD
  */
-function actualizarItem(pool, idUsuario, idPerfil, item) {
+function actualizarItem(pool, idEntrevistaUsuario, item) {
     var query = `UPDATE OP_ENTREVISTA_ITEM
                 SET FechaRegistro=GETDATE()
                 WHERE IdEntrevistaItem=@idEntrevistaItem;`;
     
     return new Promise(function(resolve, reject) {
-        return extraerIdEntrevistaUsuario(pool, idUsuario, idPerfil, item.IdEntrevista)
-        .then(idEntrevistaUsuario => {
-            return extraerIdEntrevistaItem(pool, idEntrevistaUsuario, item.IdItem)
-            .then(idEntrevistaItem => {
-                pool.acquire(function (err, connection) {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        var request = new Request(query, function(err, rowCount, rows) {
-                            if (err) {
-                                reject(err);
-                            } else {
-                                connection.release();
-                            }
-                        });
-                        
-                        request.addParameter('idEntrevistaItem', TYPES.Int, idEntrevistaItem);
-                        
-                        request.on('requestCompleted', function() {
-                            return valorData.eliminarValor(pool, idEntrevistaItem, item)
+        return extraerIdEntrevistaItem(pool, idEntrevistaUsuario, item.IdItem)
+        .then(idEntrevistaItem => {
+            pool.acquire(function (err, connection) {
+                if (err) {
+                    reject(err);
+                } else {
+                    var request = new Request(query, function(err, rowCount, rows) {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            connection.release();
+                        }
+                    });
+                    
+                    request.addParameter('idEntrevistaItem', TYPES.Int, idEntrevistaItem);
+                    
+                    request.on('requestCompleted', function() {
+                        return valorData.eliminarValor(pool, idEntrevistaItem, item)
+                        .then(item => {
+                            return valorData.almacenarValor(pool, idEntrevistaItem, item, 0) // Se almacenan los valores actualizados
                             .then(item => {
-                                return valorData.almacenarValor(pool, idEntrevistaItem, item, 0) // Se almacenan los valores actualizados
-                                .then(item => {
-                                    return actualizarAgrupacionRespondida(pool, idEntrevistaUsuario, item.IdAgrupacion, false)
-                                    .then(res => {
-                                        // TODO: Comprobar agrupación (borrado de items)
-                                        return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, true)
-                                        .then(item => {
-                                            resolve(item);
-                                        });
+                                return actualizarAgrupacionRespondida(pool, idEntrevistaUsuario, item.IdAgrupacion, false)
+                                .then(res => {
+                                    return comprobarRegla(pool, idEntrevistaUsuario, item.IdAgrupacion)
+                                    .then(ctx => {
+                                        if (ctx && ctx.IdSiguienteItem) { // Regla cumplida
+                                            if (ctx.Prev) { // Previamente regla cumplida
+                                                return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, true)
+                                                .then(item => {
+                                                    resolve(item);
+                                                });
+                                            } else { // Previamente regla incumplida
+                                                return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, ctx.IdSiguienteAgrupacion, ctx.IdSiguienteItem)
+                                                .then(res => {
+                                                    resolve(item);
+                                                });
+                                            }
+                                        } else { // Regla incumplida
+                                            if (ctx.Prev) { // Previamente regla cumplida
+                                                return extraerIdItemsRespondidosOrdenSiguiente(pool, idEntrevistaUsuario, item.IdAgrupacion)
+                                                .then(ids => {
+                                                    return valorData.eliminarValores(pool, ids, 0)
+                                                    .then(res => {
+                                                        return eliminarItems(pool, ids[0])
+                                                        .then(res => {
+                                                            return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, true)
+                                                            .then(item => {
+                                                                resolve(item);
+                                                            });
+                                                        });
+                                                    });
+                                                });
+                                            } else { // Previamente regla incumplida
+                                                return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, true)
+                                                .then(item => {
+                                                    resolve(item);
+                                                });
+                                            }
+                                        }
                                     });
                                 });
-                            })
-                            .catch(error => reject(error)); // Catch de promises anidadas
-                        });
-                        
-                        connection.execSql(request);
-                    }
-                });
+                            });
+                        })
+                        .catch(error => reject(error)); // Catch de promises anidadas
+                    });
+                    
+                    connection.execSql(request);
+                }
             });
         })
         .catch(error => reject(error)); // Catch de promises anidadas
@@ -747,7 +776,7 @@ function extraerIdItemsRespondidosOrdenSiguiente(pool, idEntrevistaUsuario, idIt
                 request.on('row', function(columns) {
                     var rowObject = {};
                     columns.forEach(function(column) {
-                        rowObject = column.value; // Solo guardo los IdItem en el array
+                        rowObject = column.value; // Solo guardo los IdEntrevistaItem en el array
                     });
                     result.push(rowObject);
                 });

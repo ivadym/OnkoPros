@@ -256,7 +256,7 @@ function comprobarRegla(pool, idEntrevistaUsuario, idItem) {
  */
 function ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, regla, index) {
     var procedimiento = regla[index].ProcedimientoSQL;
-    var result = null;
+    var result = {};
     
     return new Promise(function(resolve, reject) {
         pool.acquire(function (err, connection) {
@@ -275,20 +275,29 @@ function ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, regla, index) 
                 request.addParameter('idRegla', TYPES.Int, regla[index].IdRegla);
                 request.addParameter('idItem', TYPES.Int, idItem);
                 request.addOutputParameter('resultado', TYPES.Numeric, -2, {"precision": 18, "scale": 2});
+                request.addOutputParameter('prev', TYPES.Bit, 0); // Indicador del cumplimiento de la regla anteriormente
                 
                 request.on('returnValue', function(parameterName, value, metadata) {
-                    result = value;
+                    result[parameterName] = value;
                 });
                 
                 request.on('requestCompleted', function() {
                     var ctx = null;
                     
-                    if (regla[index].IdItemSalto && regla[index].UmbralSalto && result >= regla[index].UmbralSalto) {
-                        ctx = {
+                    if (regla[index].IdItemSalto && regla[index].UmbralSalto && result.resultado >= regla[index].UmbralSalto) {
+                        ctx = { // Se cumple la regla
                             IdRegla: regla[index].IdRegla,
                             IdSiguienteAgrupacion: regla[index].IdAgrupacionSalto,
-                            IdSiguienteItem: regla[index].IdItemSalto
+                            IdSiguienteItem: regla[index].IdItemSalto,
+                            Prev: result.prev
                         };
+                    } else {
+                        ctx = { // No se cumple la regla (o salto no definido)
+                            IdRegla: regla[index].IdRegla,
+                            IdSiguienteAgrupacion: null,
+                            IdSiguienteItem: null,
+                            Prev: result.prev
+                        }
                     }
                     
                     if (regla[++index]) { // Quedan más reglas asociadas a una agrupación

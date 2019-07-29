@@ -69,7 +69,10 @@ function setItem(req, res, next) {
     var pool = conexionPool();
     itemData.almacenarItem(pool, req.idUsuario, req.idPerfil, req.body)
     .then(item => {
-        res.status(201).json(item);
+        res.status(201).json({
+            item: item,
+            idItemsRespondidos: null
+        });
     })
     .catch(error => {
         logger.error(req.idUsuario + ' > itemController.setItem.500');
@@ -114,16 +117,25 @@ function updateItem(req, res, next) {
     logger.info(req.idUsuario + ' > itemController.updateItem');
     
     var pool =  conexionPool();
-    itemData.actualizarItem(pool, req.idUsuario, req.idPerfil, req.body)
-    .then(item => {
-        res.status(201).json(item);
+    extraerIdEntrevistaUsuario(pool, req.idUsuario, req.idPerfil, req.body.IdEntrevista)
+    .then(idEntrevistaUsuario => {
+        return itemData.actualizarItem(pool, idEntrevistaUsuario, req.body)
+        .then(item => {
+            return itemData.extraerIdItemsRespondidos(pool, idEntrevistaUsuario)
+            .then(idItemsRespondidos => {
+                res.status(201).json({
+                    item: item,
+                    idItemsRespondidos: idItemsRespondidos
+                });
+            });
+        });
     })
     .catch(error => {
         logger.error(req.idUsuario + ' > itemController.updateItem.500');
         var err = new Error(error.message ? error.message : error);
         err.statusCode = 500; // HTTP 500 Internal Server Error
         next(err);
-    })
+    });
 };
 
 module.exports = { getSiguienteItem, getItemRespondido, setItem, updateItem }
