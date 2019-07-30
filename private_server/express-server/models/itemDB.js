@@ -695,46 +695,23 @@ function actualizarItem(pool, idEntrevistaUsuario, item) {
                         .then(item => {
                             return valorData.almacenarValor(pool, idEntrevistaItem, item, 0) // Se almacenan los valores actualizados
                             .then(item => {
-                                return actualizarAgrupacionRespondida(pool, idEntrevistaUsuario, item.IdAgrupacion, false)
-                                .then(res => {
-                                    return comprobarRegla(pool, idEntrevistaUsuario, item.IdAgrupacion)
-                                    .then(ctx => {
-                                        if (ctx && ctx.IdSiguienteItem) { // Regla cumplida
-                                            if (ctx.Prev) { // Previamente regla cumplida
-                                                return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, true)
-                                                .then(item => {
-                                                    resolve(item);
-                                                });
-                                            } else { // Previamente regla incumplida
-                                                return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, ctx.IdSiguienteAgrupacion, ctx.IdSiguienteItem)
-                                                .then(res => {
-                                                    resolve(item);
-                                                });
-                                            }
-                                        } else { // Regla incumplida
-                                            if (ctx.Prev) { // Previamente regla cumplida
-                                                return extraerIdItemsRespondidosOrdenSiguiente(pool, idEntrevistaUsuario, item.IdAgrupacion)
-                                                .then(ids => {
-                                                    return valorData.eliminarValores(pool, ids, 0)
-                                                    .then(res => {
-                                                        return eliminarItems(pool, ids[0])
-                                                        .then(res => {
-                                                            return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, true)
-                                                            .then(item => {
-                                                                resolve(item);
-                                                            });
-                                                        });
-                                                    });
-                                                });
-                                            } else { // Previamente regla incumplida
-                                                return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, true)
-                                                .then(item => {
-                                                    resolve(item);
-                                                });
-                                            }
-                                        }
+                                if (item.IdAgrupacion) {
+                                    return actualizarAgrupacionRespondida(pool, idEntrevistaUsuario, item.IdAgrupacion, false)
+                                    .then(res => {
+                                        return actualizarContextoRegla(pool, idEntrevistaUsuario, item.IdAgrupacion, item)
+                                        .then(item => {
+                                            return actualizarContextoRegla(pool, idEntrevistaUsuario, item.IdItem, item)
+                                            .then(item => {
+                                                resolve(item);
+                                            });
+                                        });
                                     });
-                                });
+                                } else {
+                                    return actualizarContextoRegla(pool, idEntrevistaUsuario, item.IdItem, item)
+                                    .then(item => {
+                                        resolve(item);
+                                    });
+                                }
                             });
                         })
                         .catch(error => reject(error)); // Catch de promises anidadas
@@ -816,6 +793,96 @@ function eliminarItems(pool, idEntrevistaItem) {
                 
                 request.on('requestCompleted', function() {
                     resolve(true);
+                });
+                
+                connection.execSql(request);
+            }
+        });
+    });
+}
+
+/**
+ * Actualiza el contexto del siguiente item a partir de la regla aplicada a un item anteriormente respondido
+ */
+function actualizarContextoRegla(pool, idEntrevistaUsuario, idItem, item) {
+    
+    return new Promise(function(resolve, reject) {
+        return comprobarRegla(pool, idEntrevistaUsuario, idItem)
+        .then(ctx => {
+            if (ctx && ctx.IdSiguienteItem) { // Regla cumplida
+                if (ctx.Prev) { // Previamente regla cumplida
+                    return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, true)
+                    .then(item => {
+                        resolve(item);
+                    });
+                } else { // Previamente regla incumplida
+                    return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, ctx.IdSiguienteAgrupacion, ctx.IdSiguienteItem)
+                    .then(res => {
+                        resolve(item);
+                    });
+                }
+            } else { // Regla incumplida
+                if (ctx && ctx.Prev) { // Previamente regla cumplida
+                    return extraerIdItemsRespondidosOrdenSiguiente(pool, idEntrevistaUsuario, idItem)
+                    .then(ids => {
+                        return valorData.eliminarValores(pool, ids, 0)
+                        .then(res => {
+                            return eliminarItems(pool, ids[0])
+                            .then(res => {
+                                return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, true)
+                                .then(item => {
+                                    resolve(item);
+                                });
+                            });
+                        });
+                    });
+                } else { // Previamente regla incumplida
+                    return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, true)
+                    .then(item => {
+                        resolve(item);
+                    });
+                }
+            }
+        })
+        .catch(error => reject(error)); // Catch de promises anidadas
+    });
+}
+
+/**
+ * Elimina los valores contestados previamente por el usuario
+ */
+function eliminarReglas(pool, idEntrevistaUsuario, ids, index) {
+    var query = `DELETE op_er
+                FROM OP_ENTREVISTA_REGLA op_er INNER JOIN GEOP_ITEM_REGLA ir ON ir.IdRegla=op_er.IdRegla
+                INNER JOIN OP_ENTREVISTA_ITEM op_ei ON op_ei.IdItem=ir.IdItem
+                WHERE op_ei.IdEntrevistaItem=@idEntrevistaItem AND op_er.IdEntrevistaUsuario=@idEntrevistaUsuario AND op_er.Estado=1 AND ir.Estado=1 AND op_ei.Estado>0;`;
+    
+    return new Promise(function(resolve, reject) {
+        pool.acquire(function (err, connection) {
+            if (err) {
+                reject(err);
+            } else {
+                var request = new Request(query, function(err, rowCount, rows) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        connection.release();
+                    }
+                });
+                
+                request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
+                request.addParameter('idEntrevistaItem', TYPES.Int, ids[index]);
+                
+                request.on('requestCompleted', function() {
+                    if (ids[++index]) {
+                        return eliminarReglas(pool, idEntrevistaUsuario, ids, index)
+                        .then(res => {
+                            resolve(res);
+                        })
+                        .catch(error => reject(error)); // Catch de promises anidadas
+                    } else {
+                        resolve(true);
+                    }
                 });
                 
                 connection.execSql(request);

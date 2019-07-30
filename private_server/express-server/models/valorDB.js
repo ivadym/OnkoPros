@@ -199,6 +199,7 @@ function eliminarValores(pool, ids, index) {
                         .then(res => {
                             resolve(res);
                         })
+                        .catch(error => reject(error)); // Catch de promises anidadas
                     } else {
                         resolve(true);
                     }
