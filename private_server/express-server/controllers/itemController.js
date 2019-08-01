@@ -99,7 +99,7 @@ function getItemRespondido(req, res, next) {
                     item: item,
                     idItemsRespondidos: idItemsRespondidos
                 });
-            })
+            });
         });
     })
     .catch(error => {

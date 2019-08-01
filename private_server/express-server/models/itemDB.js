@@ -811,14 +811,20 @@ function actualizarContextoRegla(pool, idEntrevistaUsuario, idItem, item) {
         .then(ctx => {
             if (ctx && ctx.IdSiguienteItem) { // Regla cumplida
                 if (ctx.Prev) { // Previamente regla cumplida
-                    return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, true)
-                    .then(item => {
-                        resolve(item);
-                    });
+                    resolve(item); // Se mantiene el contexto original
                 } else { // Previamente regla incumplida
-                    return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, ctx.IdSiguienteAgrupacion, ctx.IdSiguienteItem)
-                    .then(res => {
-                        resolve(item);
+                    return extraerIdItemsRespondidosOrdenSiguiente(pool, idEntrevistaUsuario, idItem)
+                    .then(ids => {
+                        return valorData.eliminarValores(pool, ids, 0)
+                        .then(res => {
+                            return eliminarItems(pool, ids[0])
+                            .then(res => {
+                                return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, ctx.IdSiguienteAgrupacion, ctx.IdSiguienteItem)
+                                .then(res => {
+                                    resolve(item);
+                                });
+                            });
+                        });
                     });
                 }
             } else { // Regla incumplida
@@ -829,7 +835,7 @@ function actualizarContextoRegla(pool, idEntrevistaUsuario, idItem, item) {
                         .then(res => {
                             return eliminarItems(pool, ids[0])
                             .then(res => {
-                                return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, true)
+                                return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, false)
                                 .then(item => {
                                     resolve(item);
                                 });
@@ -837,10 +843,7 @@ function actualizarContextoRegla(pool, idEntrevistaUsuario, idItem, item) {
                         });
                     });
                 } else { // Previamente regla incumplida
-                    return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, true)
-                    .then(item => {
-                        resolve(item);
-                    });
+                    resolve(item); // Se mantiene el contexto original
                 }
             }
         })

@@ -254,8 +254,8 @@ function comprobarRegla(pool, idEntrevistaUsuario, idItem) {
 /**
  * Ejecuta un procedimiento almacenado asociado a una regla determinada
  */
-function ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, regla, index) {
-    var procedimiento = regla[index].ProcedimientoSQL;
+function ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, reglas, index) {
+    var procedimiento = reglas[index].ProcedimientoSQL;
     var result = {};
     
     return new Promise(function(resolve, reject) {
@@ -272,10 +272,10 @@ function ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, regla, index) 
                 });
                 
                 request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
-                request.addParameter('idRegla', TYPES.Int, regla[index].IdRegla);
+                request.addParameter('idRegla', TYPES.Int, reglas[index].IdRegla);
                 request.addParameter('idItem', TYPES.Int, idItem);
                 request.addOutputParameter('resultado', TYPES.Numeric, -2, {"precision": 18, "scale": 2});
-                request.addOutputParameter('prev', TYPES.Bit, 0); // Indicador del cumplimiento de la regla anteriormente
+                request.addOutputParameter('prev', TYPES.Bit); // Indicador del cumplimiento de la regla anteriormente
                 
                 request.on('returnValue', function(parameterName, value, metadata) {
                     result[parameterName] = value;
@@ -284,24 +284,24 @@ function ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, regla, index) 
                 request.on('requestCompleted', function() {
                     var ctx = null;
                     
-                    if (regla[index].IdItemSalto && regla[index].UmbralSalto && result.resultado >= regla[index].UmbralSalto) {
+                    if (reglas[index].IdItemSalto && reglas[index].UmbralSalto && result.resultado >= reglas[index].UmbralSalto) {
                         ctx = { // Se cumple la regla
-                            IdRegla: regla[index].IdRegla,
-                            IdSiguienteAgrupacion: regla[index].IdAgrupacionSalto,
-                            IdSiguienteItem: regla[index].IdItemSalto,
+                            IdRegla: reglas[index].IdRegla,
+                            IdSiguienteAgrupacion: reglas[index].IdAgrupacionSalto,
+                            IdSiguienteItem: reglas[index].IdItemSalto,
                             Prev: result.prev
                         };
                     } else {
                         ctx = { // No se cumple la regla (o salto no definido)
-                            IdRegla: regla[index].IdRegla,
+                            IdRegla: reglas[index].IdRegla,
                             IdSiguienteAgrupacion: null,
                             IdSiguienteItem: null,
                             Prev: result.prev
                         }
                     }
                     
-                    if (regla[++index]) { // Quedan más reglas asociadas a una agrupación
-                        return ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, regla, index)
+                    if (reglas[++index]) { // Quedan más reglas asociadas a una agrupación
+                        return ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, reglas, index)
                         .then(res => {
                             if (res) {
                                 resolve(res);
