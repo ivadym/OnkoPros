@@ -13,7 +13,7 @@ import { ControlComponent } from './components/control/control.component';
 
 import { AuthGuard } from '../../guards/auth/auth.guard';
 import { CanDeactivateGuard } from '../../guards/can-deactivate.guard';
-import { ProfesionalGuard } from 'src/app/guards/profesional/profesional.guard';
+import { ProfesionalGuard } from '../../guards/profesional/profesional.guard';
 
 export const dashboardRoutes: Routes = [
   {

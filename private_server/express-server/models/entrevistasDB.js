@@ -1,7 +1,7 @@
 const Request = require('tedious').Request;
 const TYPES = require('tedious').TYPES;
 
-const { guardarContextoSiguienteItem, actualizarContextoSiguienteAgrupacionPadre } = require('../helpers/helperDB');
+const { guardarContextoSiguienteItem, guardarContextoSiguienteAgrupacionPadre } = require('../helpers/helperDB');
 
 /**
  * Extrae las entrevistas asociadas a un usuario determinado
@@ -154,7 +154,7 @@ function finalizarEntrevista(pool, idEntrevistaUsuario) {
                 request.on('requestCompleted', function() {
                     return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, null, null)
                     .then(res => {
-                        return actualizarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, null)
+                        return guardarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, null)
                         .then(res => {
                             resolve(res);
                         });
