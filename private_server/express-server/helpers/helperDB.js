@@ -235,8 +235,8 @@ function comprobarRegla(pool, idEntrevistaUsuario, idItem) {
                 request.on('requestCompleted', function() {
                     if (result[0]) {
                         return ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, result, 0)
-                        .then(res => {
-                            resolve(res);
+                        .then(ctx => {
+                            resolve(ctx);
                         })
                         .catch(error => reject(error)); // Catch de promises anidadas
                     } else {

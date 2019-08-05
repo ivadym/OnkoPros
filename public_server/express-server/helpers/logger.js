@@ -48,7 +48,7 @@ const transports = {
         format: winston.format.combine(
             filtrarLogs('console'),
             winston.format.colorize(),
-            winston.format.label({ label: 'SERV' }),
+            winston.format.label({ label: 'SRV' }),
             winston.format.timestamp({
                 format: timestampFormat
             }),
@@ -60,7 +60,7 @@ const transports = {
         level: config.logger.levelFile, // Máximo nivel de logs que se van a escribir
         format: winston.format.combine(
             filtrarLogs('file'),
-            winston.format.label({ label: 'SERV' }),
+            winston.format.label({ label: 'SRV' }),
             winston.format.timestamp({
                 format: timestampFormat
             }),
@@ -88,7 +88,7 @@ const expressLogger = expressWinston.logger({
         transports.console,
         transports.file
     ],
-    msg: '{{req.idUsuario!=undefined ? req.idUsuario : req.body.usuario}} > HTTP {{req.method}} {{req.url}}'
+    msg: 'ID usuario: {{req.idUsuario!=undefined ? req.idUsuario : req.body.usuario}} > HTTP {{req.method}} {{req.url}}'
 });
 
 /**

@@ -8,7 +8,7 @@ const { logger } = require('../helpers/logger');
  * Devuelve la siguiente pregunta disponible
  */
 function getSiguienteItem(req, res, next) {
-    logger.info(req.idUsuario + ' > itemController.getsiguienteItem');
+    logger.info('ID usuario: ' + req.idUsuario + ' > itemController.getsiguienteItem');
     
     var pool = conexionPool();
     
@@ -45,14 +45,14 @@ function getSiguienteItem(req, res, next) {
                     }
                 });
             } else {
-                logger.error(req.idUsuario + ' > itemController.getsiguienteItem.404');
+                logger.error('ID usuario: ' + req.idUsuario + ' > itemController.getsiguienteItem.404');
                 var err = new Error('Error al extraer un item de una entrevista no encontrada');
                 err.statusCode = 404; // HTTP 404 Not Found
                 next(err);
             }
         })
         .catch(error => {
-            logger.error(req.idUsuario + ' > itemController.getsiguienteItem.500');
+            logger.error('ID usuario: ' + req.idUsuario + ' > itemController.getsiguienteItem.500');
             var err = new Error(error.message ? error.message : error);
             err.statusCode = 500; // HTTP 500 Internal Server Error
             next(err);
@@ -64,7 +64,7 @@ function getSiguienteItem(req, res, next) {
  * Guarda la respuesta del usuario en la base de datos
  */
 function setItem(req, res, next) {
-    logger.info(req.idUsuario + ' > itemController.setItem');
+    logger.info('ID usuario: ' + req.idUsuario + ' > itemController.setItem');
     
     var pool = conexionPool();
     itemData.almacenarItem(pool, req.idUsuario, req.idPerfil, req.body)
@@ -75,7 +75,7 @@ function setItem(req, res, next) {
         });
     })
     .catch(error => {
-        logger.error(req.idUsuario + ' > itemController.setItem.500');
+        logger.error('ID usuario: ' + req.idUsuario + ' > itemController.setItem.500');
         var err = new Error(error.message ? error.message : error);
         err.statusCode = 500; // HTTP 500 Internal Server Error
         next(err);
@@ -86,7 +86,7 @@ function setItem(req, res, next) {
  * Devuelve el item respondido y asociado a un ID determinado
  */
 function getItemRespondido(req, res, next) {
-    logger.info(req.idUsuario + ' > itemController.getItemRespondido');
+    logger.info('ID usuario: ' + req.idUsuario + ' > itemController.getItemRespondido');
     
     var pool = conexionPool();
     extraerIdEntrevistaUsuario(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista'])
@@ -103,7 +103,7 @@ function getItemRespondido(req, res, next) {
         });
     })
     .catch(error => {
-        logger.error(req.idUsuario + ' > itemController.getItemRespondido.500');
+        logger.error('ID usuario: ' + req.idUsuario + ' > itemController.getItemRespondido.500');
         var err = new Error(error.message ? error.message : error);
         err.statusCode = 500; // HTTP 500 Internal Server Error
         next(err);
@@ -114,7 +114,7 @@ function getItemRespondido(req, res, next) {
  * Actualiza la respuesta del usuario en la base de datos (se sobrescribe la anterior respuesta)
  */
 function updateItem(req, res, next) {
-    logger.info(req.idUsuario + ' > itemController.updateItem');
+    logger.info('ID usuario: ' + req.idUsuario + ' > itemController.updateItem');
     
     var pool =  conexionPool();
     extraerIdEntrevistaUsuario(pool, req.idUsuario, req.idPerfil, req.body.IdEntrevista)
@@ -131,7 +131,7 @@ function updateItem(req, res, next) {
         });
     })
     .catch(error => {
-        logger.error(req.idUsuario + ' > itemController.updateItem.500');
+        logger.error('ID usuario: ' + req.idUsuario + ' > itemController.updateItem.500');
         var err = new Error(error.message ? error.message : error);
         err.statusCode = 500; // HTTP 500 Internal Server Error
         next(err);

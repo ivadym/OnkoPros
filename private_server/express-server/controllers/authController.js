@@ -7,7 +7,7 @@ const { logger } = require('../helpers/logger');
  * Lleva a cabo la autenticación del usuario
  */
 function autenticacion(req, res, next) {
-    logger.info(req.body.usuario + ' > authController.autenticacion');
+    logger.info('Usuario: ' + req.body.usuario + ' > authController.autenticacion');
     
     const usuario = req.body.usuario;
     const clave = req.body.clave;
@@ -19,14 +19,14 @@ function autenticacion(req, res, next) {
             req.usuario = usuario;
             next();
         } else {
-            logger.error(req.body.usuario + ' > authController.autenticacion.403');
+            logger.error('Usuario: ' + req.body.usuario + ' > authController.autenticacion.403');
             var err = new Error('Forbidden');
             err.statusCode = 403; // HTTP 403 Forbidden
             next(err);
         }
     })
     .catch(error => {
-        logger.error(req.body.usuario + ' > authController.autenticacion.500');
+        logger.error('Usuario: ' + req.body.usuario + ' > authController.autenticacion.500');
         var err = new Error(error.message ? error.message : error);
         err.statusCode = 500; // HTTP 500 Internal Server Error
         next(err);

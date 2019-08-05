@@ -45,7 +45,6 @@ export class AuthService {
    * GET API URL de autenticación
    */
   get authURL(): string {
-    // TODO: Petición al servidor (fichero de configuración)
     return this._authURL;
   }
 
@@ -53,7 +52,6 @@ export class AuthService {
    * SET API URL de autenticación
    */
   set authURL(url: string) {
-    // TODO: Petición cambio URL API autenticación (fichero de configuración)
     this._authURL = url;
   }
 

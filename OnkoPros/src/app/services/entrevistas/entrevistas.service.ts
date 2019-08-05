@@ -31,7 +31,6 @@ export class EntrevistasService {
    * GET API URL de las entrevistas
    */
   get entrevistasURL(): string {
-    // TODO: Petición al servidor (fichero de configuración)
     return this._entrevistasURL;
   }
 
@@ -39,7 +38,6 @@ export class EntrevistasService {
    * SET API URL de las entrevistas
    */
   set entrevistasURL(url: string) {
-    // TODO: Petición cambio URL API entrevistas (fichero de configuración)
     this._entrevistasURL = url;
   }
 
