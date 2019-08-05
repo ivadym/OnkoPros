@@ -230,10 +230,8 @@ function extraerContextoItemHijo(pool, idEntrevistaUsuario, idAgrupacion, update
                                 return extraerContextoItemHijo(pool, idEntrevistaUsuario, itemHijo.IdItem, update)
                                 .then(ctx => {
                                     if (ctx) { // Quedan items hijos
-                                        resolve({
-                                            IdSiguienteAgrupacion: itemHijo.IdItem,
-                                            IdSiguienteItem: ctx.IdSiguienteItem
-                                        });
+                                        ctx.IdSiguienteAgrupacion = itemHijo.IdItem,
+                                        resolve(ctx);
                                     } else { // No quedan más items hijos
                                         return finalizarItemAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, itemHijo.IdItem)
                                         .then(ctx => { // Continúa el flujo principal
@@ -810,7 +808,7 @@ function actualizarContextoRegla(pool, idEntrevistaUsuario, idItem, item) {
         return comprobarRegla(pool, idEntrevistaUsuario, idItem)
         .then(ctx => {
             if (ctx && ctx.IdSiguienteItem) { // Regla cumplida
-                if (ctx.Prev) { // Previamente regla cumplida
+                if (ctx.EstadoPrev) { // Previamente regla cumplida
                     resolve(item); // Se mantiene el contexto original
                 } else { // Previamente regla incumplida
                     return extraerIdItemsRespondidosOrdenSiguiente(pool, idEntrevistaUsuario, idItem)
@@ -828,7 +826,7 @@ function actualizarContextoRegla(pool, idEntrevistaUsuario, idItem, item) {
                     });
                 }
             } else { // Regla incumplida
-                if (ctx && ctx.Prev) { // Previamente regla cumplida
+                if (ctx && ctx.EstadoPrev) { // Previamente regla cumplida
                     return extraerIdItemsRespondidosOrdenSiguiente(pool, idEntrevistaUsuario, idItem)
                     .then(ids => {
                         return valorData.eliminarValores(pool, ids, 0)
@@ -848,49 +846,6 @@ function actualizarContextoRegla(pool, idEntrevistaUsuario, idItem, item) {
             }
         })
         .catch(error => reject(error)); // Catch de promises anidadas
-    });
-}
-
-/**
- * Elimina los valores contestados previamente por el usuario
- */
-function eliminarReglas(pool, idEntrevistaUsuario, ids, index) {
-    var query = `DELETE op_er
-                FROM OP_ENTREVISTA_REGLA op_er INNER JOIN GEOP_ITEM_REGLA ir ON ir.IdRegla=op_er.IdRegla
-                INNER JOIN OP_ENTREVISTA_ITEM op_ei ON op_ei.IdItem=ir.IdItem
-                WHERE op_ei.IdEntrevistaItem=@idEntrevistaItem AND op_er.IdEntrevistaUsuario=@idEntrevistaUsuario AND op_er.Estado=1 AND ir.Estado=1 AND op_ei.Estado>0;`;
-    
-    return new Promise(function(resolve, reject) {
-        pool.acquire(function (err, connection) {
-            if (err) {
-                reject(err);
-            } else {
-                var request = new Request(query, function(err, rowCount, rows) {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        connection.release();
-                    }
-                });
-                
-                request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
-                request.addParameter('idEntrevistaItem', TYPES.Int, ids[index]);
-                
-                request.on('requestCompleted', function() {
-                    if (ids[++index]) {
-                        return eliminarReglas(pool, idEntrevistaUsuario, ids, index)
-                        .then(res => {
-                            resolve(res);
-                        })
-                        .catch(error => reject(error)); // Catch de promises anidadas
-                    } else {
-                        resolve(true);
-                    }
-                });
-                
-                connection.execSql(request);
-            }
-        });
     });
 }
 

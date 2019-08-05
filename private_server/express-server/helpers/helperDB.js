@@ -135,9 +135,8 @@ function guardarContextoSiguienteItem(pool, idEntrevistaUsuario, idSiguienteAgru
     var query = `UPDATE OP_ENTREVISTA
                 SET IdSiguienteAgrupacion=@idSiguienteAgrupacion, IdSiguienteItem=@idSiguienteItem
                 WHERE IdEntrevistaUsuario=@idEntrevistaUsuario;`;
-    var result = [];
-    
-    return new Promise(function(resolve, reject) {
+        
+        return new Promise(function(resolve, reject) {
         pool.acquire(function (err, connection) {
             if (err) {
                 reject(err);
@@ -203,7 +202,7 @@ function guardarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, idPa
  * Extrae las reglas a ejecutar asociadas a una agrupación y ejecuta los procedimientos almacenados correspondientes
  */
 function comprobarRegla(pool, idEntrevistaUsuario, idItem) {
-    var query = `SELECT r.IdRegla, r.ProcedimientoSQL, r.IdAgrupacionSalto, r.IdItemSalto, r.UmbralSalto
+    var query = `SELECT r.IdRegla, r.ProcedimientoSQL
                 FROM GEOP_ITEM_REGLA ir
                 INNER JOIN GEOP_REGLA r ON r.IdRegla=ir.IdRegla
                 WHERE ir.IdItem=@idItem AND ir.Estado=1 AND r.Estado=1
@@ -256,7 +255,7 @@ function comprobarRegla(pool, idEntrevistaUsuario, idItem) {
  */
 function ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, reglas, index) {
     var procedimiento = reglas[index].ProcedimientoSQL;
-    var result = {};
+    var result = null;
     
     return new Promise(function(resolve, reject) {
         pool.acquire(function (err, connection) {
@@ -274,44 +273,25 @@ function ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, reglas, index)
                 request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
                 request.addParameter('idRegla', TYPES.Int, reglas[index].IdRegla);
                 request.addParameter('idItem', TYPES.Int, idItem);
-                request.addOutputParameter('resultado', TYPES.Numeric, -2, {"precision": 18, "scale": 2});
-                request.addOutputParameter('prev', TYPES.Bit); // Indicador del cumplimiento de la regla anteriormente
+                request.addOutputParameter('json', TYPES.NVarChar, null, {length: Infinity});
                 
                 request.on('returnValue', function(parameterName, value, metadata) {
-                    result[parameterName] = value;
+                    result = JSON.parse(value);
                 });
                 
                 request.on('requestCompleted', function() {
-                    var ctx = null;
-                    
-                    if (reglas[index].IdItemSalto && reglas[index].UmbralSalto && result.resultado >= reglas[index].UmbralSalto) {
-                        ctx = { // Se cumple la regla
-                            IdRegla: reglas[index].IdRegla,
-                            IdSiguienteAgrupacion: reglas[index].IdAgrupacionSalto,
-                            IdSiguienteItem: reglas[index].IdItemSalto,
-                            Prev: result.prev
-                        };
-                    } else {
-                        ctx = { // No se cumple la regla (o salto no definido)
-                            IdRegla: reglas[index].IdRegla,
-                            IdSiguienteAgrupacion: null,
-                            IdSiguienteItem: null,
-                            Prev: result.prev
-                        }
-                    }
-                    
                     if (reglas[++index]) { // Quedan más reglas asociadas a una agrupación
                         return ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, reglas, index)
                         .then(res => {
                             if (res) {
                                 resolve(res);
                             } else {
-                                resolve(ctx);
+                                resolve(result);
                             }
                         })
                         .catch(error => reject(error)); // Catch de promises anidadas
                     } else {
-                        resolve(ctx);
+                        resolve(result);
                     }
                 });
                 
