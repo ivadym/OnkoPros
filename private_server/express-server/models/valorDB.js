@@ -53,8 +53,8 @@ function extraerValores(pool, item) {
  * Almacenar los valores contestados por el usuario
  */
 function almacenarValor(pool, idEntrevistaItem, item, index) {
-    var query = `INSERT INTO OP_ENTREVISTA_ITEM_VALOR (IdEntrevistaItemValor, IdEntrevistaItem, IdValor, Estado, ValorTexto, Alerta)
-                VALUES ((SELECT ISNULL(MAX(IdEntrevistaItemValor), 0)+1 FROM OP_ENTREVISTA_ITEM_VALOR), @idEntrevistaItem, @idValor, 1, @valorTexto, @alerta);`;
+    var query = `INSERT INTO OP_ENTREVISTA_ITEM_VALOR (IdEntrevistaItemValor, IdEntrevistaItem, IdValor, Estado, Titulo, Seleccionado, Valor, TipoValor, ValorTexto, Alerta)
+                VALUES ((SELECT ISNULL(MAX(IdEntrevistaItemValor), 0)+1 FROM OP_ENTREVISTA_ITEM_VALOR), @idEntrevistaItem, @idValor, 1, @titulo, @seleccionado, @valor, @tipoValor, @valorTexto, @alerta);`;
     
     return new Promise(function(resolve, reject) {
         pool.acquire(function (err, connection) {
@@ -71,6 +71,10 @@ function almacenarValor(pool, idEntrevistaItem, item, index) {
                 
                 request.addParameter('idEntrevistaItem', TYPES.Int, idEntrevistaItem);
                 request.addParameter('idValor', TYPES.Int, item.Valores[index].IdValor);
+                request.addParameter('titulo', TYPES.NVarChar, item.Valores[index].Titulo);
+                request.addParameter('seleccionado', TYPES.Bit, item.Valores[index].Seleccionado);
+                request.addParameter('valor', TYPES.NVarChar, item.Valores[index].Valor);
+                request.addParameter('tipoValor', TYPES.VarChar, item.Valores[index].TipoValor);
                 request.addParameter('valorTexto', TYPES.NVarChar, item.Valores[index].ValorTexto);
                 request.addParameter('alerta', TYPES.NVarChar, item.Valores[index].Alerta);
                 
