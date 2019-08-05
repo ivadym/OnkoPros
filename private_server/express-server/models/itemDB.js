@@ -5,7 +5,7 @@ const entrevistaData = require('../models/entrevistasDB');
 const valorData = require('../models/valorDB');
 const {
     extraerIdEntrevistaUsuario, extraerIdEntrevistaItem, extraerOrden, guardarContextoSiguienteItem,
-    guardarContextoSiguienteAgrupacionPadre, comprobarRegla
+    guardarContextoSiguienteAgrupacionPadre, comprobarRegla, procedimientoBorrado
 } = require('../helpers/helperDB');
 
 /**
@@ -724,86 +724,9 @@ function actualizarItem(pool, idEntrevistaUsuario, item) {
 }
 
 /**
- * Devuelve un array de los items contestados anteriormente
- */
-function extraerIdItemsRespondidosOrdenSiguiente(pool, idEntrevistaUsuario, idItem) {
-    var query = `SELECT op_ei.IdEntrevistaItem
-                FROM OP_ENTREVISTA_ITEM op_ei
-                WHERE op_ei.IdEntrevistaUsuario=@idEntrevistaUsuario AND op_ei.Orden> (SELECT op_ei.Orden FROM OP_ENTREVISTA_ITEM op_ei WHERE op_ei.IdEntrevistaUsuario=@idEntrevistaUsuario AND op_ei.IdItem=@idItem);`;
-    var result = [];
-    
-    return new Promise(function(resolve, reject) {
-        pool.acquire(function (err, connection) {
-            if (err) {
-                reject(err);
-            } else {
-                var request = new Request(query, function(err, rowCount, rows) {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        connection.release();
-                    }
-                });
-                
-                request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
-                request.addParameter('idItem', TYPES.Int, idItem);
-                
-                request.on('row', function(columns) {
-                    var rowObject = {};
-                    columns.forEach(function(column) {
-                        rowObject = column.value; // Solo guardo los IdEntrevistaItem en el array
-                    });
-                    result.push(rowObject);
-                });
-                
-                request.on('requestCompleted', function() {
-                    resolve(result);
-                });
-                
-                connection.execSql(request);
-            }
-        });
-    });
-}
-
-/**
- * Elimina el item especificado y previamente contestado
- */
-function eliminarItems(pool, idEntrevistaItem) {
-    var query = `DELETE op_ei
-                FROM OP_ENTREVISTA_ITEM op_ei
-                WHERE op_ei.IdEntrevistaItem>=@idEntrevistaItem AND op_ei.Estado>0;`;
-    
-    return new Promise(function(resolve, reject) {
-        pool.acquire(function (err, connection) {
-            if (err) {
-                reject(err);
-            } else {
-                var request = new Request(query, function(err, rowCount, rows) {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        connection.release();
-                    }
-                });
-                
-                request.addParameter('idEntrevistaItem', TYPES.Int, idEntrevistaItem);
-                
-                request.on('requestCompleted', function() {
-                    resolve(true);
-                });
-                
-                connection.execSql(request);
-            }
-        });
-    });
-}
-
-/**
  * Actualiza el contexto del siguiente item a partir de la regla aplicada a un item anteriormente respondido
  */
 function actualizarContextoRegla(pool, idEntrevistaUsuario, idItem, item) {
-    
     return new Promise(function(resolve, reject) {
         return comprobarRegla(pool, idEntrevistaUsuario, idItem)
         .then(ctx => {
@@ -811,33 +734,21 @@ function actualizarContextoRegla(pool, idEntrevistaUsuario, idItem, item) {
                 if (ctx.EstadoPrev) { // Previamente regla cumplida
                     resolve(item); // Se mantiene el contexto original
                 } else { // Previamente regla incumplida
-                    return extraerIdItemsRespondidosOrdenSiguiente(pool, idEntrevistaUsuario, idItem)
-                    .then(ids => {
-                        return valorData.eliminarValores(pool, ids, 0)
+                    return procedimientoBorrado(pool, idEntrevistaUsuario, idItem)
+                    .then(res => {
+                        return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, ctx.IdSiguienteAgrupacion, ctx.IdSiguienteItem)
                         .then(res => {
-                            return eliminarItems(pool, ids[0])
-                            .then(res => {
-                                return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, ctx.IdSiguienteAgrupacion, ctx.IdSiguienteItem)
-                                .then(res => {
-                                    resolve(item);
-                                });
-                            });
+                            resolve(item);
                         });
                     });
                 }
             } else { // Regla incumplida
                 if (ctx && ctx.EstadoPrev) { // Previamente regla cumplida
-                    return extraerIdItemsRespondidosOrdenSiguiente(pool, idEntrevistaUsuario, idItem)
-                    .then(ids => {
-                        return valorData.eliminarValores(pool, ids, 0)
-                        .then(res => {
-                            return eliminarItems(pool, ids[0])
-                            .then(res => {
-                                return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, false)
-                                .then(item => {
-                                    resolve(item);
-                                });
-                            });
+                    return procedimientoBorrado(pool, idEntrevistaUsuario, idItem)
+                    .then(res => {
+                        return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, false)
+                        .then(item => {
+                            resolve(item);
                         });
                     });
                 } else { // Previamente regla incumplida

@@ -301,7 +301,39 @@ function ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, reglas, index)
     });
 }
 
+/**
+ * Ejecuta un procedimiento almacenado que se encarga del borrado de los items & valores
+ */
+function procedimientoBorrado(pool, idEntrevistaUsuario, idItem) {
+    var procedimiento = 'BORRADO_SIGUIENTES_ITEMS';
+    
+    return new Promise(function(resolve, reject) {
+        pool.acquire(function (err, connection) {
+            if (err) {
+                reject(err);
+            } else {
+                var request = new Request(procedimiento, function(err) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        connection.release();
+                    }
+                });
+                
+                request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
+                request.addParameter('idItem', TYPES.Int, idItem);
+                
+                request.on('requestCompleted', function() {
+                    resolve(true);
+                });
+                
+                connection.callProcedure(request);
+            }
+        });
+    });
+}
+
 module.exports = {
     extraerIdEntrevistaUsuario, extraerIdEntrevistaItem, extraerOrden, guardarContextoSiguienteItem,
-    guardarContextoSiguienteAgrupacionPadre, comprobarRegla
+    guardarContextoSiguienteAgrupacionPadre, comprobarRegla, procedimientoBorrado
 };
