@@ -4,7 +4,7 @@ const env = process.env.NODE_ENV || 'dev';
 
 const dev = {
     app: {
-        port: process.env.PORT || 8080,
+        port: process.env.PORT || 8443,
         privateServerURL: process.env.PRIVATE_SERVER_URL,
         cert: '../../certificados/OKImpetus.crt',
         key: '../../certificados/OKImpetus.rsa'
