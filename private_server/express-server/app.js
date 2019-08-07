@@ -36,10 +36,17 @@ var options = {
     key: fs.readFileSync(config.app.key)
 };
 
-const server = https.createServer(options, app);
+var server = null;
 
-server.listen(config.app.port, function() {
-    logger.info('servidor.iniciado.puerto.' + config.app.port);
-});
+if (config.app.port != 443) { // Entorno de desarrollo (HTTP)
+    server = app.listen(config.app.port, function() {
+        logger.info('servidor.iniciado.puerto.' + config.app.port);
+    });
+} else { // Producción (HTTPS)
+    server = https.createServer(options, app);
+    server.listen(config.app.port, function() {
+        logger.info('servidor.iniciado.puerto.' + config.app.port);
+    });
+}
 
 server.timeout = 5000;
