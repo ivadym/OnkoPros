@@ -20,7 +20,7 @@ const httpOptions = {
 })
 export class EntrevistasService {
   
-  private _entrevistasURL = environment.production ? 'api/entrevistas' : 'https://172.27.6.220:443/api/entrevistas';
+  private _entrevistasURL = environment.production ? 'api/entrevistas' : 'https://172.27.6.220:8080/api/entrevistas';
   
   constructor(
     private http: HttpClient,
