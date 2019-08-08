@@ -6,14 +6,16 @@ const authController = require('../controllers/authController');
 const entrevistasController = require('../controllers/entrevistasController');
 const itemController = require('../controllers/itemController');
 
-router.post('/api/auth', authController.autenticacion, jwtController.generarJWT);
+const ruta = '/api/';
 
-router.get('/api/entrevistas', jwtController.verificarJWT, entrevistasController.getEntrevistas);
-router.get('/api/entrevistas/:idEntrevista', jwtController.verificarJWT, entrevistasController.getEntrevista);
+router.post(ruta + 'auth', authController.autenticacion, jwtController.generarJWT);
 
-router.get('/api/entrevistas/:idEntrevista/items', jwtController.verificarJWT, itemController.getSiguienteItem);
-router.post('/api/entrevistas/:idEntrevista/items', jwtController.verificarJWT, itemController.setItem);
-router.get('/api/entrevistas/:idEntrevista/items/:idItem', jwtController.verificarJWT, itemController.getItemRespondido);
-router.post('/api/entrevistas/:idEntrevista/items/:idItem', jwtController.verificarJWT, itemController.updateItem);
+router.get(ruta + 'entrevistas', jwtController.verificarJWT, entrevistasController.getEntrevistas);
+router.get(ruta + 'entrevistas/:idEntrevista', jwtController.verificarJWT, entrevistasController.getEntrevista);
+
+router.get(ruta + 'entrevistas/:idEntrevista/items', jwtController.verificarJWT, itemController.getSiguienteItem);
+router.post(ruta + 'entrevistas/:idEntrevista/items', jwtController.verificarJWT, itemController.setItem);
+router.get(ruta + 'entrevistas/:idEntrevista/items/:idItem', jwtController.verificarJWT, itemController.getItemRespondido);
+router.post(ruta + 'entrevistas/:idEntrevista/items/:idItem', jwtController.verificarJWT, itemController.updateItem);
 
 module.exports = router;
