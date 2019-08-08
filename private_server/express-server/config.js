@@ -28,7 +28,7 @@ const dev = {
     },
     logger: {
         activo: true, // true: Logs activos, false: Logs desactivados
-        filtroUnico: false, // Imprime los logs únicamente del nivel especificado
+        filtroUnico: false, // true: Imprime únicamente los logs del nivel especificado
         levelConsole: 'info',
         levelFile: 'error',
         filename: __dirname + '/logs/app.log'
