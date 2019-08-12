@@ -177,27 +177,7 @@ export class ItemsComponent implements OnInit {
       datos => {
         this.logger.log(`Item enviado correctamente (id: ${datos.item.IdItem})`);
         this.idItemsRespondidos = datos.idItemsRespondidos ? datos.idItemsRespondidos : this.idItemsRespondidos;
-        for (var i = 0; i < datos.item.Valores.length; i++) {
-          if (datos.item.Valores[i].Alerta) {
-            this.cuadroDialogoService.alerta(
-              'Atención, es necesario que siga las siguientes intrucciones:',
-              datos.item.Valores[i].Alerta
-            ).then(res => {
-              if (datos.item.Fin) {
-                this.logger.log(`No quedan items asociados a la entrevista con id: ${datos.item.IdEntrevista}) (enviarItem())`);
-                this.limpiarContexto();
-                this.navegacionService.navegar(`/dashboard/entrevistas/${datos.item.IdEntrevista}/fin`, true);
-              } else if (this.idItemsRespondidos.slice(0, this.idItemsRespondidos.length - 2).includes(datos.item.IdItem)) {
-                this.paginaSeleccionada = this.idItemsRespondidos.indexOf(datos.item.IdItem) + 2;
-                this.extraerItemRespondido();
-              } else {
-                this.limpiarContexto();
-                this.extraerSiguienteItem(datos.item.IdEntrevista);
-              }
-              return;
-            });
-          }
-        }
+        
         if (datos.item.Fin) {
           this.logger.log(`No quedan items asociados a la entrevista con id: ${datos.item.IdEntrevista}) (enviarItem())`);
           this.limpiarContexto();
@@ -208,6 +188,17 @@ export class ItemsComponent implements OnInit {
         } else {
           this.limpiarContexto();
           this.extraerSiguienteItem(datos.item.IdEntrevista);
+        }
+        
+        for (var i = 0; i < datos.item.Valores.length; i++) {
+          if (datos.item.Alerta || datos.item.Valores[i].Alerta) {
+            this.cuadroDialogoService.alerta(
+              'Atención, es necesario que siga las siguientes intrucciones:',
+              datos.item.Alerta ? datos.item.Alerta : datos.item.Valores[i].Alerta // Tiene preferencia la alerta a nivel de item
+            ).then(res => {
+              return; // Sale del bucle (equivalente a un break)
+            });
+          }
         }
       },
       error => {

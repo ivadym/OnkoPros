@@ -7,4 +7,5 @@ export class Item {
     Tooltip:        string;
     TipoItem:       string;
     Valores:        object;
+    Alerta:         string;
 }

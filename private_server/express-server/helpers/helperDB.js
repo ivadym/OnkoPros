@@ -201,7 +201,7 @@ function guardarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, idPa
 /**
  * Extrae las reglas a ejecutar asociadas a una agrupación y ejecuta los procedimientos almacenados correspondientes
  */
-function comprobarRegla(pool, idEntrevistaUsuario, idItem) {
+function comprobarRegla(pool, idEntrevistaUsuario, idItem, item) {
     var query = `SELECT r.IdRegla, r.ProcedimientoSQL
                 FROM GEOP_ITEM_REGLA ir
                 INNER JOIN GEOP_REGLA r ON r.IdRegla=ir.IdRegla
@@ -234,13 +234,16 @@ function comprobarRegla(pool, idEntrevistaUsuario, idItem) {
                 
                 request.on('requestCompleted', function() {
                     if (result[0]) {
-                        return ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, result, 0)
-                        .then(ctx => {
-                            resolve(ctx);
+                        return ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, item, result, 0)
+                        .then(obj => {
+                            resolve(obj);
                         })
                         .catch(error => reject(error)); // Catch de promises anidadas
                     } else {
-                        resolve(null);
+                        resolve({
+                            ctx: null,
+                            item: item
+                        });
                     }
                 });
                 
@@ -253,7 +256,7 @@ function comprobarRegla(pool, idEntrevistaUsuario, idItem) {
 /**
  * Ejecuta un procedimiento almacenado asociado a una regla determinada
  */
-function ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, reglas, index) {
+function ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, item, reglas, index) {
     var procedimiento = reglas[index].ProcedimientoSQL;
     var result = null;
     
@@ -276,22 +279,30 @@ function ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, reglas, index)
                 request.addOutputParameter('json', TYPES.NVarChar, null, {length: Infinity});
                 
                 request.on('returnValue', function(parameterName, value, metadata) {
-                    result = JSON.parse(value);
+                    result = JSON.stringify(value); // Permite representar caracteres especiales
+                    json = JSON.parse(JSON.parse(result)); // Deshace el stringify de una string
                 });
                 
                 request.on('requestCompleted', function() {
+                    item.Alerta = json.Alerta;
                     if (reglas[++index]) { // Quedan más reglas asociadas a una agrupación
-                        return ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, reglas, index)
-                        .then(res => {
-                            if (res) {
-                                resolve(res);
+                        return ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, item, reglas, index)
+                        .then(obj => {
+                            if (obj) {
+                                resolve(obj);
                             } else {
-                                resolve(result);
+                                resolve({
+                                    ctx: json,
+                                    item: item
+                                });
                             }
                         })
                         .catch(error => reject(error)); // Catch de promises anidadas
                     } else {
-                        resolve(result);
+                        resolve({
+                            ctx: json,
+                            item: item
+                        });
                     }
                 });
                 

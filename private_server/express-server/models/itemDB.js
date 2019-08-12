@@ -141,10 +141,10 @@ function extraerContextoItemSiguiente(pool, idEntrevistaUsuario, opts) {
                                     if (ctx) { // Item hijo extraído
                                         resolve(ctx);
                                     } else { // No hay más item hijos
-                                        return finalizarItemAgrupacion(pool, idEntrevistaUsuario, null, siguienteItem.IdItem)
-                                        .then(ctx => {
-                                            if (ctx && ctx.IdSiguienteItem) {
-                                                resolve(ctx);
+                                        return finalizarItemAgrupacion(pool, idEntrevistaUsuario, null, siguienteItem.IdItem, siguienteItem)
+                                        .then(obj => {
+                                            if (obj && obj.ctx && obj.ctx.IdSiguienteItem) {
+                                                resolve(obj.ctx);
                                             } else {
                                                 return extraerContextoItemSiguiente(pool, idEntrevistaUsuario, opts)
                                                 .then(ctx => {
@@ -233,10 +233,10 @@ function extraerContextoItemHijo(pool, idEntrevistaUsuario, idAgrupacion, update
                                         ctx.IdSiguienteAgrupacion = itemHijo.IdItem,
                                         resolve(ctx);
                                     } else { // No quedan más items hijos
-                                        return finalizarItemAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, itemHijo.IdItem)
-                                        .then(ctx => { // Continúa el flujo principal
-                                            if(ctx && ctx.IdSiguienteItem) {
-                                                resolve(ctx);
+                                        return finalizarItemAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, itemHijo.IdItem, itemHjo)
+                                        .then(obj => { // Continúa el flujo principal
+                                            if(obj && obj.ctx && obj.ctx.IdSiguienteItem) {
+                                                resolve(obj.ctx);
                                             } else {
                                                 return extraerContextoItemHijo(pool, idEntrevistaUsuario, idAgrupacion, update)
                                                 .then(ctx => {
@@ -344,16 +344,18 @@ function almacenarItem(pool, idUsuario, idPerfil, item) {
                                 .then(item => {
                                     return entrevistaData.actualizarEstadoEntrevista(pool, idEntrevistaUsuario)
                                     .then(res => {
-                                        return comprobarRegla(pool, idEntrevistaUsuario, item.IdItem)
-                                        .then(ctx => {
-                                            if(ctx && ctx.IdSiguienteItem) {
-                                                return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, ctx.IdSiguienteAgrupacion, ctx.IdSiguienteItem)
+                                        return comprobarRegla(pool, idEntrevistaUsuario, item.IdItem, item)
+                                        .then(obj => {
+                                            var alertaNivelItem = obj.item.Alerta;
+                                            if(obj && obj.ctx && obj.ctx.IdSiguienteItem) {
+                                                return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, obj.ctx.IdSiguienteAgrupacion, obj.ctx.IdSiguienteItem)
                                                 .then(res => {
-                                                    resolve(item);
+                                                    resolve(obj.item);
                                                 });
                                             } else {
-                                                return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, false)
+                                                return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, obj.item, false)
                                                 .then(item => {
+                                                    item.Alerta = alertaNivelItem ? alertaNivelItem : item.Alerta;
                                                     resolve(item);
                                                 });
                                             }
@@ -440,15 +442,15 @@ function actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, update
                             .catch(error => reject(error)); // Catch de promises anidadas
                         }
                     } else if (item.IdAgrupacion) { // No hay más items - AGRUPACIÓN
-                        return finalizarItemAgrupacion(pool, idEntrevistaUsuario, null, item.IdAgrupacion)
-                        .then(ctx => {
-                            if(ctx && ctx.IdSiguienteItem) {
-                                return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, ctx.IdSiguienteAgrupacion, ctx.IdSiguienteItem)
+                        return finalizarItemAgrupacion(pool, idEntrevistaUsuario, null, item.IdAgrupacion, item)
+                        .then(obj => {
+                            if(obj && obj.ctx && obj.ctx.IdSiguienteItem) {
+                                return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, obj.ctx.IdSiguienteAgrupacion, obj.ctx.IdSiguienteItem)
                                 .then(res => {
-                                    resolve(item);
+                                    resolve(obj.item);
                                 });
                             } else {
-                                resolve(item);
+                                resolve(obj.item);
                             }
                         })
                         .catch(error => reject(error)); // Catch de promises anidadas
@@ -471,7 +473,7 @@ function actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, update
 /**
  * Finaliza el item agrupación correspondiente a un usuario determinado
  */
-function finalizarItemAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, idItem) {
+function finalizarItemAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, idItem, item) {
     var query = ``;
     
     return new Promise(function(resolve, reject) {
@@ -510,16 +512,16 @@ function finalizarItemAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, idItem
                         request.addParameter('orden', TYPES.VarChar, orden);
                         
                         request.on('requestCompleted', function() {
-                            return comprobarRegla(pool, idEntrevistaUsuario, idItem)
-                            .then(ctx => {
-                                if (ctx && ctx.IdSiguienteItem) {
-                                    resolve(ctx);
+                            return comprobarRegla(pool, idEntrevistaUsuario, idItem, item)
+                            .then(obj => {
+                                if (obj && obj.ctx && obj.ctx.IdSiguienteItem) {
+                                    resolve(obj);
                                 } else {
                                     return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, null, null)
                                     .then(res => {
                                         return guardarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, null)
                                         .then(res => {
-                                            resolve(res);
+                                            resolve(obj);
                                         });
                                     });
                                 }
@@ -669,7 +671,7 @@ function actualizarAgrupacionRespondida(pool, idEntrevistaUsuario, idAgrupacion,
 function actualizarItem(pool, idEntrevistaUsuario, item) {
     var query = `UPDATE OP_ENTREVISTA_ITEM
                 SET FechaRegistro=GETDATE()
-                WHERE IdEntrevistaItem=@idEntrevistaItem;`;
+                WHERE IdEntrevistaItem=@idEntrevistaItem AND Estado>0;`;
     
     return new Promise(function(resolve, reject) {
         return extraerIdEntrevistaItem(pool, idEntrevistaUsuario, item.IdItem)
@@ -697,7 +699,7 @@ function actualizarItem(pool, idEntrevistaUsuario, item) {
                                     return actualizarAgrupacionRespondida(pool, idEntrevistaUsuario, item.IdAgrupacion, false)
                                     .then(res => {
                                         return actualizarContextoRegla(pool, idEntrevistaUsuario, item.IdAgrupacion, item)
-                                        .then(item => {
+                                        .then(itemAgrupacion => { // El paso siguiente lo marca el item del nivel más bajo
                                             return actualizarContextoRegla(pool, idEntrevistaUsuario, item.IdItem, item)
                                             .then(item => {
                                                 resolve(item);
@@ -728,31 +730,38 @@ function actualizarItem(pool, idEntrevistaUsuario, item) {
  */
 function actualizarContextoRegla(pool, idEntrevistaUsuario, idItem, item) {
     return new Promise(function(resolve, reject) {
-        return comprobarRegla(pool, idEntrevistaUsuario, idItem)
-        .then(ctx => {
-            if (ctx && ctx.IdSiguienteItem) { // Regla cumplida
-                if (ctx.EstadoPrev) { // Previamente regla cumplida
-                    resolve(item); // Se mantiene el contexto original
+        return comprobarRegla(pool, idEntrevistaUsuario, idItem, item)
+        .then(obj => {
+            if (obj && obj.ctx && (obj.ctx.IdSiguienteItem || obj.ctx.Alerta)) { // Regla cumplida
+                if (obj.ctx.EstadoPrev) { // Previamente regla cumplida
+                    resolve(obj.item); // Se mantiene el contexto original
                 } else { // Previamente regla incumplida
                     return procedimientoBorrado(pool, idEntrevistaUsuario, idItem)
                     .then(res => {
-                        return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, ctx.IdSiguienteAgrupacion, ctx.IdSiguienteItem)
-                        .then(res => {
-                            resolve(item);
-                        });
+                        if (obj.ctx.IdSiguienteItem) {
+                            return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, obj.ctx.IdSiguienteAgrupacion, obj.ctx.IdSiguienteItem)
+                            .then(res => {
+                                resolve(obj.item);
+                            });
+                        } else if (obj.ctx.Alerta) {
+                            return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, obj.item, false)
+                            .then(item => {
+                                resolve(item);
+                            });
+                        }
                     });
                 }
             } else { // Regla incumplida
-                if (ctx && ctx.EstadoPrev) { // Previamente regla cumplida
+                if (obj && obj.ctx && obj.ctx.EstadoPrev) { // Previamente regla cumplida
                     return procedimientoBorrado(pool, idEntrevistaUsuario, idItem)
                     .then(res => {
-                        return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, false)
+                        return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, obj.item, false)
                         .then(item => {
                             resolve(item);
                         });
                     });
                 } else { // Previamente regla incumplida
-                    resolve(item); // Se mantiene el contexto original
+                    resolve(obj.item); // Se mantiene el contexto original
                 }
             }
         })
