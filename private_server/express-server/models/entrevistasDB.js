@@ -1,8 +1,6 @@
 const Request = require('tedious').Request;
 const TYPES = require('tedious').TYPES;
 
-const { guardarContextoSiguienteItem, guardarContextoSiguienteAgrupacionPadre } = require('../helpers/helperDB');
-
 /**
  * Extrae las entrevistas asociadas a un usuario determinado
  */
@@ -128,44 +126,4 @@ function actualizarEstadoEntrevista(pool, idEntrevistaUsuario) {
     });
 }
 
-/**
- * Finaliza una entrevista deetrminada (no quedan más items por responder)
- */
-function finalizarEntrevista(pool, idEntrevistaUsuario) {
-    var query = `UPDATE OP_ENTREVISTA
-                SET Estado=20
-                WHERE IdEntrevistaUsuario=@idEntrevistaUsuario`;
-    
-    return new Promise(function(resolve, reject) {
-        pool.acquire(function (err, connection) {
-            if (err) {
-                reject(err);
-            } else {
-                var request = new Request(query, function(err, rowCount, rows) {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        connection.release();
-                    }
-                });
-                
-                request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
-                
-                request.on('requestCompleted', function() {
-                    return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, null, null)
-                    .then(res => {
-                        return guardarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, null)
-                        .then(res => {
-                            resolve(res);
-                        });
-                    })
-                    .catch(error => reject(error)); // Catch de promises anidadas
-                });
-                
-                connection.execSql(request);
-            }
-        });
-    });
-}
-
-module.exports = { extraerEntrevistas, extraerEntrevista, actualizarEstadoEntrevista, finalizarEntrevista }
+module.exports = { extraerEntrevistas, extraerEntrevista, actualizarEstadoEntrevista }

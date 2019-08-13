@@ -1,6 +1,8 @@
 const Request = require('tedious').Request;
 const TYPES = require('tedious').TYPES;
 
+const proc = require('./procedimientos');
+
 /**
  * Extrae el ID asociado a una entrevista asignada a un usuario y perfil determinados
  */
@@ -129,6 +131,94 @@ function extraerOrden(pool, idEntrevistaUsuario) {
 }
 
 /**
+ * Extrae los item hijos asociados a una agrupación
+ */
+function extraerContextoItemHijo(pool, idEntrevistaUsuario, idAgrupacion, update) {
+    var query = ``;
+    var result = [];
+    
+    if (update) {
+        query = `SELECT TOP 1 i.IdItem, i.EsAgrupacion FROM
+                GEOP_ITEM_AGRUPACION ia INNER JOIN GEOP_ITEM i on i.idItem=ia.IdItem
+                WHERE ia.IdAgrupacion=@idAgrupacion AND ia.Estado=1 AND i.Estado=1
+                ORDER BY CAST(ia.Orden AS numeric) ASC;`;     
+    } else {
+        query = `SELECT TOP 1 i.IdItem, i.EsAgrupacion FROM
+                GEOP_ITEM_AGRUPACION ia INNER JOIN GEOP_ITEM i on i.idItem=ia.IdItem
+                WHERE ia.IdAgrupacion=@idAgrupacion AND ia.Estado=1 AND i.Estado=1
+                AND (i.IdItem NOT IN (SELECT op_ei.IdItem FROM OP_ENTREVISTA_ITEM op_ei WHERE op_ei.Estado>0 AND op_ei.IdEntrevistaUsuario=@idEntrevistaUsuario))
+                ORDER BY CAST(ia.Orden AS numeric) ASC;`; 
+    }
+    
+    return new Promise(function(resolve, reject) {
+        pool.acquire(function (err, connection) {
+            if (err) {
+                reject(err);
+            } else {
+                var request = new Request(query, function(err, rowCount, rows) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        connection.release();
+                    }
+                });
+                
+                request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
+                request.addParameter('idAgrupacion', TYPES.Int, idAgrupacion);
+                
+                request.on('row', function(columns) {
+                    var rowObject = {};
+                    columns.forEach(function(column) {
+                        rowObject[column.metadata.colName] = column.value;
+                    });
+                    result.push(rowObject);
+                });
+                
+                request.on('requestCompleted', function() {
+                    var itemHijo = result[0];
+                    if (itemHijo) {
+                        if (itemHijo.EsAgrupacion) { // Item hijo es a su vez agrupación
+                            return guardarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, idAgrupacion)
+                            .then(res => {
+                                return extraerContextoItemHijo(pool, idEntrevistaUsuario, itemHijo.IdItem, update)
+                                .then(ctx => {
+                                    if (ctx) { // Quedan items hijos
+                                        ctx.IdSiguienteAgrupacion = itemHijo.IdItem,
+                                        resolve(ctx);
+                                    } else { // No quedan más items hijos
+                                        return finalizarItemAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, itemHijo.IdItem, itemHjo)
+                                        .then(obj => { // Continúa el flujo principal
+                                            if(obj && obj.ctx && obj.ctx.IdSiguienteItem) {
+                                                resolve(obj.ctx);
+                                            } else {
+                                                return extraerContextoItemHijo(pool, idEntrevistaUsuario, idAgrupacion, update)
+                                                .then(ctx => {
+                                                    resolve(ctx);
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            })
+                            .catch(error => reject(error)); // Catch de promises anidadas
+                        } else { // Item hijo no es agrupación
+                            resolve({
+                                IdSiguienteAgrupacion: idAgrupacion,
+                                IdSiguienteItem: itemHijo.IdItem
+                            });
+                        }
+                    } else {
+                        resolve(null);
+                    }
+                });
+                
+                connection.execSql(request);
+            }
+        });
+    });
+}
+
+/**
  * Actualiza el siguiente item a extraer por el usuario
  */
 function guardarContextoSiguienteItem(pool, idEntrevistaUsuario, idSiguienteAgrupacion, idSiguienteItem) {
@@ -198,13 +288,28 @@ function guardarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, idPa
     });
 }
 
+
 /**
- * Actualiza la respuesta del usuario en la BBDD
+ * Guarda el contexto del siguiente item a presentar al usuario
  */
-function actualizarItemAlerta(pool, idEntrevistaUsuario, idItem, alerta) {
-    var query = `UPDATE OP_ENTREVISTA_ITEM
-                SET FechaRegistro=GETDATE(), Alerta=@alerta
-                WHERE IdEntrevistaUsuario=@idEntrevistaUsuario AND IdItem=@idItem AND Estado>0;`;
+function actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, item, update) {
+    var query = ``;
+    var result = [];
+    
+    if (item.IdAgrupacion) { // Extracción del siguiente item a nivel agrupacion
+        query = `SELECT i.IdItem, i.EsAgrupacion FROM
+                GEOP_ITEM_AGRUPACION ia INNER JOIN GEOP_ITEM i ON i.IdItem=ia.IdItem
+                WHERE ia.IdAgrupacion=@idAgrupacion AND ia.Estado=1 AND i.Estado=1
+                AND ia.Orden=(SELECT ISNULL(ia_p.Orden, 0)+1 FROM GEOP_ITEM_AGRUPACION ia_p WHERE ia_p.IdAgrupacion=@idAgrupacion AND ia_p.IdItem=@idItem AND ia_p.Estado=1);`;                             
+    } else { // Extracción del siguiente item a nivel entrevista
+        query = `SELECT TOP 1 i.IdItem, i.EsAgrupacion FROM
+                OP_ENTREVISTA op_e INNER JOIN GEOP_ENTREVISTA e ON e.IdEntrevista=op_e.IdEntrevista
+                INNER JOIN GEOP_ENTREVISTA_ITEM ei ON ei.IdEntrevista=e.IdEntrevista
+                INNER JOIN GEOP_ITEM i ON i.IdItem=ei.IdItem
+                WHERE op_e.IdEntrevistaUsuario=@idEntrevistaUsuario AND ei.Estado=1 AND i.Estado=1
+                AND i.IdItem NOT IN (SELECT op_ei.IdItem FROM OP_ENTREVISTA_ITEM op_ei WHERE op_ei.IdEntrevistaUsuario=@idEntrevistaUsuario AND op_ei.Estado>0)
+                ORDER BY CAST(ei.Orden AS numeric) ASC;`;
+    }
     
     return new Promise(function(resolve, reject) {
         pool.acquire(function (err, connection) {
@@ -220,11 +325,57 @@ function actualizarItemAlerta(pool, idEntrevistaUsuario, idItem, alerta) {
                 });
                 
                 request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
-                request.addParameter('idItem', TYPES.Int, idItem);
-                request.addParameter('alerta', TYPES.NVarChar, alerta);
+                request.addParameter('idAgrupacion', TYPES.Int, item.IdAgrupacion);
+                request.addParameter('idItem', TYPES.Int, item.IdItem);
+                
+                request.on('row', function(columns) {
+                    var rowObject = {};
+                    columns.forEach(function(column) {
+                        rowObject[column.metadata.colName] = column.value;
+                    });
+                    result.push(rowObject);
+                });
                 
                 request.on('requestCompleted', function() {
-                    resolve(true);
+                    var siguienteItem = result[0];
+                    if (siguienteItem) { // Item extraído
+                        if (siguienteItem.EsAgrupacion) { // Es agrupación
+                            return extraerContextoItemHijo(pool, idEntrevistaUsuario, siguienteItem.IdItem, update)
+                            .then(ctx => {
+                                return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, ctx.IdSiguienteAgrupacion, ctx.IdSiguienteItem)
+                                .then(res => {
+                                    resolve(item);
+                                });
+                            })
+                            .catch(error => reject(error)); // Catch de promises anidadas
+                        } else { // No es agrupación
+                            return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, item.IdAgrupacion, siguienteItem.IdItem)
+                            .then(res => {
+                                resolve(item);
+                            })
+                            .catch(error => reject(error)); // Catch de promises anidadas
+                        }
+                    } else if (item.IdAgrupacion) { // No hay más items - AGRUPACIÓN
+                        return finalizarItemAgrupacion(pool, idEntrevistaUsuario, null, item.IdAgrupacion, item)
+                        .then(obj => {
+                            if(obj && obj.ctx && obj.ctx.IdSiguienteItem) {
+                                return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, obj.ctx.IdSiguienteAgrupacion, obj.ctx.IdSiguienteItem)
+                                .then(res => {
+                                    resolve(obj.item);
+                                });
+                            } else {
+                                resolve(obj.item);
+                            }
+                        })
+                        .catch(error => reject(error)); // Catch de promises anidadas
+                    } else if (!item.IdAgrupacion) { // No hay más items - ENTREVISTA
+                        return finalizarEntrevista(pool, idEntrevistaUsuario)
+                        .then(res => {
+                            item.Fin = true;
+                            resolve(item);
+                        })
+                        .catch(error => reject(error)); // Catch de promises anidadas
+                    }
                 });
                 
                 connection.execSql(request);
@@ -234,14 +385,13 @@ function actualizarItemAlerta(pool, idEntrevistaUsuario, idItem, alerta) {
 }
 
 /**
- * Extrae las reglas a ejecutar asociadas a una agrupación y ejecuta los procedimientos almacenados correspondientes
+ * Actualiza la agrupación respondida previamente
  */
-function comprobarRegla(pool, idEntrevistaUsuario, idItem, item) {
-    var query = `SELECT r.IdRegla, r.ProcedimientoSQL
-                FROM GEOP_ITEM_REGLA ir
-                INNER JOIN GEOP_REGLA r ON r.IdRegla=ir.IdRegla
-                WHERE ir.IdItem=@idItem AND ir.Estado=1 AND r.Estado=1
-                ORDER BY CAST(ir.Orden AS numeric) ASC;`;
+function actualizarAgrupacionRespondida(pool, idEntrevistaUsuario, idAgrupacion, anidada) {
+    var query = `UPDATE OP_ENTREVISTA_ITEM
+                SET FechaRegistro=GETDATE()
+                OUTPUT inserted.IdAgrupacion
+                WHERE IdEntrevistaUsuario=@idEntrevistaUsuario AND IdItem=@idAgrupacion;`;            
     var result = [];
     
     return new Promise(function(resolve, reject) {
@@ -257,7 +407,8 @@ function comprobarRegla(pool, idEntrevistaUsuario, idItem, item) {
                     }
                 });
                 
-                request.addParameter('idItem', TYPES.Int, idItem);
+                request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
+                request.addParameter('idAgrupacion', TYPES.Int, idAgrupacion);
                 
                 request.on('row', function(columns) {
                     var rowObject = {};
@@ -268,17 +419,17 @@ function comprobarRegla(pool, idEntrevistaUsuario, idItem, item) {
                 });
                 
                 request.on('requestCompleted', function() {
-                    if (result[0]) {
-                        return ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, item, result, 0)
-                        .then(obj => {
-                            resolve(obj);
+                    idAgrupacion = result[0] ? result[0].IdAgrupacion : null;
+                    if (idAgrupacion) { // Agrupación anidada
+                        return actualizarAgrupacionRespondida(pool, idEntrevistaUsuario, idAgrupacion, true)
+                        .then(res => {
+                            resolve(res);
                         })
                         .catch(error => reject(error)); // Catch de promises anidadas
+                    } else if (result[0] || anidada) {
+                        resolve(true);
                     } else {
-                        resolve({
-                            ctx: null,
-                            item: item
-                        });
+                        resolve(false);
                     }
                 });
                 
@@ -289,80 +440,131 @@ function comprobarRegla(pool, idEntrevistaUsuario, idItem, item) {
 }
 
 /**
- * Ejecuta un procedimiento almacenado asociado a una regla determinada
+ * Actualiza el contexto del siguiente item a partir de la regla aplicada a un item anteriormente respondido
  */
-function ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, item, reglas, index) {
-    var procedimiento = reglas[index].ProcedimientoSQL;
-    var result = null;
-    
+function actualizarContextoRegla(pool, idEntrevistaUsuario, idItem, item) {
     return new Promise(function(resolve, reject) {
-        pool.acquire(function (err, connection) {
-            if (err) {
-                reject(err);
-            } else {
-                var request = new Request(procedimiento, function(err) {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        connection.release();
-                    }
-                });
-                
-                request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
-                request.addParameter('idRegla', TYPES.Int, reglas[index].IdRegla);
-                request.addParameter('idItem', TYPES.Int, idItem);
-                request.addOutputParameter('json', TYPES.NVarChar, null, {length: Infinity});
-                
-                request.on('returnValue', function(parameterName, value, metadata) {
-                    result = JSON.stringify(value); // Permite representar caracteres especiales
-                    json = JSON.parse(JSON.parse(result)); // Deshace el stringify de una string
-                });
-                
-                request.on('requestCompleted', function() {
-                    item.Alerta = json.Alerta;
-                    if (reglas[++index]) { // Quedan más reglas asociadas a una agrupación
-                        return ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, item, reglas, index)
-                        .then(obj => {
-                            if (obj) {
-                                resolve(obj);
-                            } else {
-                                resolve({
-                                    ctx: json,
-                                    item: item
-                                });
-                            }
-                        })
-                        .catch(error => reject(error)); // Catch de promises anidadas
-                    } else {
-                        return actualizarItemAlerta(pool, idEntrevistaUsuario, idItem, item.Alerta)
-                        .then(res => {
-                            resolve({
-                                ctx: json,
-                                item: item
+        return proc.comprobarRegla(pool, idEntrevistaUsuario, idItem, item)
+        .then(obj => {
+            if (obj && obj.ctx && (obj.ctx.IdSiguienteItem || obj.ctx.Alerta)) { // Regla cumplida
+                if (obj.ctx.EstadoPrev) { // Previamente regla cumplida
+                    resolve(obj.item); // Se mantiene el contexto original
+                } else { // Previamente regla incumplida
+                    return proc.procedimientoBorrado(pool, idEntrevistaUsuario, idItem)
+                    .then(res => {
+                        if (obj.ctx.IdSiguienteItem) {
+                            return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, obj.ctx.IdSiguienteAgrupacion, obj.ctx.IdSiguienteItem)
+                            .then(res => {
+                                resolve(obj.item);
                             });
-                        })
-                        .catch(error => reject(error)); // Catch de promises anidadas
-                    }
-                });
-                
-                connection.callProcedure(request);
+                        } else if (obj.ctx.Alerta) {
+                            return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, obj.item, false)
+                            .then(item => {
+                                resolve(item);
+                            });
+                        }
+                    });
+                }
+            } else { // Regla incumplida
+                if (obj && obj.ctx && obj.ctx.EstadoPrev) { // Previamente regla cumplida
+                    return proc.procedimientoBorrado(pool, idEntrevistaUsuario, idItem)
+                    .then(res => {
+                        return actualizarContextoSiguienteItem(pool, idEntrevistaUsuario, obj.item, false)
+                        .then(item => {
+                            resolve(item);
+                        });
+                    });
+                } else { // Previamente regla incumplida
+                    resolve(obj.item); // Se mantiene el contexto original
+                }
             }
-        });
+        })
+        .catch(error => reject(error)); // Catch de promises anidadas
     });
 }
 
 /**
- * Ejecuta un procedimiento almacenado que se encarga del borrado de los items & valores
+ * Finaliza el item agrupación correspondiente a un usuario determinado
  */
-function procedimientoBorrado(pool, idEntrevistaUsuario, idItem) {
-    var procedimiento = 'BORRADO_SIGUIENTES_ITEMS';
+function finalizarItemAgrupacion(pool, idEntrevistaUsuario, idAgrupacion, idItem, item) {
+    var query = ``;
+    
+    return new Promise(function(resolve, reject) {
+        return actualizarAgrupacionRespondida(pool, idEntrevistaUsuario, idItem, false)
+        .then(res => {
+            if (res) { // Agrupación finalizada anteriormente, se realiza únicamente el update
+                query = ``;
+            } else {
+                if (idAgrupacion) {
+                query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdAgrupacion, IdItem, Estado, Orden)
+                        VALUES ((SELECT ISNULL(MAX(IdEntrevistaItem), 0)+1 FROM OP_ENTREVISTA_ITEM), @idEntrevistaUsuario, @idAgrupacion, @idItem, 2, @orden);`;
+                } else {
+                query = `INSERT INTO OP_ENTREVISTA_ITEM (IdEntrevistaItem, IdEntrevistaUsuario, IdAgrupacion, IdItem, Estado, Orden)
+                        VALUES ((SELECT ISNULL(MAX(IdEntrevistaItem), 0)+1 FROM OP_ENTREVISTA_ITEM), @idEntrevistaUsuario,
+                        (SELECT op_e.IdSiguienteAgrupacionPadre FROM OP_ENTREVISTA op_e WHERE op_e.IdEntrevistaUsuario=@idEntrevistaUsuario),
+                        @idItem, 2, @orden);`;
+                }
+            }
+            return extraerOrden(pool, idEntrevistaUsuario)
+            .then(orden => {
+                pool.acquire(function (err, connection) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        var request = new Request(query, function(err, rowCount, rows) {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                connection.release();
+                            }
+                        });
+                        
+                        request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
+                        request.addParameter('idAgrupacion', TYPES.Int, idAgrupacion);
+                        request.addParameter('idItem', TYPES.Int, idItem);
+                        request.addParameter('orden', TYPES.VarChar, orden);
+                        
+                        request.on('requestCompleted', function() {
+                            return proc.comprobarRegla(pool, idEntrevistaUsuario, idItem, item)
+                            .then(obj => {
+                                if (obj && obj.ctx && obj.ctx.IdSiguienteItem) {
+                                    resolve(obj);
+                                } else {
+                                    return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, null, null)
+                                    .then(res => {
+                                        return guardarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, null)
+                                        .then(res => {
+                                            resolve(obj);
+                                        });
+                                    });
+                                }
+                            })
+                            .catch(error => reject(error)); // Catch de promises anidadas
+                        });
+                        
+                        connection.execSql(request);
+                    }
+                });
+            });
+        })
+        .catch(error => reject(error)); // Catch de promises anidadas
+    });
+}
+
+/**
+ * Finaliza una entrevista deetrminada (no quedan más items por responder)
+ */
+function finalizarEntrevista(pool, idEntrevistaUsuario) {
+    var query = `UPDATE OP_ENTREVISTA
+                SET Estado=20
+                WHERE IdEntrevistaUsuario=@idEntrevistaUsuario`;
     
     return new Promise(function(resolve, reject) {
         pool.acquire(function (err, connection) {
             if (err) {
                 reject(err);
             } else {
-                var request = new Request(procedimiento, function(err) {
+                var request = new Request(query, function(err, rowCount, rows) {
                     if (err) {
                         reject(err);
                     } else {
@@ -371,19 +573,26 @@ function procedimientoBorrado(pool, idEntrevistaUsuario, idItem) {
                 });
                 
                 request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
-                request.addParameter('idItem', TYPES.Int, idItem);
                 
                 request.on('requestCompleted', function() {
-                    resolve(true);
+                    return guardarContextoSiguienteItem(pool, idEntrevistaUsuario, null, null)
+                    .then(res => {
+                        return guardarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, null)
+                        .then(res => {
+                            resolve(res);
+                        });
+                    })
+                    .catch(error => reject(error)); // Catch de promises anidadas
                 });
                 
-                connection.callProcedure(request);
+                connection.execSql(request);
             }
         });
     });
 }
 
 module.exports = {
-    extraerIdEntrevistaUsuario, extraerIdEntrevistaItem, extraerOrden, guardarContextoSiguienteItem,
-    guardarContextoSiguienteAgrupacionPadre, comprobarRegla, procedimientoBorrado
+    extraerIdEntrevistaUsuario, extraerIdEntrevistaItem, extraerOrden, extraerContextoItemHijo, guardarContextoSiguienteItem,
+    guardarContextoSiguienteAgrupacionPadre, actualizarContextoSiguienteItem, actualizarAgrupacionRespondida, actualizarContextoRegla,
+    finalizarItemAgrupacion, finalizarEntrevista
 };

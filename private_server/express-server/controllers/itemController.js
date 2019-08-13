@@ -1,7 +1,7 @@
 const itemData = require('../models/itemDB');
 
 const { conexionPool } = require('../helpers/conexionPool');
-const { extraerIdEntrevistaUsuario } = require('../helpers/helperDB');
+const helper = require('../helpers/helperDB');
 const { logger } = require('../helpers/logger');
 
 /**
@@ -12,7 +12,7 @@ function getSiguienteItem(req, res, next) {
     
     var pool = conexionPool();
     
-    extraerIdEntrevistaUsuario(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista'])
+    helper.extraerIdEntrevistaUsuario(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista'])
     .then(idEntrevistaUsuario => {
         return itemData.extraerContextoItemSiguiente(pool, idEntrevistaUsuario, {'op': true})
         .then(ctx => {
@@ -89,7 +89,7 @@ function getItemRespondido(req, res, next) {
     logger.info('ID usuario: ' + req.idUsuario + ' > itemController.getItemRespondido');
     
     var pool = conexionPool();
-    extraerIdEntrevistaUsuario(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista'])
+    helper.extraerIdEntrevistaUsuario(pool, req.idUsuario, req.idPerfil, req.params['idEntrevista'])
     .then(idEntrevistaUsuario => {
         return itemData.extraerItemRespondido(pool, idEntrevistaUsuario, req.params['idItem'])
         .then(item => {
@@ -117,7 +117,7 @@ function updateItem(req, res, next) {
     logger.info('ID usuario: ' + req.idUsuario + ' > itemController.updateItem');
     
     var pool =  conexionPool();
-    extraerIdEntrevistaUsuario(pool, req.idUsuario, req.idPerfil, req.body.IdEntrevista)
+    helper.extraerIdEntrevistaUsuario(pool, req.idUsuario, req.idPerfil, req.body.IdEntrevista)
     .then(idEntrevistaUsuario => {
         return itemData.actualizarItem(pool, idEntrevistaUsuario, req.body)
         .then(item => {
