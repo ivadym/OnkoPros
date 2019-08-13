@@ -199,6 +199,41 @@ function guardarContextoSiguienteAgrupacionPadre(pool, idEntrevistaUsuario, idPa
 }
 
 /**
+ * Actualiza la respuesta del usuario en la BBDD
+ */
+function actualizarItemAlerta(pool, idEntrevistaUsuario, idItem, alerta) {
+    var query = `UPDATE OP_ENTREVISTA_ITEM
+                SET FechaRegistro=GETDATE(), Alerta=@alerta
+                WHERE IdEntrevistaUsuario=@idEntrevistaUsuario AND IdItem=@idItem AND Estado>0;`;
+    
+    return new Promise(function(resolve, reject) {
+        pool.acquire(function (err, connection) {
+            if (err) {
+                reject(err);
+            } else {
+                var request = new Request(query, function(err, rowCount, rows) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        connection.release();
+                    }
+                });
+                
+                request.addParameter('idEntrevistaUsuario', TYPES.Int, idEntrevistaUsuario);
+                request.addParameter('idItem', TYPES.Int, idItem);
+                request.addParameter('alerta', TYPES.NVarChar, alerta);
+                
+                request.on('requestCompleted', function() {
+                    resolve(true);
+                });
+                
+                connection.execSql(request);
+            }
+        });
+    });
+}
+
+/**
  * Extrae las reglas a ejecutar asociadas a una agrupación y ejecuta los procedimientos almacenados correspondientes
  */
 function comprobarRegla(pool, idEntrevistaUsuario, idItem, item) {
@@ -299,10 +334,14 @@ function ejecutarProcedimiento(pool, idEntrevistaUsuario, idItem, item, reglas, 
                         })
                         .catch(error => reject(error)); // Catch de promises anidadas
                     } else {
-                        resolve({
-                            ctx: json,
-                            item: item
-                        });
+                        return actualizarItemAlerta(pool, idEntrevistaUsuario, idItem, item.Alerta)
+                        .then(res => {
+                            resolve({
+                                ctx: json,
+                                item: item
+                            });
+                        })
+                        .catch(error => reject(error)); // Catch de promises anidadas
                     }
                 });
                 
