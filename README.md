@@ -1,5 +1,5 @@
 <h1 align="center">
-  Onkologikoa Patient Reported Outcomes
+  Onkologikoa Patient-Reported Outcomes
 </h1>
 
 <p align="center">
